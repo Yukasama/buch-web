@@ -1,5 +1,15 @@
-node_modules
-
-/.cache
+# compiled output
+/node_modules
 /build
+
+# Generierte Dateien
+/.cache
+
+# dotenv environment variable files
 .env
+
+# IDE - VSCode
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
