@@ -24,9 +24,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
       - name: Install dependencies
-        run: pnpm i --no-fund --no-audit
+        run: pnpm i
       - name: Run build
-        run: pnpm build --if-present
+        run: pnpm build
 
   eslint:
     needs: setup
