@@ -31,65 +31,79 @@ jobs:
   eslint:
     needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
           version: 8
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
-      - run: pnpm install eslint
       - name: Run eslint
-        run: pnpm run eslint
+        run: pnpm lint
 
   prettier:
     needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
           version: 8
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
-      - run: pnpm i prettier
       - name: Run prettier
-        run: pnpm run prettier
+        run: pnpm prettier
 
   audit:
     needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
           version: 8
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
       - name: Run audit
-        run: pnpm audit --omit=dev
+        run: pnpm audit --prod
 
   test:
     needs: setup
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
           version: 8
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
       - name: Run tests
         run: echo "Tests successfully passed"
