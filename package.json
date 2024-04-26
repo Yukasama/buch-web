@@ -12,10 +12,17 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.5",
     "@remix-run/node": "^2.9.1",
     "@remix-run/react": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
+    "framer-motion": "^11.1.7",
     "isbot": "^4.1.0",
+    "lucide-react": "^0.374.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
