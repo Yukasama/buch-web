@@ -11,6 +11,7 @@ import { withEmotionCache } from '@emotion/react'
 import { useContext, useEffect, useMemo } from 'react'
 import { ServerStyleContext, ClientStyleContext } from './context'
 import { LoaderFunction } from '@remix-run/node'
+import NavigationBar from './components/navigation-bar';
 
 export const loader: LoaderFunction = async ({ request }) => {
   return request.headers.get('cookie') ?? ''
@@ -88,6 +89,7 @@ export const Layout = withEmotionCache(
           <ChakraProvider
             colorModeManager={cookieStorageManagerSSR(cookies as string)}
           >
+            <NavigationBar />
             {children}
           </ChakraProvider>
           <ScrollRestoration />
