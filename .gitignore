@@ -4,6 +4,7 @@
 
 # Generierte Dateien
 /.cache
+.DS_Store
 
 # dotenv environment variable files
 .env

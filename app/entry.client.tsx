@@ -9,7 +9,7 @@ import { startTransition, StrictMode, useMemo, useState } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { ClientStyleContext } from './context'
 import { CacheProvider } from '@emotion/react'
-import createEmotionCache, { defaultCache } from './lib/createEmotionCache'
+import createEmotionCache, { defaultCache } from './utils/createEmotionCache'
 
 interface ClientCacheProviderProps {
   children: React.ReactNode

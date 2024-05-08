@@ -1,17 +1,21 @@
 import { ChakraProvider, cookieStorageManagerSSR } from '@chakra-ui/react'
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRouteError,
 } from '@remix-run/react'
 import { withEmotionCache } from '@emotion/react'
 import { useContext, useEffect, useMemo } from 'react'
 import { ServerStyleContext, ClientStyleContext } from './context'
 import { LoaderFunction } from '@remix-run/node'
-import NavigationBar from './components/navigation-bar';
+import NavigationBar from './components/navigation-bar'
+import { ApolloProvider } from '@apollo/client/index.js'
+import { graphQLClient } from './lib/apollo-client'
 
 export const loader: LoaderFunction = async ({ request }) => {
   return request.headers.get('cookie') ?? ''
@@ -101,5 +105,33 @@ export const Layout = withEmotionCache(
 )
 
 export default function App() {
-  return <Outlet />
+  return (
+    <ApolloProvider client={graphQLClient}>
+      <Outlet />
+    </ApolloProvider>
+  )
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+
+  return (
+    <html lang="en">
+      <head>
+        <title>Oops!</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <h1>
+          {isRouteErrorResponse(error)
+            ? `${error.status} ${error.statusText}`
+            : error instanceof Error
+              ? error.message
+              : 'Unknown Error'}
+        </h1>
+        <Scripts />
+      </body>
+    </html>
+  )
 }
