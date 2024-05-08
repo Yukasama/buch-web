@@ -21,7 +21,7 @@ export default function handleRequest(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext,
 ) {
-  return isbot(request.headers.get('user-agent') || '')
+  return isbot(request.headers.get('user-agent') ?? '')
     ? handleBotRequest(
         request,
         responseStatusCode,
@@ -71,6 +71,7 @@ function handleBotRequest(
           if (error instanceof Error) {
             reject(error)
           } else {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             reject(new Error(`An error occurred: ${error}`))
           }
         },
@@ -122,6 +123,7 @@ function handleBrowserRequest(
           if (error instanceof Error) {
             reject(error)
           } else {
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             reject(new Error(`An error occurred: ${error}`))
           }
         },

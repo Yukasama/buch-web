@@ -17,7 +17,7 @@ import NavigationBar from './components/navigation-bar'
 import { ApolloProvider } from '@apollo/client/index.js'
 import { graphQLClient } from './lib/apollo-client'
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = ({ request }) => {
   return request.headers.get('cookie') ?? ''
 }
 
@@ -25,6 +25,7 @@ export const Layout = withEmotionCache(
   ({ children }: { children: React.ReactNode }, emotionCache) => {
     function getColorMode(cookies: string) {
       const match = RegExp(
+        // eslint-disable-next-line security-node/non-literal-reg-expr
         new RegExp(`(^| )${CHAKRA_COOKIE_COLOR_KEY}=([^;]+)`),
       ).exec(cookies)
       return match == null ? void 0 : match[2]
@@ -39,15 +40,18 @@ export const Layout = withEmotionCache(
     }
 
     const colorMode = useMemo(() => {
-      let color = getColorMode(cookies as string)
+      if (typeof cookies === 'string') {
+        let color = getColorMode(cookies)
 
-      if (!color && DEFAULT_COLOR_MODE) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        cookies += ` ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
-        color = DEFAULT_COLOR_MODE
+        if (!color && DEFAULT_COLOR_MODE) {
+          cookies = `${cookies} ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
+          color = DEFAULT_COLOR_MODE
+        }
+
+        return color
       }
 
-      return color
+      return DEFAULT_COLOR_MODE
     }, [cookies])
 
     const serverStyleData = useContext(ServerStyleContext)
@@ -57,7 +61,7 @@ export const Layout = withEmotionCache(
       emotionCache.sheet.container = document.head
       const tags = emotionCache.sheet.tags
       emotionCache.sheet.flush()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       tags.forEach((tag) => (emotionCache.sheet as any)._insertTag(tag))
       clientStyleData?.reset()
 

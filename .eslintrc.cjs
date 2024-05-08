@@ -8,6 +8,7 @@
 module.exports = {
   root: true,
   parserOptions: {
+    project: true,
     ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
@@ -22,7 +23,38 @@ module.exports = {
   ignorePatterns: ['!**/.server', '!**/.client'],
 
   // Base config
-  extends: ['eslint:recommended'],
+  extends: [
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'plugin:sonarjs/recommended',
+    'plugin:promise/recommended',
+    'plugin:security/recommended-legacy',
+    'plugin:security-node/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:@eslint-community/eslint-comments/recommended',
+    'plugin:regexp/recommended',
+    // 'plugin:jest/recommended',
+    // 'plugin:jest/style',
+    // 'plugin:jest-formatting/strict',
+  ],
+
+  // Base plugins
+  plugins: [
+    'sonarjs',
+    'prettier',
+    'promise',
+    'security',
+    'security-node',
+    'prefer-arrow',
+    'regexp',
+    '@stylistic',
+    'jest',
+    'jest-formatting',
+  ],
 
   overrides: [
     // React
@@ -80,5 +112,13 @@ module.exports = {
         node: true,
       },
     },
+  ],
+
+  ignorePatterns: [
+    'node_modules',
+    'dist',
+    'build',
+    '__generated__',
+    '.eslintrc.cjs',
   ],
 }

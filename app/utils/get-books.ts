@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client/index.js'
 import { graphQLClient } from '~/lib/apollo-client'
-import type { Buch } from '~/graphql/__generated__/graphql'
 import { logger } from '~/lib/logger'
+import type { Buch } from '~/graphql/__generated__/graphql'
 import { GraphQLError } from 'graphql'
 
 export const getAllBooks = async () => {
@@ -19,9 +19,11 @@ export const getAllBooks = async () => {
     }
   `
   try {
-    const { data } = await graphQLClient.query({ query })
+    const { data }: { data: { buch: Buch }[] } = await graphQLClient.query({
+      query,
+    })
     logger.debug('getAllBooks (success)')
-    return data as Buch[]
+    return data.map((book) => book)
   } catch (error) {
     handleGraphQlError(error)
     return []
@@ -32,7 +34,7 @@ export const getBookById = async ({ id }: { id?: string }) => {
   logger.debug('getBookById: id=%s', id)
 
   if (!id) {
-    return undefined
+    return
   }
 
   const query = gql`
@@ -47,12 +49,15 @@ export const getBookById = async ({ id }: { id?: string }) => {
     }
   `
   try {
-    const { data } = await graphQLClient.query({ query, variables: { id } })
+    const { data }: { data: { buch: Buch } } = await graphQLClient.query({
+      query,
+      variables: { id },
+    })
     logger.debug('getBookById: data=%o', data)
-    return data.buch as Buch
+    return data.buch
   } catch (error) {
     handleGraphQlError(error)
-    return undefined
+    return
   }
 }
 

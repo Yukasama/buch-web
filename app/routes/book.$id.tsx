@@ -2,13 +2,13 @@ import { StarIcon } from '@chakra-ui/icons'
 import { Box, Text } from '@chakra-ui/react'
 import { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useLoaderData } from '@remix-run/react'
-import { getBookById } from '~/utils/getBooks'
+import { getBookById } from '~/utils/get-books'
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const buch = await getBookById({ id: params.id })
 
   if (!buch) {
-    throw new Response(null, {
+    throw new Response(undefined, {
       status: 404,
       statusText: 'Not Found',
     })
