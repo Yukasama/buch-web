@@ -14,3 +14,6 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Documents
+notes.txt
