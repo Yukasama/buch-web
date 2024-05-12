@@ -14,18 +14,16 @@ import { useContext, useEffect, useMemo } from 'react'
 import { ServerStyleContext, ClientStyleContext } from './context'
 import { LoaderFunction } from '@remix-run/node'
 import NavigationBar from './components/navigation-bar'
-import { ApolloProvider } from '@apollo/client/index.js'
-import { graphQLClient } from './lib/apollo-client'
+// import { ApolloProvider } from '@apollo/client/index.js'
+// import { graphQLClient } from './lib/apollo-client'
 
 export default function App() {
   return (
-    <Layout>
-      <ChakraProvider>
-        {/* <ApolloProvider client={graphQLClient}> */}
-        <Outlet />
-        {/* </ApolloProvider> */}
-      </ChakraProvider>
-    </Layout>
+    <>
+      {/* <ApolloProvider client={graphQLClient}> */}
+      <Outlet />
+      {/* </ApolloProvider> */}
+    </>
   )
 }
 
