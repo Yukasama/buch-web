@@ -1,12 +1,13 @@
-import type { MetaFunction } from '@remix-run/node'
-
-export const meta: MetaFunction = () => {
-  return [
-    { title: 'Buch Web' },
-    { name: 'description', content: 'Welcome to Buch Web!' },
-  ]
-}
+import { Link } from '@remix-run/react'
 
 export default function Index() {
-  return <div></div>
+  return (
+    <main id="content">
+      <h1>Homepage</h1>
+      <p>Das ist ein Test</p>
+      <p id="cta">
+        <Link to="/dev">Lets Dev</Link>
+      </p>
+    </main>
+  )
 }

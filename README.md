@@ -2,6 +2,10 @@
 
 📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
 
+## Time Recording
+
+[Excell Sheet](https://docs.google.com/spreadsheets/d/1oLMuQetIe_q7bHLv5ST57yzq3hoEpzUm/edit?usp=sharing&ouid=109904203276183428284&rtpof=true&sd=true)
+
 ## Install
 
 ```shellscript

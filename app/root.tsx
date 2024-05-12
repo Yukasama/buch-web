@@ -17,6 +17,18 @@ import NavigationBar from './components/navigation-bar'
 import { ApolloProvider } from '@apollo/client/index.js'
 import { graphQLClient } from './lib/apollo-client'
 
+export default function App() {
+  return (
+    <Layout>
+      <ChakraProvider>
+        {/* <ApolloProvider client={graphQLClient}> */}
+        <Outlet />
+        {/* </ApolloProvider> */}
+      </ChakraProvider>
+    </Layout>
+  )
+}
+
 export const loader: LoaderFunction = ({ request }) => {
   return request.headers.get('cookie') ?? ''
 }
@@ -107,14 +119,6 @@ export const Layout = withEmotionCache(
     )
   },
 )
-
-export default function App() {
-  return (
-    <ApolloProvider client={graphQLClient}>
-      <Outlet />
-    </ApolloProvider>
-  )
-}
 
 export function ErrorBoundary() {
   const error = useRouteError()
