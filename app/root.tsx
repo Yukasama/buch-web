@@ -13,7 +13,7 @@ import { withEmotionCache } from '@emotion/react'
 import { useContext, useEffect, useMemo } from 'react'
 import { ServerStyleContext, ClientStyleContext } from './context'
 import { LoaderFunction } from '@remix-run/node'
-import NavigationBar from './components/navigation-bar'
+import NavigationBar from './components/header/navigation-bar'
 import { ApolloProvider } from '@apollo/client/index.js'
 import { graphQLClient } from './lib/apollo-client'
 
