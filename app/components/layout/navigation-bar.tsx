@@ -8,17 +8,19 @@ import {
   Input,
   IconButton,
   Image,
+  useColorModeValue,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
-import { ThemeToggle } from '../theme-toggle'
+import { ThemeToggle } from './theme-toggle'
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
-
   const handleToggle = () => setIsOpen(!isOpen)
 
+  const bg = useColorModeValue('gray.100', 'gray.900')
+
   return (
-    <Box bg="black" px={4}>
+    <Box bg={bg} px={4}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <IconButton
           size="md"

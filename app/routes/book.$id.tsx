@@ -21,7 +21,8 @@ export default function Details() {
   const buch = useLoaderData<typeof loader>()
 
   return (
-    <div>
+    <Box px={40} py={28}>
+      <Box bgColor="gray" />
       <div key={buch.titel.titel}>
         <h2>{buch.titel.titel}</h2>
         <h2>{buch.isbn}</h2>
@@ -32,6 +33,6 @@ export default function Details() {
           <StarIcon key={i} />
         ))}
       </Box>
-    </div>
+    </Box>
   )
 }
