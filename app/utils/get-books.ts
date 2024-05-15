@@ -42,8 +42,14 @@ export const getBookById = async ({ id }: { id?: string }) => {
       buch(id: $id) {
         isbn
         rating
+        preis
+        rabatt
+        art
+        lieferbar
+        homepage
         titel {
           titel
+          untertitel
         }
       }
     }
@@ -54,6 +60,35 @@ export const getBookById = async ({ id }: { id?: string }) => {
       variables: { id },
     })
     logger.debug('getBookById: data=%o', data)
+    return data.buch
+  } catch (error) {
+    handleGraphQlError(error)
+    return
+  }
+}
+
+export const getBookAbbildungenById = async ({ id }: { id?: string }) => {
+  logger.debug('getBookById: id=%s', id)
+
+  if (!id) {
+    return
+  }
+
+  const query = gql`
+    query ($id: ID!) {
+      buch(id: $id) {
+        abbildungen {
+          beschriftung
+        }
+      }
+    }
+  `
+  try {
+    const { data }: { data: { buch: Buch } } = await graphQLClient.query({
+      query,
+      variables: { id },
+    })
+    logger.debug('getBookAbbildungenById: data=%o', data)
     return data.buch
   } catch (error) {
     handleGraphQlError(error)
