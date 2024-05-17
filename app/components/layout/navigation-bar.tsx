@@ -5,7 +5,6 @@ import {
   HStack,
   Link,
   Button,
-  Input,
   IconButton,
   Image,
   Spacer,
@@ -13,10 +12,10 @@ import {
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'
+import SearchBar from './search-bar'
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
-
   const handleToggle = () => setIsOpen(!isOpen)
 
   const bg = useColorModeValue('gray.100', 'gray.900')
@@ -37,16 +36,13 @@ const NavBar = () => {
             alt="Logo"
             height={12}
             width={12}
+            rounded="full"
             cursor="pointer"
           />
         </Link>
         <Spacer />
         <HStack spacing={8} alignItems="center">
-          <Input
-            placeholder="Bücher suchen"
-            variant="filled"
-            bg="blackAlpha.900"
-          />
+          <SearchBar />
         </HStack>
         <Spacer />
         <ThemeToggle />
