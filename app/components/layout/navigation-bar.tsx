@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from '@remix-run/react'
 import {
   Box,
   Flex,
@@ -9,16 +10,26 @@ import {
   Image,
   Spacer,
   useColorModeValue,
+  Input,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'
-import SearchBar from './search-bar'
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const handleToggle = () => setIsOpen(!isOpen)
+  const navigate = useNavigate()
 
   const bg = useColorModeValue('gray.100', 'gray.900')
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
+    const searchQuery = formData.get('searchQuery')
+    if (searchQuery && typeof searchQuery === 'string') {
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`)
+    }
+  }
 
   return (
     <Box bg={bg} px={4}>
@@ -42,7 +53,13 @@ const NavBar = () => {
         </Link>
         <Spacer />
         <HStack spacing={8} alignItems="center">
-          <SearchBar />
+          <form onSubmit={handleSearch}>
+            <Input
+              name="searchQuery"
+              placeholder="Search books"
+              variant="filled"
+            />
+          </form>
         </HStack>
         <Spacer />
         <ThemeToggle />

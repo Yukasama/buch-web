@@ -21,7 +21,8 @@ import {
   Th,
   Td,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from '@remix-run/react'
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -30,6 +31,19 @@ export default function SearchPage() {
   const [selectedValueKeywords, setSelectedValueKeywords] = useState('')
   const [selectedValueBookType, setSelectedValueBookType] = useState('')
   const [showNumberInput, setShowNumberInput] = useState(false)
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const query = searchParams.get('query')
+    if (query) {
+      if (/^\d{10}$|^\d{13}$/.test(query)) {
+        setIsbnQuery(query)
+      } else {
+        setSearchQuery(query)
+      }
+    }
+  }, [searchParams])
+
   const handleCheckboxChange = () => {
     setShowNumberInput(!showNumberInput)
   }
