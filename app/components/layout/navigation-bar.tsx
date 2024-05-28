@@ -65,7 +65,7 @@ const NavBar = () => {
         <ThemeToggle />
         <Flex alignItems="center">
           <Button ml={4} colorScheme="blue">
-            Login
+            <Link href="/login">Login</Link>
           </Button>
         </Flex>
       </Flex>
