@@ -1,16 +1,18 @@
 import { StarIcon } from '@chakra-ui/icons'
 import {
   Box,
+  Button,
   Divider,
   Flex,
   GridItem,
+  Image,
   SimpleGrid,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs } from '@remix-run/node'
 import { json, useLoaderData } from '@remix-run/react'
-import { Book, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import { getBookById } from '~/utils/get-books'
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -29,20 +31,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 export default function BookPage() {
   const buch = useLoaderData<typeof loader>()
   const bg = useColorModeValue('gray.100', 'gray.700')
+  const lieferbarColor = useColorModeValue('green.500', 'green.300')
 
   return (
     <SimpleGrid columns={3} spacing={10} px={48} py={28}>
       <GridItem>
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          rounded="lg"
-          bg={bg}
-          height={550}
-          width={420}
-        >
-          <Book size={40} />
-        </Flex>
+        <Image src="/gangof4.png" rounded="md" />
       </GridItem>
       <GridItem>
         <Flex flexDirection="column" gap={4}>
@@ -136,12 +130,46 @@ export default function BookPage() {
             inkl. MwSt., zzgl. Versand
           </Text>
         </Box>
-        <Flex>
-          {buch.lieferbar ? (
-            <Text color="green.400">Lieferbar</Text>
-          ) : (
-            <Text color="red.400">Nicht lieferbar</Text>
+        {buch.lieferbar ? (
+          <Text color={lieferbarColor} fontSize="large">
+            Lieferbar
+          </Text>
+        ) : (
+          <Text color="red.400" fontSize="large">
+            Nicht lieferbar
+          </Text>
+        )}
+        <Flex direction="column" gap={1}>
+          {buch.lieferbar && (
+            <>
+              <Flex gap={1.5}>
+                <Text fontSize="small">Versand durch:</Text>
+                <Text
+                  fontSize="small"
+                  color="blue.300"
+                  decoration="underline"
+                  cursor="pointer"
+                >
+                  Buch-Web
+                </Text>
+              </Flex>
+              <Flex gap={1.5}>
+                <Text fontSize="small">Lieferung durch:</Text>
+                <Text
+                  fontSize="small"
+                  color="blue.300"
+                  decoration="underline"
+                  cursor="pointer"
+                >
+                  Buch-Web
+                </Text>
+              </Flex>
+            </>
           )}
+        </Flex>
+        <Flex direction="column" gap={2} mt={2}>
+          <Button colorScheme="blue">Jetzt bestellen</Button>
+          <Button colorScheme="gray">In den Warenkorb</Button>
         </Flex>
       </GridItem>
     </SimpleGrid>
