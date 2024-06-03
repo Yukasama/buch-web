@@ -11,6 +11,7 @@ import {
   Spacer,
   useColorModeValue,
   Input,
+  Center,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'

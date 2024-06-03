@@ -1,20 +1,20 @@
 import authenticator from '~/services/auth.server'
 import { Form, Link, useLoaderData } from '@remix-run/react'
-import { ActionFunction, LoaderFunction } from '@remix-run/node'
+import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
 
 import ImageCarousel from '../components/layout/image-carousel'
 
-// is logged in?
-export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
-    failureRedirect: '/login',
-  })
-}
+// // is logged in?
+// export const loader: LoaderFunction = async ({ request }) => {
+//   return await authenticator.isAuthenticated(request, {
+//     failureRedirect: '/login',
+//   })
+// }
 
-// logout
-export const action: ActionFunction = async ({ request }) => {
-  await authenticator.logout(request, { redirectTo: '/login' })
-}
+// // logout
+// export const action: ActionFunction = async ({ request }) => {
+//   await authenticator.logout(request, { redirectTo: '/login' })
+// }
 
 export default function Index() {
   const data = useLoaderData<{ name: string; token?: string }>()

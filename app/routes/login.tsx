@@ -1,7 +1,23 @@
+import {
+  AbsoluteCenter,
+  Box,
+  Button,
+  Center,
+  Container,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
+  Spacer,
+  Stack,
+  VStack,
+} from '@chakra-ui/react'
 import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
+import { Text, Center } from '@chakra-ui/react'
 import { Form, useLoaderData } from '@remix-run/react'
 import authenticator from '~/services/auth.server'
 import { sessionStorage } from '~/services/session.server'
+import { AlignRight } from 'lucide-react'
 
 /**
  * called when the user hits button to login
@@ -9,63 +25,69 @@ import { sessionStorage } from '~/services/session.server'
  * @param param0
  * @returns
  */
-export const action: ActionFunction = async ({ request, context }) => {
-  // call my authenticator
-  return await authenticator.authenticate('form', request, {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    throwOnError: true,
-    context,
-  })
-}
+// export const action: ActionFunction = async ({ request, context }) => {
+//   // call my authenticator
+//   return await authenticator.authenticate('form', request, {
+//     successRedirect: '/',
+//     failureRedirect: '/login',
+//     throwOnError: true,
+//     context,
+//   })
+// }
 
 /**
- * get the cookie and see if there are any errors that were
+ * get the cookie and see if there are any errors that werey
  * generated when attempting to login
  *
  * @param param0
  * @returns
  */
-export const loader: LoaderFunction = async ({ request }) => {
-  await authenticator.isAuthenticated(request, {
-    successRedirect: '/',
-  })
+// export const loader: LoaderFunction = async ({ request }) => {
+//   await authenticator.isAuthenticated(request, {
+//     successRedirect: '/',
+//   })
 
-  const session = await sessionStorage.getSession(request.headers.get('Cookie'))
+//   const session = await sessionStorage.getSession(request.headers.get('Cookie'))
 
-  const error = session.get('sessionErrorKey')
-  return json<any>({ error })
-}
+//   const error = session.get('sessionErrorKey')
+//   return json<any>({ error })
+// }
 
-/**
- *
- * @returns
- */
-export default function LoginPage() {
-  // if i got an error it will come back with the loader data
-  const loaderData = useLoaderData()
+export default function Login() {
   return (
-    <div style={{ fontFamily: 'system-ui, sans-serif', lineHeight: '1.4' }}>
-      <h1>Welcome to Remix-Auth Example</h1>
-      <p>
-        Based on the Form Strategy From{' '}
-        <a href="https://github.com/sergiodxa/remix-auth" target={'_window'}>
-          Remix-Auth Project
-        </a>
-      </p>
-      <Form method="post">
-        <input type="email" name="email" placeholder="email" required />
-        <input
-          type="password"
-          name="password"
-          placeholder="password"
-          autoComplete="current-password"
-        />
-        <button>Sign In</button>
-      </Form>
-      <div>
-        {loaderData?.error ? <p>ERROR: {loaderData?.error?.message}</p> : null}
-      </div>
-    </div>
+    <Center mt="120px">
+      <Box borderWidth="1px" borderRadius="lg" p="20px">
+        <Text fontSize="40px" textDecoration="underline" textAlign="left">
+          Login
+        </Text>
+        <FormControl>
+          <VStack align="left" m="32px">
+            <FormLabel mb="-4px">Email address</FormLabel>
+            <Input
+              type="email"
+              name="email"
+              placeholder="your@email.com"
+              required
+            />
+            <FormLabel mb="-4px">Password</FormLabel>
+            <Input
+              type="password"
+              name="password"
+              placeholder="password"
+              autoComplete="current-password"
+              required
+            />
+          </VStack>
+        </FormControl>
+        <Box display="flex" justifyContent="flex-end">
+          <Spacer />
+          <Button variant="solid" mt="12px">
+            Log in
+          </Button>
+        </Box>
+      </Box>
+    </Center>
   )
 }
+
+// {/* {loaderData?.error ? <p>ERROR: {loaderData?.error?.message}</p> : null} */}
