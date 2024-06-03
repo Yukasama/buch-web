@@ -18,6 +18,6 @@ export const { getSession, commitSession, destroySession } = sessionStorage
 
 // define the user model
 export interface User {
-  name: string
+  username: string
   token: string
 }

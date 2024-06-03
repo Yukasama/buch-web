@@ -37,7 +37,8 @@
     "remix": "2.9.2",
     "remix-auth": "^3.6.0",
     "remix-auth-form": "^1.5.0",
-    "remix-auth-keycloak": "^1.2.0"
+    "remix-auth-keycloak": "^1.2.0",
+    "remix-keycloak": "2.0.4"
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.3.0",

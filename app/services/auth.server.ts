@@ -1,14 +1,30 @@
 // app/services/auth.server.ts
 import { Authenticator, AuthorizationError } from 'remix-auth'
 import { FormStrategy } from 'remix-auth-form'
+import { KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECERT } from '~/config/graphql'
+import { KeycloakStrategy } from 'remix-keycloak'
 import { sessionStorage, User } from '~/services/session.server'
 
 // Create an instance of the authenticator, pass a Type, User,  with what
 // strategies will return and will store in the session
-const authenticator = new Authenticator<User | Error | null>(sessionStorage, {
-  sessionKey: 'sessionKey', // keep in sync
-  sessionErrorKey: 'sessionErrorKey', // keep in sync
-})
+const authenticator = new Authenticator<User | Error | null>(sessionStorage)
+
+export const keycloakStrategy = new KeycloakStrategy(
+  {
+    useSSL: true,
+    domain: 'http://localhost:8080',
+    realm: 'acme',
+    clientID: KEYCLOAK_CLIENT_SECERT,
+    clientSecret: KEYCLOAK_CLIENT_ID,
+    callbackURL: 'http://localhost:3000',
+  },
+  async ({ profile }) => {
+    // Get the user data from your DB or API using the tokens and profile
+    return User.findOrCreate({ email: profile.emails[0].value })
+  },
+)
+
+authenticator.use(keycloakStrategy, 'keycloak')
 
 // Tell the Authenticator to use the form strategy
 authenticator.use(
@@ -21,15 +37,15 @@ authenticator.use(
     let user = null
 
     // do some validation, errors are in the sessionErrorKey
-    if (!email || email?.length === 0)
-      throw new AuthorizationError('Bad Credentials: Email is required')
-    if (typeof email !== 'string')
-      throw new AuthorizationError('Bad Credentials: Email must be a string')
+    // if (!email || email?.length === 0)
+    //   throw new AuthorizationError('Bad Credentials: Email is required')
+    // if (typeof email !== 'string')
+    //   throw new AuthorizationError('Bad Credentials: Email must be a string')
 
-    if (!password || password?.length === 0)
-      throw new AuthorizationError('Bad Credentials: Password is required')
-    if (typeof password !== 'string')
-      throw new AuthorizationError('Bad Credentials: Password must be a string')
+    // if (!password || password?.length === 0)
+    //   throw new AuthorizationError('Bad Credentials: Password is required')
+    // if (typeof password !== 'string')
+    //   throw new AuthorizationError('Bad Credentials: Password must be a string')
 
     // login the user, this could be whatever process you want
     if (email === 'admin@acme.com' && password === 'p') {

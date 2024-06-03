@@ -25,15 +25,15 @@ import { AlignRight } from 'lucide-react'
  * @param param0
  * @returns
  */
-// export const action: ActionFunction = async ({ request, context }) => {
-//   // call my authenticator
-//   return await authenticator.authenticate('form', request, {
-//     successRedirect: '/',
-//     failureRedirect: '/login',
-//     throwOnError: true,
-//     context,
-//   })
-// }
+export const action: ActionFunction = async ({ request, context }) => {
+  // call my authenticator
+  return await authenticator.authenticate('form', request, {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    throwOnError: true,
+    context,
+  })
+}
 
 /**
  * get the cookie and see if there are any errors that werey
@@ -60,31 +60,33 @@ export default function Login() {
         <Text fontSize="40px" textDecoration="underline" textAlign="left">
           Login
         </Text>
-        <FormControl>
-          <VStack align="left" m="32px">
-            <FormLabel mb="-4px">Email address</FormLabel>
-            <Input
-              type="email"
-              name="email"
-              placeholder="your@email.com"
-              required
-            />
-            <FormLabel mb="-4px">Password</FormLabel>
-            <Input
-              type="password"
-              name="password"
-              placeholder="password"
-              autoComplete="current-password"
-              required
-            />
-          </VStack>
-        </FormControl>
-        <Box display="flex" justifyContent="flex-end">
-          <Spacer />
-          <Button variant="solid" mt="12px">
-            Log in
-          </Button>
-        </Box>
+        <Form action="/auth/keycloak" method="post">
+          <FormControl>
+            <VStack align="left" m="32px">
+              <FormLabel mb="-4px">Username</FormLabel>
+              <Input
+                type="username"
+                name="Username"
+                placeholder="username"
+                required
+              />
+              <FormLabel mb="-4px">Password</FormLabel>
+              <Input
+                type="password"
+                name="password"
+                placeholder="password"
+                autoComplete="current-password"
+                required
+              />
+            </VStack>
+          </FormControl>
+          <Box display="flex" justifyContent="flex-end">
+            <Spacer />
+            <Button variant="solid" mt="12px">
+              Log in
+            </Button>
+          </Box>
+        </Form>
       </Box>
     </Center>
   )
