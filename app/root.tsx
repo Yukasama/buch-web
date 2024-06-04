@@ -54,6 +54,7 @@ export const Layout = withEmotionCache(
         let color = getColorMode(cookies)
 
         if (!color && DEFAULT_COLOR_MODE) {
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           cookies = `${cookies} ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
           color = DEFAULT_COLOR_MODE
         }
