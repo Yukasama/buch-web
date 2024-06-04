@@ -20,11 +20,11 @@ export const keycloakStrategy = new KeycloakStrategy(
   },
   async ({ profile }) => {
     // Get the user data from your DB or API using the tokens and profile
-    return User.findOrCreate({ email: profile.emails[0].value })
+    return User.findOrCreate({  })
   },
 )
 
-authenticator.use(keycloakStrategy, 'keycloak')
+authenticator.use(keycloakStrategy)
 
 // Tell the Authenticator to use the form strategy
 authenticator.use(

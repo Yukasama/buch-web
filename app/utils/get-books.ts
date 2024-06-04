@@ -96,7 +96,7 @@ export const getBookAbbildungenById = async ({ id }: { id?: string }) => {
   }
 }
 
-const handleGraphQlError = (error: unknown) => {
+export const handleGraphQlError = (error: unknown) => {
   if (error instanceof GraphQLError) {
     logger.error(
       'handleGraphQlError: message=%s, locations=%o, path=%o',
