@@ -88,8 +88,10 @@ export const Layout = withEmotionCache(
         })}
       >
         <head>
+          <title>Buch-Web</title>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <desc>On Buch-Web, you can buy books.</desc>
           <Meta />
           <Links />
           {serverStyleData?.map(({ key, ids, css }) => (

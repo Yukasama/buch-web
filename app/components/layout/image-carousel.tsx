@@ -38,6 +38,7 @@ const ImageCarousel = () => {
             objectFit="cover"
             opacity={isCentered ? 1 : 0.5}
             transition="all 0.9s ease-in-out"
+            alt="Buch-Carousel"
           />
         )
       })}
