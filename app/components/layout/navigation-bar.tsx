@@ -44,7 +44,7 @@ const NavBar = () => {
         <Link href="/">
           <Image
             src="/logo.png"
-            alt="Logo"
+            alt="Buch-Web Logo"
             height={12}
             width={12}
             rounded="full"

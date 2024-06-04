@@ -33,7 +33,7 @@ export default function BookPage() {
   return (
     <SimpleGrid columns={3} spacing={10} px={48} py={28}>
       <GridItem>
-        <Image src="/gangof4.png" rounded="md" />
+        <Image src="/gangof4.png" rounded="md" alt="Book Image" />
       </GridItem>
       <GridItem>
         <Flex flexDirection="column" gap={4}>
