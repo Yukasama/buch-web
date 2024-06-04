@@ -1,4 +1,4 @@
-import { ChakraProvider, cookieStorageManagerSSR } from '@chakra-ui/react'
+import { ChakraProvider, cookieStorageManagerSSR, Flex } from '@chakra-ui/react'
 import {
   isRouteErrorResponse,
   Links,
@@ -91,7 +91,7 @@ export const Layout = withEmotionCache(
           <title>Buch-Web</title>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <desc>On Buch-Web, you can buy books.</desc>
+          <meta name="description" content="On Buch-Web, you can buy books." />
           <Meta />
           <Links />
           {serverStyleData?.map(({ key, ids, css }) => (
@@ -127,18 +127,21 @@ export function ErrorBoundary() {
   return (
     <html lang="en">
       <head>
-        <title>Oops!</title>
+        <title>Oops! | Buch Web</title>
+        <meta name="description" content="Oops, something went wrong!." />
         <Meta />
         <Links />
       </head>
       <body>
-        <h1>
-          {isRouteErrorResponse(error)
-            ? `${error.status} ${error.statusText}`
-            : error instanceof Error
-              ? error.message
-              : 'Unknown Error'}
-        </h1>
+        <Flex justifyContent="center" alignItems="center" pt={350}>
+          <h1>
+            {isRouteErrorResponse(error)
+              ? `${error.status} ${error.statusText}`
+              : error instanceof Error
+                ? error.message
+                : 'Unknown Error'}
+          </h1>
+        </Flex>
         <Scripts />
       </body>
     </html>
