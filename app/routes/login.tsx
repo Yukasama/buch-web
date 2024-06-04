@@ -1,23 +1,17 @@
 import {
-  AbsoluteCenter,
   Box,
   Button,
-  Center,
-  Container,
   FormControl,
   FormLabel,
-  HStack,
   Input,
   Spacer,
-  Stack,
   VStack,
+  Text,
+  Center,
 } from '@chakra-ui/react'
-import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
-import { Text, Center } from '@chakra-ui/react'
-import { Form, useLoaderData } from '@remix-run/react'
+import { ActionFunction } from '@remix-run/node'
+import { Form } from '@remix-run/react'
 import authenticator from '~/services/auth.server'
-import { sessionStorage } from '~/services/session.server'
-import { AlignRight } from 'lucide-react'
 
 /**
  * called when the user hits button to login
