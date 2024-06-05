@@ -2,7 +2,7 @@ import { gql } from '@apollo/client/index.js'
 import { graphQLClient } from '~/lib/apollo-client'
 import { logger } from '~/lib/logger'
 import type { Buch } from '~/graphql/__generated__/graphql'
-import { GraphQLError } from 'graphql'
+import { handleGraphQlError } from './handleGraphqlError'
 
 export const getAllBooks = async () => {
   logger.debug('getAllBooks (attempt)')
@@ -40,12 +40,15 @@ export const getBookById = async ({ id }: { id?: string }) => {
   const query = gql`
     query ($id: ID!) {
       buch(id: $id) {
+        id
+        version
         isbn
         rating
         preis
         rabatt
         art
         lieferbar
+        schlagwoerter
         homepage
         titel {
           titel
@@ -93,18 +96,5 @@ export const getBookAbbildungenById = async ({ id }: { id?: string }) => {
   } catch (error) {
     handleGraphQlError(error)
     return
-  }
-}
-
-const handleGraphQlError = (error: unknown) => {
-  if (error instanceof GraphQLError) {
-    logger.error(
-      'handleGraphQlError: message=%s, locations=%o, path=%o',
-      error.message,
-      error.locations,
-      error.path,
-    )
-  } else {
-    logger.error('handleGraphQlError: error=%s', error)
   }
 }
