@@ -1,9 +1,9 @@
 import { gql, FetchResult } from '@apollo/client/index.js'
 import { graphQLClient } from '~/lib/apollo-client'
 import { logger } from '~/lib/logger'
-import { handleGraphQlError } from './handleGraphqlError'
+import { handleReqError } from '../handleReqError'
 import { Buch } from '~/graphql/__generated__/graphql'
-import { getBookById } from './get-books'
+import { getBookById } from './query-books'
 
 export const updateBookById = async ({
   id,
@@ -47,7 +47,7 @@ export const updateBookById = async ({
     logger.debug('updateBookById: id=%s, version=%s', id, data?.version)
     return data?.version
   } catch (error) {
-    handleGraphQlError(error)
+    handleReqError(error)
     return
   }
 }

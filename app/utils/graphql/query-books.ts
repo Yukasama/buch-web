@@ -2,7 +2,7 @@ import { gql } from '@apollo/client/index.js'
 import { graphQLClient } from '~/lib/apollo-client'
 import { logger } from '~/lib/logger'
 import type { Buch } from '~/graphql/__generated__/graphql'
-import { handleGraphQlError } from './handleGraphqlError'
+import { handleReqError } from '../handleReqError'
 
 export const getAllBooks = async () => {
   logger.debug('getAllBooks (attempt)')
@@ -25,7 +25,7 @@ export const getAllBooks = async () => {
     logger.debug('getAllBooks (success)')
     return data.map((book) => book)
   } catch (error) {
-    handleGraphQlError(error)
+    handleReqError(error)
     return []
   }
 }
@@ -65,7 +65,7 @@ export const getBookById = async ({ id }: { id?: string }) => {
     logger.debug('getBookById: data=%o', data)
     return data.buch
   } catch (error) {
-    handleGraphQlError(error)
+    handleReqError(error)
     return
   }
 }
@@ -94,7 +94,7 @@ export const getBookAbbildungenById = async ({ id }: { id?: string }) => {
     logger.debug('getBookAbbildungenById: data=%o', data)
     return data.buch
   } catch (error) {
-    handleGraphQlError(error)
+    handleReqError(error)
     return
   }
 }
