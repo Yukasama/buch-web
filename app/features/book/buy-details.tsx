@@ -7,7 +7,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { Buch } from '~/graphql/__generated__/graphql'
-import UpdateModal from 'features/book/update-modal'
+import UpdateModal from '~/features/book/update-modal'
 
 export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
   const bg = useColorModeValue('gray.100', 'gray.700')

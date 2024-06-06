@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
 import { json, useLoaderData, Await, useFetcher } from '@remix-run/react'
-import { BuyDetails } from 'features/book/buy-details'
+import { BuyDetails } from '~/features/book/buy-details'
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 import { getBookById } from '~/utils/get-books'
