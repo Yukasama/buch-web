@@ -7,6 +7,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { Buch } from '~/graphql/__generated__/graphql'
+import UpdateModal from 'features/book/update-modal'
 
 export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
   const bg = useColorModeValue('gray.100', 'gray.700')
@@ -22,37 +23,51 @@ export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
       gap={4}
       borderColor={bg}
     >
-      <Box>
-        {book.rabatt ? (
-          <Box>
-            <Flex gap={2} alignItems="center">
-              <Text fontSize="x-large" fontWeight={500}>
-                {Number(
-                  (book.preis - Number(book.rabatt.split('%')[0])).toFixed(2),
-                )}
-                €
-              </Text>
-              <Text fontSize="larger" color="red.400" fontWeight={500} mt="3px">
-                -{book.rabatt}
-              </Text>
-            </Flex>
+      <Flex justifyContent="space-between">
+        <Box>
+          {book.rabatt ? (
+            <Box>
+              <Flex gap={2} alignItems="center">
+                <Text fontSize="x-large" fontWeight={500}>
+                  {Number(
+                    (book.preis - Number(book.rabatt.split('%')[0])).toFixed(2),
+                  )}
+                  €
+                </Text>
+                <Text
+                  fontSize="larger"
+                  color="red.400"
+                  fontWeight={500}
+                  mt="3px"
+                >
+                  -{book.rabatt}
+                </Text>
+              </Flex>
 
-            <Flex gap={2} alignItems="center" fontSize="small" color="gray.400">
-              <Text>Listenpreis:</Text>
-              <Text as="del" fontWeight={500}>
-                {book.preis}€
-              </Text>
-            </Flex>
-          </Box>
-        ) : (
-          <Text fontSize="x-large" fontWeight={500}>
-            {book.preis}€
+              <Flex
+                gap={2}
+                alignItems="center"
+                fontSize="small"
+                color="gray.400"
+              >
+                <Text>Listenpreis:</Text>
+                <Text as="del" fontWeight={500}>
+                  {book.preis}€
+                </Text>
+              </Flex>
+            </Box>
+          ) : (
+            <Text fontSize="x-large" fontWeight={500}>
+              {book.preis}€
+            </Text>
+          )}
+          <Text fontSize="small" mt="5px" color="gray.400">
+            inkl. MwSt., zzgl. Versand
           </Text>
-        )}
-        <Text fontSize="small" mt="5px" color="gray.400">
-          inkl. MwSt., zzgl. Versand
-        </Text>
-      </Box>
+        </Box>
+        <UpdateModal book={book} />
+      </Flex>
+
       {book.lieferbar ? (
         <Text color={lieferbarColor} fontSize="large">
           Lieferbar
