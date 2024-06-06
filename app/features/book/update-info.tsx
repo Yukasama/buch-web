@@ -15,7 +15,7 @@ import {
   Checkbox,
   Flex,
 } from '@chakra-ui/react'
-import { Buch } from '~/graphql/__generated__/graphql'
+import { Buch } from '~/lib/validators/book'
 
 export default function UpdateInfo({ book }: Readonly<{ book: Buch }>) {
   const { isOpen, onOpen, onClose } = useDisclosure()

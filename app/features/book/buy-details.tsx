@@ -6,10 +6,10 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { Buch } from '~/graphql/__generated__/graphql'
 import UpdateModal from '~/features/book/update-modal'
+import { Buch } from '~/lib/validators/book'
 
-export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
+export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
   const bg = useColorModeValue('gray.100', 'gray.700')
   const lieferbarColor = useColorModeValue('green.500', 'green.300')
 
@@ -25,14 +25,11 @@ export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
     >
       <Flex justifyContent="space-between">
         <Box>
-          {book.rabatt ? (
+          {buch.rabatt ? (
             <Box>
               <Flex gap={2} alignItems="center">
                 <Text fontSize="x-large" fontWeight={500}>
-                  {Number(
-                    (book.preis - Number(book.rabatt.split('%')[0])).toFixed(2),
-                  )}
-                  €
+                  {Number((buch.preis - buch.rabatt).toFixed(2))}€
                 </Text>
                 <Text
                   fontSize="larger"
@@ -40,7 +37,7 @@ export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
                   fontWeight={500}
                   mt="3px"
                 >
-                  -{book.rabatt}
+                  -{buch.rabatt}
                 </Text>
               </Flex>
 
@@ -52,23 +49,23 @@ export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
               >
                 <Text>Listenpreis:</Text>
                 <Text as="del" fontWeight={500}>
-                  {book.preis}€
+                  {buch.preis}€
                 </Text>
               </Flex>
             </Box>
           ) : (
             <Text fontSize="x-large" fontWeight={500}>
-              {book.preis}€
+              {buch.preis}€
             </Text>
           )}
           <Text fontSize="small" mt="5px" color="gray.400">
             inkl. MwSt., zzgl. Versand
           </Text>
         </Box>
-        <UpdateModal book={book} />
+        <UpdateModal buch={buch} />
       </Flex>
 
-      {book.lieferbar ? (
+      {buch.lieferbar ? (
         <Text color={lieferbarColor} fontSize="large">
           Lieferbar
         </Text>
@@ -78,7 +75,7 @@ export const BuyDetails = ({ book }: Readonly<{ book: Buch }>) => {
         </Text>
       )}
       <Flex direction="column" gap={1}>
-        {book.lieferbar && (
+        {buch.lieferbar && (
           <>
             <Flex gap={1.5}>
               <Text fontSize="small">Versand durch:</Text>

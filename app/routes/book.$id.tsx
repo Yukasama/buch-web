@@ -19,26 +19,33 @@ import { json, useLoaderData, Await, useFetcher } from '@remix-run/react'
 import { BuyDetails } from '~/features/book/buy-details'
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
-import { getBookById } from '~/utils/get-books'
-import { Buch } from '~/graphql/__generated__/graphql'
-import { updateBookById } from '~/utils/update-book'
+import { getBookById } from '~/utils/rest/read-books'
+import { updateBookById } from '~/utils/rest/write-book'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const buch = await getBookById({ id: params.id })
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 })
+  }
 
+  const buch = await getBookById({ id: params.id })
   if (!buch) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  return json(buch)
+  return buch
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
   const body = await request.formData()
-  const id = params.id
+  const versionStr = request.headers.get('E-Tag')
+  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
 
   const { ...values } = Object.fromEntries(body)
-  await updateBookById({ id, mutateData: values })
+  await updateBookById({ id: params.id, version, mutateData: values })
 
   return json({ ok: true })
 }
@@ -56,7 +63,7 @@ export default function BookPage() {
       <GridItem>
         <Suspense fallback={<Skeleton />}>
           <Await resolve={buch}>
-            {(buch: Buch) => (
+            {(buch) => (
               <Flex flexDirection="column" gap={2}>
                 <Box>
                   <Editable
@@ -122,7 +129,7 @@ export default function BookPage() {
         </Suspense>
       </GridItem>
       <Suspense fallback={<Skeleton />}>
-        <Await resolve={buch}>{(buch) => <BuyDetails book={buch} />}</Await>
+        <Await resolve={buch}>{(buch) => <BuyDetails buch={buch} />}</Await>
       </Suspense>
     </SimpleGrid>
   )
