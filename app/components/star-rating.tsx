@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Box, IconButton } from '@chakra-ui/react'
-import { GoStar, GoStarFill } from 'react-icons/go'
+import { Star, StarHalf } from 'lucide-react'
 
 interface StarRatingProps {
   maxStars?: number
@@ -39,9 +39,9 @@ const StarRating: React.FC<StarRatingProps> = ({
           key={index}
           icon={
             index < (hoverIndex !== null ? hoverIndex + 1 : rating) ? (
-              <GoStarFill />
+              <StarHalf />
             ) : (
-              <GoStar />
+              <Star />
             )
           }
           onClick={() => handleClick(index)}

@@ -16,7 +16,7 @@ import {
   Td,
   Button, // Import Button component
 } from '@chakra-ui/react'
-import StarRating from '../components/starRating'
+import StarRating from '../components/star-rating'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from '@remix-run/react'
 
