@@ -1,7 +1,6 @@
 import {
   Container,
   Box,
-  Checkbox,
   Heading,
   Text,
   Radio,
@@ -9,28 +8,24 @@ import {
   VStack,
   HStack,
   Input,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  Button, // Import Button component
 } from '@chakra-ui/react'
+import StarRating from '../components/starRating'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from '@remix-run/react'
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isbnQuery, setIsbnQuery] = useState('')
-  const [numberValue, setNumberValue] = useState(0)
   const [selectedValueKeywords, setSelectedValueKeywords] = useState('')
   const [selectedValueBookType, setSelectedValueBookType] = useState('')
-  const [showNumberInput, setShowNumberInput] = useState(false)
+  const [rating, setRating] = useState(0) // New state for the rating
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
@@ -44,8 +39,13 @@ export default function SearchPage() {
     }
   }, [searchParams])
 
-  const handleCheckboxChange = () => {
-    setShowNumberInput(!showNumberInput)
+  // Reset all input elements to their initial state
+  const resetInputs = () => {
+    setSearchQuery('')
+    setIsbnQuery('')
+    setSelectedValueKeywords('')
+    setSelectedValueBookType('')
+    setRating(0) // Reset the rating
   }
 
   // Beispiel-Daten für die Tabelle
@@ -111,30 +111,19 @@ export default function SearchPage() {
           </RadioGroup>
         </VStack>
 
-        <Box>
-          <Checkbox onChange={handleCheckboxChange} colorScheme="blue">
-            Nach Rating suchen
-          </Checkbox>
-          {showNumberInput && (
-            <NumberInput
-              value={numberValue}
-              onChange={(valueString) => setNumberValue(parseInt(valueString))}
-              min={0}
-              max={5}
-              clampValueOnBlur
-              size="sm"
-              w="60px"
-              mt="10px"
-            >
-              <NumberInputField />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-          )}
-        </Box>
+        <VStack align="flex-start" spacing={2}>
+          <Text fontWeight="bold">Rating</Text>
+          <StarRating maxStars={5} rating={rating} setRating={setRating} />{' '}
+          {/* Pass rating state and setter */}
+        </VStack>
       </HStack>
+
+      {/* Button to reset all input elements */}
+      <Box mt={4}>
+        <Button colorScheme="gray" onClick={resetInputs}>
+          Reset
+        </Button>
+      </Box>
 
       {/* Tabelle für die Anzeige der Daten */}
       <Table variant="simple" mt="15px">
