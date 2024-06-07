@@ -3,15 +3,12 @@ import {
   Badge,
   Box,
   Divider,
-  Editable,
   Flex,
   GridItem,
   Icon,
   Image,
   SimpleGrid,
   Text,
-  EditableInput,
-  EditablePreview,
   Skeleton,
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
@@ -21,6 +18,7 @@ import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 import { getBookById } from '~/utils/rest/read-books'
 import { updateBookById } from '~/utils/rest/write-book'
+import { UpdateInfo } from '~/features/book/update-info'
 
 export async function loader({ params }: LoaderFunctionArgs) {
   if (!params.id) {
@@ -65,24 +63,21 @@ export default function BookPage() {
           <Await resolve={buch}>
             {(buch) => (
               <Flex flexDirection="column" gap={2}>
-                <Box>
-                  <Editable
-                    isDisabled={!isAdmin}
-                    defaultValue={buch.titel.titel}
-                    fontSize="x-large"
-                    fontWeight={500}
-                  >
-                    <EditablePreview />
-                    <EditableInput name="title" />
-                  </Editable>
-                  <Text
-                    mt={-1}
-                    color="gray.400"
-                    display={buch.titel.untertitel ? 'block' : 'none'}
-                  >
-                    {buch.titel.untertitel}
-                  </Text>
-                </Box>
+                <Flex justifyContent="space-between">
+                  <Box>
+                    <Text fontSize="x-large" fontWeight={500}>
+                      {buch.titel.titel}
+                    </Text>
+                    <Text
+                      mt={-1}
+                      color="gray.400"
+                      display={buch.titel.untertitel ? 'block' : 'none'}
+                    >
+                      {buch.titel.untertitel}
+                    </Text>
+                  </Box>
+                  {isAdmin && <UpdateInfo buch={buch} />}
+                </Flex>
                 <Flex gap={2}>
                   <Badge colorScheme="blue">{buch.art}</Badge>
                   {buch.schlagwoerter?.map((word) => (

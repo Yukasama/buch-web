@@ -6,7 +6,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import UpdateModal from '~/features/book/update-modal'
+import { UpdatePriceModal } from '~/features/book/update-price-modal'
 import { Buch } from '~/lib/validators/book'
 
 export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
@@ -29,7 +29,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
             <Box>
               <Flex gap={2} alignItems="center">
                 <Text fontSize="x-large" fontWeight={500}>
-                  {Number((buch.preis - buch.rabatt).toFixed(2))}€
+                  {(buch.preis - buch.preis * buch.rabatt).toFixed(2)}€
                 </Text>
                 <Text
                   fontSize="larger"
@@ -37,7 +37,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
                   fontWeight={500}
                   mt="3px"
                 >
-                  -{buch.rabatt}
+                  -{(buch.rabatt * 100).toFixed(2)}%
                 </Text>
               </Flex>
 
@@ -62,7 +62,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
             inkl. MwSt., zzgl. Versand
           </Text>
         </Box>
-        <UpdateModal buch={buch} />
+        <UpdatePriceModal buch={buch} />
       </Flex>
 
       {buch.lieferbar ? (

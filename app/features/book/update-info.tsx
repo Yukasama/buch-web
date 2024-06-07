@@ -12,12 +12,10 @@ import {
   Input,
   FormLabel,
   Box,
-  Checkbox,
-  Flex,
 } from '@chakra-ui/react'
 import { Buch } from '~/lib/validators/book'
 
-export default function UpdateInfo({ book }: Readonly<{ book: Buch }>) {
+export const UpdateInfo = ({ buch }: Readonly<{ buch: Buch }>) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
@@ -26,24 +24,24 @@ export default function UpdateInfo({ book }: Readonly<{ book: Buch }>) {
         <EditIcon />
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modify Purchase Options</ModalHeader>
+          <ModalHeader>Modify Book Information</ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDir="column" gap={4}>
             <Box>
-              <FormLabel>Price</FormLabel>
-              <Input defaultValue={book.preis} />
+              <FormLabel>Title</FormLabel>
+              <Input defaultValue={buch.titel.titel} />
             </Box>
             <Box>
-              <FormLabel>On Sale</FormLabel>
-              <Input defaultValue={book.rabatt} />
+              <FormLabel>Untertitel</FormLabel>
+              <Input defaultValue={buch.titel.untertitel} />
             </Box>
-            <Flex gap={2}>
-              <FormLabel>In Stock</FormLabel>
-              <Checkbox checked={!!book.lieferbar} />
-            </Flex>
+            <Box>
+              <FormLabel>Rating</FormLabel>
+              <Input defaultValue={buch.titel.untertitel} />
+            </Box>
           </ModalBody>
 
           <ModalFooter>

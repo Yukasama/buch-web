@@ -16,10 +16,12 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { Form } from '@remix-run/react'
+import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 
-export default function UpdateModal({ buch }: Readonly<{ buch: Buch }>) {
+export const UpdatePriceModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [onSale, setOnSale] = useState(buch.rabatt !== 0)
 
   return (
     <>
@@ -34,17 +36,36 @@ export default function UpdateModal({ buch }: Readonly<{ buch: Buch }>) {
           <ModalCloseButton />
           <Form method="post">
             <ModalBody display="flex" flexDir="column" gap={4}>
-              <Box>
-                <FormLabel>Price</FormLabel>
-                <Input name="preis" defaultValue={buch.preis} />
-              </Box>
-              <Box>
-                <FormLabel>On Sale</FormLabel>
-                <Input name="rabatt" defaultValue={buch.rabatt} />
-              </Box>
-              <Flex gap={2}>
+              <Flex gap={3}>
+                <Box>
+                  <FormLabel>Price in €</FormLabel>
+                  <Input name="preis" type="number" defaultValue={buch.preis} />
+                </Box>
+                <Box>
+                  <Flex>
+                    <FormLabel>On Sale</FormLabel>
+                    <Checkbox
+                      mb={2}
+                      onChange={() => setOnSale(!onSale)}
+                      defaultChecked={onSale}
+                    />
+                  </Flex>
+                  <Input
+                    name="rabatt"
+                    disabled={!onSale}
+                    type="number"
+                    value={onSale ? buch.rabatt : 0}
+                    defaultValue={buch.rabatt}
+                  />
+                </Box>
+              </Flex>
+              <Flex alignItems="center">
                 <FormLabel>In Stock</FormLabel>
-                <Checkbox name="lieferbar" defaultChecked={!!buch.lieferbar} />
+                <Checkbox
+                  mb={2}
+                  name="lieferbar"
+                  defaultChecked={!!buch.lieferbar}
+                />
               </Flex>
             </ModalBody>
 
