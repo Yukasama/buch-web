@@ -11,7 +11,10 @@ import {
 } from '@remix-run/react'
 import { withEmotionCache } from '@emotion/react'
 import { useContext, useEffect, useMemo } from 'react'
-import { ServerStyleContext, ClientStyleContext } from './context'
+import {
+  ServerStyleContext,
+  ClientStyleContext,
+} from './utils/chakra-ui/context'
 import { LoaderFunction } from '@remix-run/node'
 import NavBar from './components/layout/navigation-bar'
 // import { ApolloProvider } from '@apollo/client/index.js'
