@@ -9,23 +9,33 @@ import {
   Text,
   Center,
 } from '@chakra-ui/react'
-import { ActionFunction } from '@remix-run/node'
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { Form } from '@remix-run/react'
 import authenticator from '~/services/auth.server'
 
-/**
- * called when the user hits button to login
- *
- * @param param0
- * @returns
- */
-export const action: ActionFunction = async ({ request, context }) => {
-  // call my authenticator
-  return await authenticator.authenticate('form', request, {
+// export const action: ActionFunction = async ({ request, context }) => {
+//   // call my authenticator
+//   return await authenticator.authenticate('form', request, {
+//     successRedirect: '/',
+//     failureRedirect: '/login',
+//     throwOnError: true,
+//     context,
+//   })
+// }
+
+export async function action({ request }: ActionFunctionArgs) {
+  // we call the method with the name of the strategy we want to use and the
+  // request object, optionally we pass an object with the URLs we want the user
+  // to be redirected to after a success or a failure
+  return await authenticator.authenticate('keycloak', request, {
     successRedirect: '/',
     failureRedirect: '/login',
-    throwOnError: true,
-    context,
+  })
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/',
   })
 }
 
@@ -60,7 +70,7 @@ export default function Login() {
               <FormLabel mb="-4px">Username</FormLabel>
               <Input
                 type="username"
-                name="Username"
+                name="username"
                 placeholder="username"
                 required
               />

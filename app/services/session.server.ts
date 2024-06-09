@@ -1,6 +1,5 @@
 // app/services/session.server.ts
 import { createCookieSessionStorage } from '@remix-run/node'
-import { loginKeycloak } from '~/utils/login-keycloak'
 
 // export the whole sessionStorage object
 export const sessionStorage = createCookieSessionStorage({
@@ -14,17 +13,4 @@ export const sessionStorage = createCookieSessionStorage({
   },
 })
 
-// you can also export the methods individually for your own usage
 export const { getSession, commitSession, destroySession } = sessionStorage
-
-// define the user model
-export interface User {
-  username: string
-  password: string
-  access_token: string
-  refresh_token: string
-
-  function login() :User {
-    return loginKeycloak({ username, password })
-  }
-}
