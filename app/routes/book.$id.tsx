@@ -1,149 +1,136 @@
 import { StarIcon } from '@chakra-ui/icons'
 import {
+  Badge,
   Box,
   Divider,
+  Editable,
   Flex,
   GridItem,
+  Icon,
+  Image,
   SimpleGrid,
   Text,
-  useColorModeValue,
+  EditableInput,
+  EditablePreview,
+  Skeleton,
 } from '@chakra-ui/react'
-import { LoaderFunctionArgs } from '@remix-run/node'
-import { json, useLoaderData } from '@remix-run/react'
-import { Book, Star } from 'lucide-react'
-import { getBookById } from '~/utils/get-books'
+import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
+import { json, useLoaderData, Await, useFetcher } from '@remix-run/react'
+import { BuyDetails } from '~/features/book/buy-details'
+import { Star } from 'lucide-react'
+import { Suspense } from 'react'
+import { getBookById } from '~/utils/rest/read-books'
+import { updateBookById } from '~/utils/rest/write-book'
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const buch = await getBookById({ id: params.id })
-
-  if (!buch) {
-    throw new Response(undefined, {
-      status: 404,
-      statusText: 'Not Found',
-    })
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 })
   }
 
-  return json(buch)
+  const buch = await getBookById({ id: params.id })
+  if (!buch) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
+  return buch
+}
+
+export async function action({ request, params }: ActionFunctionArgs) {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
+  const body = await request.formData()
+  const versionStr = request.headers.get('E-Tag')
+  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
+
+  const { ...values } = Object.fromEntries(body)
+  await updateBookById({ id: params.id, version, mutateData: values })
+
+  return json({ ok: true })
 }
 
 export default function BookPage() {
   const buch = useLoaderData<typeof loader>()
-  const bg = useColorModeValue('gray.100', 'gray.700')
+  const fetcher = useFetcher()
+  const isAdmin = true
 
   return (
     <SimpleGrid columns={3} spacing={10} px={48} py={28}>
       <GridItem>
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          rounded="lg"
-          bg={bg}
-          height={550}
-          width={420}
-        >
-          <Book size={40} />
-        </Flex>
+        <Image src="/gangof4.png" rounded="md" alt="Book Image" />
       </GridItem>
       <GridItem>
-        <Flex flexDirection="column" gap={4}>
-          <Box>
-            <Text fontSize="x-large" fontWeight={500}>
-              {buch.titel.titel}
-            </Text>
-            <Text
-              color="gray.400"
-              display={buch.titel.untertitel ? 'block' : 'none'}
-            >
-              {buch.titel.untertitel}
-            </Text>
-          </Box>
-          <Flex alignItems="center" gap={2}>
-            <Text fontSize="md">{buch.rating}.0</Text>
-            {Array.from({ length: Number(buch.rating) }, (_, i) => (
-              <StarIcon key={i} />
-            ))}
-            <Box display="flex" gap={2} mt={0.4}>
-              {Array.from(
-                { length: Number(5 - (buch.rating ?? 0)) },
-                (_, i) => (
-                  <Star key={i + '1'} size={18} />
-                ),
-              )}
-            </Box>
-          </Flex>
-          <Divider />
-          <Box>
-            <Text color="gray.400">ISBN</Text>
-            <Text>{buch.isbn}</Text>
-          </Box>
-          <Box>
-            <Text color="gray.400">Art</Text>
-            <Text>{buch.art}</Text>
-          </Box>
-          <Box>
-            <Text color="gray.400">Homepage</Text>
-            <Text>{buch.homepage}</Text>
-          </Box>
-        </Flex>
-      </GridItem>
-      <GridItem
-        border="1px"
-        rounded="md"
-        p={5}
-        display="flex"
-        flexDirection="column"
-        gap={4}
-        borderColor={bg}
-      >
-        <Box>
-          {buch.rabatt ? (
-            <Box>
-              <Flex gap={2} alignItems="center">
-                <Text fontSize="x-large" fontWeight={500}>
-                  {Number(
-                    (buch.preis - Number(buch.rabatt.split('%')[0])).toFixed(2),
-                  )}
-                  €
-                </Text>
-                <Text
-                  fontSize="larger"
-                  color="red.400"
-                  fontWeight={500}
-                  mt="3px"
-                >
-                  -{buch.rabatt}
-                </Text>
+        <Suspense fallback={<Skeleton />}>
+          <Await resolve={buch}>
+            {(buch) => (
+              <Flex flexDirection="column" gap={2}>
+                <Box>
+                  <Editable
+                    isDisabled={!isAdmin}
+                    defaultValue={buch.titel.titel}
+                    fontSize="x-large"
+                    fontWeight={500}
+                  >
+                    <EditablePreview />
+                    <EditableInput name="title" />
+                  </Editable>
+                  <Text
+                    mt={-1}
+                    color="gray.400"
+                    display={buch.titel.untertitel ? 'block' : 'none'}
+                  >
+                    {buch.titel.untertitel}
+                  </Text>
+                </Box>
+                <Flex gap={2}>
+                  <Badge colorScheme="blue">{buch.art}</Badge>
+                  {buch.schlagwoerter?.map((word) => (
+                    <Badge key={word}>{word}</Badge>
+                  ))}
+                </Flex>
+                <Flex alignItems="center" gap={2} my={2}>
+                  <Text fontSize="md">{buch.rating}.0</Text>
+                  {Array.from({ length: Number(buch.rating) }, (_, i) => (
+                    <StarIcon key={i} />
+                  ))}
+                  <Box display="flex" gap={2} mt={0.4}>
+                    {Array.from(
+                      { length: Number(5 - (buch.rating ?? 0)) },
+                      (_, i) => (
+                        <Icon
+                          as={Star}
+                          boxSize={18}
+                          key={i + '1'}
+                          onClick={() => {
+                            fetcher.submit(
+                              { rating: (buch.rating ?? 0) + i + 1 },
+                              { method: 'POST', encType: 'application/json' },
+                            )
+                          }}
+                          _hover={{ cursor: 'pointer', background: 'gray' }}
+                        />
+                      ),
+                    )}
+                  </Box>
+                </Flex>
+                <Divider />
+                <Box>
+                  <Text color="gray.400">ISBN</Text>
+                  <Text>{buch.isbn}</Text>
+                </Box>
+                <Box>
+                  <Text color="gray.400">Homepage</Text>
+                  <Text>{buch.homepage}</Text>
+                </Box>
               </Flex>
-
-              <Flex
-                gap={2}
-                alignItems="center"
-                fontSize="small"
-                color="gray.400"
-              >
-                <Text>Listenpreis:</Text>
-                <Text as="del" fontWeight={500}>
-                  {buch.preis}€
-                </Text>
-              </Flex>
-            </Box>
-          ) : (
-            <Text fontSize="x-large" fontWeight={500}>
-              {buch.preis}€
-            </Text>
-          )}
-          <Text fontSize="small" mt="5px" color="gray.400">
-            inkl. MwSt., zzgl. Versand
-          </Text>
-        </Box>
-        <Flex>
-          {buch.lieferbar ? (
-            <Text color="green.400">Lieferbar</Text>
-          ) : (
-            <Text color="red.400">Nicht lieferbar</Text>
-          )}
-        </Flex>
+            )}
+          </Await>
+        </Suspense>
       </GridItem>
+      <Suspense fallback={<Skeleton />}>
+        <Await resolve={buch}>{(buch) => <BuyDetails buch={buch} />}</Await>
+      </Suspense>
     </SimpleGrid>
   )
 }

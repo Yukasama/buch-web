@@ -1,4 +1,4 @@
-import { ChakraProvider, cookieStorageManagerSSR } from '@chakra-ui/react'
+import { ChakraProvider, cookieStorageManagerSSR, Flex } from '@chakra-ui/react'
 import {
   isRouteErrorResponse,
   Links,
@@ -51,6 +51,7 @@ export const Layout = withEmotionCache(
         let color = getColorMode(cookies)
 
         if (!color && DEFAULT_COLOR_MODE) {
+          // eslint-disable-next-line react-hooks/exhaustive-deps
           cookies = `${cookies} ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
           color = DEFAULT_COLOR_MODE
         }
@@ -84,8 +85,10 @@ export const Layout = withEmotionCache(
         })}
       >
         <head>
+          <title>Buch-Web</title>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="description" content="On Buch-Web, you can buy books." />
           <Meta />
           <Links />
           {serverStyleData?.map(({ key, ids, css }) => (
@@ -124,18 +127,21 @@ export function ErrorBoundary() {
   return (
     <html lang="en">
       <head>
-        <title>Oops!</title>
+        <title>Oops! | Buch Web</title>
+        <meta name="description" content="Oops, something went wrong!." />
         <Meta />
         <Links />
       </head>
       <body>
-        <h1>
-          {isRouteErrorResponse(error)
-            ? `${error.status} ${error.statusText}`
-            : error instanceof Error
-              ? error.message
-              : 'Unknown Error'}
-        </h1>
+        <Flex justifyContent="center" alignItems="center" pt={350}>
+          <h1>
+            {isRouteErrorResponse(error)
+              ? `${error.status} ${error.statusText}`
+              : error instanceof Error
+                ? error.message
+                : 'Unknown Error'}
+          </h1>
+        </Flex>
         <Scripts />
       </body>
     </html>
