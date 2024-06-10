@@ -3,7 +3,6 @@ import { logger } from '~/lib/logger'
 import { client } from '../../lib/axios-client'
 
 export const login = async (username: string, password: string) => {
-  logger.debug('AAAA')
   try {
     const headers: Record<string, string> = {
       'Content-Type': 'application/x-www-form-urlencoded', // eslint-disable-line @typescript-eslint/naming-convention
@@ -14,9 +13,10 @@ export const login = async (username: string, password: string) => {
       { headers },
     )
 
-    logger.debug(response.data.access_token)
     return {
+      username: username,
       access_token: response.data.access_token,
+      refresh_token: response.data.refresh_token,
     }
   } catch (error) {
     logger.error(error)
@@ -25,6 +25,7 @@ export const login = async (username: string, password: string) => {
 
 interface LoginResult {
   access_token: string
+  refresh_token: string
 }
 
 export interface User {

@@ -28,7 +28,7 @@ export default function Index() {
       <p>
         {data?.name} {data?.token}
       </p>
-      <Form method="post">
+      <Form method="post" action="/logout">
         <Button type="submit">Log Out</Button>
       </Form>
     </main>
