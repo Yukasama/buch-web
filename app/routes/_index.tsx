@@ -3,6 +3,7 @@ import { Form, Link, useLoaderData } from '@remix-run/react'
 import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
 
 import ImageCarousel from '../components/layout/image-carousel'
+import { Button } from '@chakra-ui/react'
 
 // // is logged in?
 // export const loader: LoaderFunction = async ({ request }) => {
@@ -28,7 +29,7 @@ export default function Index() {
         {data?.name} {data?.token}
       </p>
       <Form method="post">
-        <button>Log Out</button>
+        <Button type="submit">Log Out</Button>
       </Form>
     </main>
   )

@@ -3,26 +3,19 @@ import { logger } from '~/lib/logger'
 import { client } from '../../lib/axios-client'
 
 export const login = async (username: string, password: string) => {
-  const axiosInstance = client
+  logger.debug('AAAA')
   try {
     const headers: Record<string, string> = {
       'Content-Type': 'application/x-www-form-urlencoded', // eslint-disable-line @typescript-eslint/naming-convention
     }
-    const response: AxiosResponse<LoginResult> = await axiosInstance.post(
+    const response: AxiosResponse<LoginResult> = await client.post(
       loginPath,
-      {
-        headers,
-        data: {
-          username: username,
-          password: password,
-        },
-      },
+      `username=${username}&password=${password}`,
+      { headers },
     )
 
-    logger.debug(response.data)
-
+    logger.debug(response.data.access_token)
     return {
-      username,
       access_token: response.data.access_token,
     }
   } catch (error) {
