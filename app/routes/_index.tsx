@@ -8,6 +8,9 @@ export default function Index() {
       <p id="ctb">
         <Link to="/search">Lets Search</Link>
       </p>
+      <p id="create-link">
+        <Link to="/create">Lets Create</Link>
+      </p>
     </main>
   )
 }
