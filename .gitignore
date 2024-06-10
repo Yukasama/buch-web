@@ -9,9 +9,6 @@
 # dotenv environment variable files
 .env
 
-# pnpm
-pnpm-lock.yaml
-
 # IDE - VSCode
 .vscode/*
 !.vscode/tasks.json
