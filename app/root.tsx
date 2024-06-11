@@ -2,6 +2,7 @@ import { ChakraProvider, cookieStorageManagerSSR, Flex } from '@chakra-ui/react'
 import {
   isRouteErrorResponse,
   Links,
+  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -17,15 +18,11 @@ import {
 } from './utils/chakra-ui/context'
 import { LoaderFunction } from '@remix-run/node'
 import NavBar from './components/layout/navigation-bar'
-// import { ApolloProvider } from '@apollo/client/index.js'
-// import { graphQLClient } from './lib/apollo-client'
 
 export default function App() {
   return (
     <>
-      {/* <ApolloProvider client={graphQLClient}> */}
       <Outlet />
-      {/* </ApolloProvider> */}
     </>
   )
 }
@@ -113,11 +110,14 @@ export const Layout = withEmotionCache(
           <ChakraProvider
             colorModeManager={cookieStorageManagerSSR(cookies as string)}
           >
-            <NavBar />
+            <header>
+              <NavBar />
+            </header>
             {children}
           </ChakraProvider>
           <ScrollRestoration />
           <Scripts />
+          <LiveReload />
         </body>
       </html>
     )
