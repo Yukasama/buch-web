@@ -17,16 +17,19 @@ import {
   Flex,
   Select,
   FormControl,
+  Checkbox,
 } from '@chakra-ui/react'
 import { Star } from 'lucide-react'
 import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 import { Form, useActionData } from '@remix-run/react'
 
-export const BookInfoModal = ({ buch }: Readonly<{ buch: Buch }>) => {
+export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const actionData = useActionData()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [rating, setRating] = useState(buch.rating)
+  const [onSale, setOnSale] = useState(buch.rabatt !== 0)
 
   const KINDS = ['KINDLE', 'DRUCK']
 
@@ -47,7 +50,10 @@ export const BookInfoModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>Title</FormLabel>
-                    <Input name="titel" defaultValue={buch.titel.titel} />
+                    <Input
+                      name="titelwrapper"
+                      defaultValue={buch.titel.titel}
+                    />
                     {actionData?.issues ? (
                       <p style={{ color: 'red' }}>{actionData?.error?.titel}</p>
                     ) : null}
@@ -55,7 +61,7 @@ export const BookInfoModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <Box>
                     <FormLabel>Untertitel</FormLabel>
                     <Input
-                      name="untertitel"
+                      name="untertitelwrapper"
                       defaultValue={buch.titel.untertitel}
                     />
                   </Box>
@@ -119,6 +125,42 @@ export const BookInfoModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     </Box>
                   </Flex>
                 </Box>
+
+                <Flex gap={3}>
+                  <Box>
+                    <FormLabel>Price in €</FormLabel>
+                    <Input
+                      name="preis"
+                      type="number"
+                      defaultValue={buch.preis}
+                    />
+                  </Box>
+                  <Box>
+                    <Flex>
+                      <FormLabel>On Sale</FormLabel>
+                      <Checkbox
+                        mb={2}
+                        onChange={() => setOnSale(!onSale)}
+                        defaultChecked={onSale}
+                      />
+                    </Flex>
+                    <Input
+                      name="rabatt"
+                      disabled={!onSale}
+                      type="number"
+                      value={onSale ? buch.rabatt : 0}
+                      defaultValue={buch.rabatt}
+                    />
+                  </Box>
+                </Flex>
+                <Flex alignItems="center">
+                  <FormLabel>In Stock</FormLabel>
+                  <Checkbox
+                    mb={2}
+                    name="lieferbar"
+                    defaultChecked={!!buch.lieferbar}
+                  />
+                </Flex>
               </FormControl>
 
               <ModalFooter px={0}>

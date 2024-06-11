@@ -6,7 +6,6 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { BookPriceModal } from '~/features/book/book-price-modal'
 import { Buch } from '~/lib/validators/book'
 
 export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
@@ -24,47 +23,34 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
       gap={4}
       borderColor={bg}
     >
-      <Flex justifyContent="space-between">
-        <Box>
-          {buch.rabatt ? (
-            <Box>
-              <Flex gap={2} alignItems="center">
-                <Text fontSize="x-large" fontWeight={500}>
-                  {(buch.preis - buch.preis * buch.rabatt).toFixed(2)}€
-                </Text>
-                <Text
-                  fontSize="larger"
-                  color="red.400"
-                  fontWeight={500}
-                  mt="3px"
-                >
-                  -{(buch.rabatt * 100).toFixed(2)}%
-                </Text>
-              </Flex>
+      <Box>
+        {buch.rabatt ? (
+          <Box>
+            <Flex gap={2} alignItems="center">
+              <Text fontSize="x-large" fontWeight={500}>
+                {(buch.preis - buch.preis * buch.rabatt).toFixed(2)}€
+              </Text>
+              <Text fontSize="larger" color="red.400" fontWeight={500} mt="3px">
+                -{(buch.rabatt * 100).toFixed(2)}%
+              </Text>
+            </Flex>
 
-              <Flex
-                gap={2}
-                alignItems="center"
-                fontSize="small"
-                color="gray.400"
-              >
-                <Text>Listenpreis:</Text>
-                <Text as="del" fontWeight={500}>
-                  {buch.preis}€
-                </Text>
-              </Flex>
-            </Box>
-          ) : (
-            <Text fontSize="x-large" fontWeight={500}>
-              {buch.preis}€
-            </Text>
-          )}
-          <Text fontSize="small" mt="5px" color="gray.400">
-            inkl. MwSt., zzgl. Versand
+            <Flex gap={2} alignItems="center" fontSize="small" color="gray.400">
+              <Text>Listenpreis:</Text>
+              <Text as="del" fontWeight={500}>
+                {buch.preis}€
+              </Text>
+            </Flex>
+          </Box>
+        ) : (
+          <Text fontSize="x-large" fontWeight={500}>
+            {buch.preis}€
           </Text>
-        </Box>
-        <BookPriceModal buch={buch} />
-      </Flex>
+        )}
+        <Text fontSize="small" mt="5px" color="gray.400">
+          inkl. MwSt., zzgl. Versand
+        </Text>
+      </Box>
 
       {buch.lieferbar ? (
         <Text color={lieferbarColor} fontSize="large">

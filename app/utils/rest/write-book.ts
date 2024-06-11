@@ -1,5 +1,5 @@
 import { logger } from '~/lib/logger'
-import { BuchInput } from '~/lib/validators/book'
+import { BuchUpdate } from '~/lib/validators/book'
 import { getBookById } from './read-books'
 import { client } from '~/lib/axios-client'
 import { AxiosError } from 'axios'
@@ -9,7 +9,7 @@ import { AxiosError } from 'axios'
  * @param data Data to create a book without id
  * @returns Location with id of the created book
  */
-export const createBook = async ({ data }: { data: BuchInput }) => {
+export const createBook = async ({ data }: { data: BuchUpdate }) => {
   logger.debug('createBook (attempt): data=%o', data)
 
   try {
@@ -42,10 +42,10 @@ export const updateBookById = async ({
 }: {
   id: string
   version: number
-  mutateData: BuchInput
+  mutateData: BuchUpdate
 }) => {
   logger.debug(
-    'updateBookById (attempt): id=%s, version,=%s mutateData=%o',
+    'updateBookById (attempt): id=%s, version=%s, mutateData=%o',
     id,
     version,
     mutateData,
@@ -53,13 +53,22 @@ export const updateBookById = async ({
 
   const bookDb = await getBookById({ id })
 
+  const insertData = {
+    ...mutateData,
+    titel: {
+      titel: mutateData.titelwrapper,
+      untertitel: mutateData.untertitelwrapper,
+    },
+    titelwrapper: undefined,
+    untertitelwrapper: undefined,
+  }
+
   try {
     const response = await client.put(`/rest/${id}`, {
       headers: { 'E-Tag': `"${version}"` },
       data: {
         ...bookDb,
-        ...mutateData,
-        lieferbar: true,
+        ...insertData,
       },
     })
 
@@ -69,13 +78,13 @@ export const updateBookById = async ({
       response.headers['E-Tag'],
     )
 
-    return { version: response.headers['E-Tag'] as string }
+    return { ok: true }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('updateBookById (axios-error): message=%s', error.message)
     } else {
       logger.error('updateBookById (error): error=%s', error)
     }
-    return { ok: false }
   }
+  return { ok: false }
 }

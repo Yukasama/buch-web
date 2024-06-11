@@ -18,8 +18,8 @@ import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 import { getBookById } from '~/utils/rest/read-books'
 import { updateBookById } from '~/utils/rest/write-book'
-import { BookInfoModal } from '~/features/book/book-info-modal'
-import { BuchInputSchema } from '~/lib/validators/book'
+import { UpdateModal } from '~/features/book/update-modal'
+import { BuchUpdateSchema } from '~/lib/validators/book'
 import { logger } from '~/lib/logger'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
@@ -43,18 +43,22 @@ export async function action({ request, params }: ActionFunctionArgs) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  const validated = BuchInputSchema.safeParse(await request.formData())
+  const validated = BuchUpdateSchema.safeParse(await request.formData())
   if (!validated.success) {
-    logger.debug('book action (invalid-fields): values=%o', validated)
+    logger.debug('book [action] (invalid-fields): values=%o', validated)
     return validated.error
   }
 
   const versionStr = request.headers.get('E-Tag')
   const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
 
-  await updateBookById({ id: params.id, version, mutateData: validated.data })
+  const { ok } = await updateBookById({
+    id: params.id,
+    version,
+    mutateData: validated.data,
+  })
 
-  return json({ ok: true })
+  return json({ ok })
 }
 
 export default function BookPage() {
@@ -94,7 +98,7 @@ export default function BookPage() {
                       {buch.titel.untertitel}
                     </Text>
                   </Box>
-                  {isAdmin && <BookInfoModal buch={buch} />}
+                  {isAdmin && <UpdateModal buch={buch} />}
                 </Flex>
                 <Flex gap={2}>
                   <Badge colorScheme="blue">{buch.art}</Badge>
