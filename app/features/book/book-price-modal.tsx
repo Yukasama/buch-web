@@ -19,7 +19,7 @@ import { Form } from '@remix-run/react'
 import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 
-export const UpdatePriceModal = ({ buch }: Readonly<{ buch: Buch }>) => {
+export const BookPriceModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [onSale, setOnSale] = useState(buch.rabatt !== 0)
 

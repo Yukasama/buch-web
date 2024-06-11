@@ -12,20 +12,25 @@ import {
   Skeleton,
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
-import { json, useLoaderData, Await, useFetcher } from '@remix-run/react'
+import { json, useLoaderData, Await } from '@remix-run/react'
 import { BuyDetails } from '~/features/book/buy-details'
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 import { getBookById } from '~/utils/rest/read-books'
 import { updateBookById } from '~/utils/rest/write-book'
-import { UpdateInfo } from '~/features/book/update-info'
+import { BookInfoModal } from '~/features/book/book-info-modal'
+import { BuchInputSchema } from '~/lib/validators/book'
+import { logger } from '~/lib/logger'
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!params.id) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  const buch = await getBookById({ id: params.id })
+  const versionStr = request.headers.get('E-Tag')
+  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
+
+  const buch = await getBookById({ id: params.id, version })
   if (!buch) {
     throw new Response('Not Found', { status: 404 })
   }
@@ -38,32 +43,45 @@ export async function action({ request, params }: ActionFunctionArgs) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  const body = await request.formData()
+  const validated = BuchInputSchema.safeParse(await request.formData())
+  if (!validated.success) {
+    logger.debug('book action (invalid-fields): values=%o', validated)
+    return validated.error
+  }
+
   const versionStr = request.headers.get('E-Tag')
   const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
 
-  const { ...values } = Object.fromEntries(body)
-  await updateBookById({ id: params.id, version, mutateData: values })
+  await updateBookById({ id: params.id, version, mutateData: validated.data })
 
   return json({ ok: true })
 }
 
 export default function BookPage() {
   const buch = useLoaderData<typeof loader>()
-  const fetcher = useFetcher()
   const isAdmin = true
 
   return (
-    <SimpleGrid columns={3} spacing={10} px={48} py={28}>
+    <SimpleGrid
+      columns={[1, 1, 2, 3]}
+      spacing={[5, 5, 10, 10, 10]}
+      px={[7, 16, 24, 32, 48]}
+      py={[7, 12, 20, 16, 28]}
+    >
       <GridItem>
-        <Image src="/gangof4.png" rounded="md" alt="Book Image" />
+        <Image
+          src="/gangof4.png"
+          boxSize={['sm', 'sm', 'md', 'lg']}
+          rounded="md"
+          alt="Book Image"
+        />
       </GridItem>
       <GridItem>
         <Suspense fallback={<Skeleton />}>
           <Await resolve={buch}>
             {(buch) => (
               <Flex flexDirection="column" gap={2}>
-                <Flex justifyContent="space-between">
+                <Flex justifyContent="space-between" alignItems="center">
                   <Box>
                     <Text fontSize="x-large" fontWeight={500}>
                       {buch.titel.titel}
@@ -76,7 +94,7 @@ export default function BookPage() {
                       {buch.titel.untertitel}
                     </Text>
                   </Box>
-                  {isAdmin && <UpdateInfo buch={buch} />}
+                  {isAdmin && <BookInfoModal buch={buch} />}
                 </Flex>
                 <Flex gap={2}>
                   <Badge colorScheme="blue">{buch.art}</Badge>
@@ -93,18 +111,7 @@ export default function BookPage() {
                     {Array.from(
                       { length: Number(5 - (buch.rating ?? 0)) },
                       (_, i) => (
-                        <Icon
-                          as={Star}
-                          boxSize={18}
-                          key={i + '1'}
-                          onClick={() => {
-                            fetcher.submit(
-                              { rating: (buch.rating ?? 0) + i + 1 },
-                              { method: 'POST', encType: 'application/json' },
-                            )
-                          }}
-                          _hover={{ cursor: 'pointer', background: 'gray' }}
-                        />
+                        <Icon as={Star} boxSize={18} key={i + '1'} />
                       ),
                     )}
                   </Box>

@@ -40,7 +40,7 @@ export const getBookById = async ({
       headers: { 'E-Tag': `"${version}"` },
     })
 
-    logger.debug('getBookById (done): book=%o', data)
+    logger.debug('getBookById (done): id=%s, version=%s', id, version)
     return data
   } catch (error) {
     if (error instanceof AxiosError) {

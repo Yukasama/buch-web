@@ -6,7 +6,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { UpdatePriceModal } from '~/features/book/update-price-modal'
+import { BookPriceModal } from '~/features/book/book-price-modal'
 import { Buch } from '~/lib/validators/book'
 
 export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
@@ -17,6 +17,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
     <GridItem
       border="1px"
       rounded="md"
+      colSpan={[2, 2, 2, 1, 1]}
       p={5}
       display="flex"
       flexDirection="column"
@@ -62,7 +63,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
             inkl. MwSt., zzgl. Versand
           </Text>
         </Box>
-        <UpdatePriceModal buch={buch} />
+        <BookPriceModal buch={buch} />
       </Flex>
 
       {buch.lieferbar ? (

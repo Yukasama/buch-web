@@ -1,5 +1,5 @@
 import { logger } from '~/lib/logger'
-import { Buch } from '~/lib/validators/book'
+import { BuchInput } from '~/lib/validators/book'
 import { getBookById } from './read-books'
 import { client } from '~/lib/axios-client'
 import { AxiosError } from 'axios'
@@ -9,7 +9,7 @@ import { AxiosError } from 'axios'
  * @param data Data to create a book without id
  * @returns Location with id of the created book
  */
-export const createBook = async ({ data }: { data: Partial<Buch> }) => {
+export const createBook = async ({ data }: { data: BuchInput }) => {
   logger.debug('createBook (attempt): data=%o', data)
 
   try {
@@ -42,7 +42,7 @@ export const updateBookById = async ({
 }: {
   id: string
   version: number
-  mutateData: Partial<Buch>
+  mutateData: BuchInput
 }) => {
   logger.debug(
     'updateBookById (attempt): id=%s, version,=%s mutateData=%o',
