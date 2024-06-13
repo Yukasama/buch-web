@@ -12,11 +12,9 @@
     "prettier": "prettier --write .",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
-    "e2e:report": "npx playwright show-report",
-    "codegen": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 graphql-codegen --config ./app/config/codegen.ts"
+    "e2e:report": "npx playwright show-report"
   },
   "dependencies": {
-    "@apollo/client": "3.10.3",
     "@chakra-ui/icons": "2.1.1",
     "@chakra-ui/react": "2.8.2",
     "@emotion/cache": "^11.11.0",
@@ -31,7 +29,6 @@
     "date-fns": "^3.6.0",
     "dotenv": "16.4.5",
     "framer-motion": "11.1.7",
-    "graphql": "^16.8.1",
     "isbot": "^4.4.0",
     "keycloak": "1.2.0",
     "lucide-react": "^0.378.0",
@@ -39,8 +36,6 @@
     "pino-pretty": "^11.2.0",
     "playwright": "^1.44.1",
     "react": "^18.3.1",
-    "react-date-picker": "^11.0.0",
-    "react-datepicker": "^6.9.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.51.5",
     "remix-auth": "^3.7.0",
@@ -50,8 +45,6 @@
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "^4.3.0",
-    "@graphql-codegen/cli": "^5.0.2",
-    "@graphql-codegen/client-preset": "^4.2.6",
     "@playwright/test": "^1.44.1",
     "@remix-run/dev": "^2.9.2",
     "@stylistic/eslint-plugin": "^2.1.0",
