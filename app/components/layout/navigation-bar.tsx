@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from '@remix-run/react'
+import { Form, useNavigate } from '@remix-run/react'
 import {
   Box,
   Flex,
@@ -19,6 +19,8 @@ const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const handleToggle = () => setIsOpen(!isOpen)
   const navigate = useNavigate()
+
+  const user = null
 
   const bg = useColorModeValue('gray.100', 'gray.900')
 
@@ -64,9 +66,15 @@ const NavBar = () => {
         <Spacer />
         <ThemeToggle />
         <Flex alignItems="center">
-          <Button ml={4} colorScheme="blue">
-            <Link href="/login">Login</Link>
-          </Button>
+          {user ? (
+            <Form method="post" action="/logout">
+              <Button type="submit">Log Out</Button>
+            </Form>
+          ) : (
+            <Button ml={4} colorScheme="blue">
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Box>

@@ -130,7 +130,7 @@ export function ErrorBoundary() {
   return (
     <html lang="en">
       <head>
-        <title>Oops! | Buch Web</title>
+        <title>Oops! | Buch-Web</title>
         <meta name="description" content="Oops, something went wrong!." />
         <Meta />
         <Links />
