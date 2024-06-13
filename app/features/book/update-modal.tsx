@@ -16,22 +16,25 @@ import {
   Icon,
   Flex,
   Select,
-  FormControl,
   Checkbox,
+  Stack,
+  VisuallyHiddenInput,
 } from '@chakra-ui/react'
 import { Star } from 'lucide-react'
 import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 import { Form, useActionData } from '@remix-run/react'
+import { action } from '~/routes/book.$id'
+import { FormMessage } from './form-message'
 
 export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
-  const actionData = useActionData()
+  const actionData = useActionData<typeof action>()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
   const [onSale, setOnSale] = useState(buch.rabatt !== 0)
 
-  const KINDS = ['KINDLE', 'DRUCK']
+  const KINDS = ['KINDLE', 'DRUCKAUSGABE']
 
   return (
     <>
@@ -45,8 +48,8 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
           <ModalHeader>Modify Book Information</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Form method="post">
-              <FormControl display="flex" flexDir="column" gap={4}>
+            <Form method="put">
+              <Stack gap={3}>
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>Title</FormLabel>
@@ -54,9 +57,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="titelwrapper"
                       defaultValue={buch.titel.titel}
                     />
-                    {actionData?.issues ? (
-                      <p style={{ color: 'red' }}>{actionData?.error?.titel}</p>
-                    ) : null}
+                    <FormMessage actionData={actionData} field="titelwrapper" />
                   </Box>
                   <Box>
                     <FormLabel>Untertitel</FormLabel>
@@ -64,16 +65,22 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="untertitelwrapper"
                       defaultValue={buch.titel.untertitel}
                     />
+                    <FormMessage
+                      actionData={actionData}
+                      field="untertitelwrapper"
+                    />
                   </Box>
                 </Flex>
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>ISBN</FormLabel>
                     <Input name="isbn" defaultValue={buch.isbn} />
+                    <FormMessage actionData={actionData} field="isbn" />
                   </Box>
                   <Box>
                     <FormLabel>Homepage</FormLabel>
                     <Input name="homepage" defaultValue={buch.homepage} />
+                    <FormMessage actionData={actionData} field="homepage" />
                   </Box>
                 </Flex>
                 <Box>
@@ -100,40 +107,37 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     px={4}
                   >
                     <Text fontSize="md">{rating}.0</Text>
-                    {Array.from({ length: rating }, (_, i) => (
-                      <StarIcon
-                        key={i}
-                        fill="transparent"
-                        onClick={() => {
-                          setRating(i + 1)
-                        }}
-                      />
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <>
+                        {i < rating ? (
+                          <StarIcon
+                            key={i + 'b'}
+                            onClick={() => setRating(i + 1)}
+                            cursor="pointer"
+                          />
+                        ) : (
+                          <Icon
+                            key={i + 'a'}
+                            boxSize={18}
+                            as={Star}
+                            onClick={() => setRating(i + 1)}
+                            borderRadius="lg"
+                            _hover={{ cursor: 'pointer', background: 'gray' }}
+                          />
+                        )}
+                      </>
                     ))}
-                    <Box display="flex" gap={2} mt={0.4}>
-                      {Array.from({ length: 5 - (rating ?? 0) }, (_, i) => (
-                        <Icon
-                          as={Star}
-                          boxSize={18}
-                          key={i + '1'}
-                          onClick={() => {
-                            setRating(rating + i + 1)
-                          }}
-                          borderRadius="lg"
-                          _hover={{ cursor: 'pointer', background: 'gray' }}
-                        />
-                      ))}
-                    </Box>
+                    <VisuallyHiddenInput
+                      name="rating"
+                      value={rating}
+                      defaultValue={buch.rating}
+                    />
                   </Flex>
                 </Box>
-
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>Price in €</FormLabel>
-                    <Input
-                      name="preis"
-                      type="number"
-                      defaultValue={buch.preis}
-                    />
+                    <Input name="preis" defaultValue={buch.preis} />
                   </Box>
                   <Box>
                     <Flex>
@@ -147,7 +151,6 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <Input
                       name="rabatt"
                       disabled={!onSale}
-                      type="number"
                       value={onSale ? buch.rabatt : 0}
                       defaultValue={buch.rabatt}
                     />
@@ -161,7 +164,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     defaultChecked={!!buch.lieferbar}
                   />
                 </Flex>
-              </FormControl>
+              </Stack>
 
               <ModalFooter px={0}>
                 <Button colorScheme="gray" mr={3} onClick={onClose}>

@@ -41,7 +41,12 @@ export const getBookById = async ({
     })
 
     logger.debug('getBookById (done): id=%s, version=%s', id, version)
-    return data
+
+    return {
+      ...data,
+      id,
+      version,
+    }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('getBookById (axios-error): message=%s', error.message)

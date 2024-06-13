@@ -1,6 +1,5 @@
 import { StarIcon } from '@chakra-ui/icons'
 import {
-  Badge,
   Box,
   Divider,
   Flex,
@@ -21,6 +20,7 @@ import { updateBookById } from '~/utils/rest/write-book'
 import { UpdateModal } from '~/features/book/update-modal'
 import { BuchUpdateSchema } from '~/lib/validators/book'
 import { logger } from '~/lib/logger'
+import { BuchTags } from '~/features/book/buch-tags'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!params.id) {
@@ -35,30 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  return buch
-}
-
-export async function action({ request, params }: ActionFunctionArgs) {
-  if (!params.id) {
-    throw new Response('Not Found', { status: 404 })
-  }
-
-  const validated = BuchUpdateSchema.safeParse(await request.formData())
-  if (!validated.success) {
-    logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return validated.error
-  }
-
-  const versionStr = request.headers.get('E-Tag')
-  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
-
-  const { ok } = await updateBookById({
-    id: params.id,
-    version,
-    mutateData: validated.data,
-  })
-
-  return json({ ok })
+  return json(buch)
 }
 
 export default function BookPage() {
@@ -100,12 +77,9 @@ export default function BookPage() {
                   </Box>
                   {isAdmin && <UpdateModal buch={buch} />}
                 </Flex>
-                <Flex gap={2}>
-                  <Badge colorScheme="blue">{buch.art}</Badge>
-                  {buch.schlagwoerter?.map((word) => (
-                    <Badge key={word}>{word}</Badge>
-                  ))}
-                </Flex>
+
+                <BuchTags buch={buch} />
+
                 <Flex alignItems="center" gap={2} my={2}>
                   <Text fontSize="md">{buch.rating}.0</Text>
                   {Array.from({ length: Number(buch.rating) }, (_, i) => (
@@ -120,7 +94,9 @@ export default function BookPage() {
                     )}
                   </Box>
                 </Flex>
+
                 <Divider />
+
                 <Box>
                   <Text color="gray.400">ISBN</Text>
                   <Text>{buch.isbn}</Text>
@@ -139,4 +115,42 @@ export default function BookPage() {
       </Suspense>
     </SimpleGrid>
   )
+}
+
+export async function action({ request, params }: ActionFunctionArgs) {
+  if (!params.id) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
+  const isAdmin = true
+  if (!isAdmin) {
+    return json('No Access', { status: 403 })
+  }
+
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  const values = {
+    ...data,
+    rating: Number(formData.get('rating')),
+    preis: Number(formData.get('preis')),
+    rabatt: Number(formData.get('rabatt')),
+    lieferbar: formData.get('lieferbar') === 'on',
+  }
+
+  const validated = BuchUpdateSchema.safeParse(values)
+  if (!validated.success) {
+    logger.debug('book [action] (invalid-fields): values=%o', validated)
+    return json({ errors: validated.error.errors }, { status: 400 })
+  }
+
+  const versionStr = request.headers.get('E-Tag')
+  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
+
+  const { ok } = await updateBookById({
+    id: params.id,
+    version,
+    mutateData: validated.data,
+  })
+
+  return json({ ok })
 }
