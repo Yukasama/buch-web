@@ -44,6 +44,7 @@ module.exports = {
   // Base plugins
   plugins: [
     'sonarjs',
+    'n,',
     'prettier',
     'promise',
     'security',

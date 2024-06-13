@@ -17,3 +17,7 @@
 
 # Documents
 notes.md
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
