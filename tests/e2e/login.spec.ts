@@ -7,7 +7,7 @@ const username = 'admin'
 const password = 'p'
 const wrongPassword = 'x'
 
-test('successful login and logout', async ({ page }) => {
+test('successful admin login and logout', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('link', { name: 'Login' }).click()
 
@@ -23,7 +23,7 @@ test('successful login and logout', async ({ page }) => {
   await logoutButton.click()
 })
 
-test('failed login', async ({ page }) => {
+test('failed admin login', async ({ page }) => {
   await page.goto(url)
   await page.getByRole('link', { name: 'Login' }).click()
 
