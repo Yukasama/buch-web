@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Box, IconButton } from '@chakra-ui/react'
-import { Star, StarHalf } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 interface StarRatingProps {
   maxStars?: number
@@ -27,7 +27,7 @@ const StarRating: React.FC<StarRatingProps> = ({
     setHoverIndex(null)
   }
 
-  // Reset rating when rating prop changes
+  // Reset hoverIndex when rating prop changes
   useEffect(() => {
     setHoverIndex(null)
   }, [rating])
@@ -38,11 +38,13 @@ const StarRating: React.FC<StarRatingProps> = ({
         <IconButton
           key={index}
           icon={
-            index < (hoverIndex !== null ? hoverIndex + 1 : rating) ? (
-              <StarHalf />
-            ) : (
-              <Star />
-            )
+            <Star
+              fill={
+                index < (hoverIndex !== null ? hoverIndex + 1 : rating)
+                  ? 'yellow'
+                  : 'none'
+              }
+            />
           }
           onClick={() => handleClick(index)}
           onMouseEnter={() => handleMouseEnter(index)}
