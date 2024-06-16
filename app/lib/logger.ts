@@ -1,8 +1,11 @@
 import pino from 'pino'
-// import { format } from 'date-fns'
 
-const isProduction = process.env.NODE_ENV === 'production'
-const logLevel = process.env.LOG_LEVEL ?? 'info'
+// Überprüfen, ob process definiert ist
+const isNode = typeof process !== 'undefined'
+
+// Fallback-Werte für Browsererkennung
+const isProduction = isNode ? process.env.NODE_ENV === 'production' : false
+const logLevel = isNode ? process.env.LOG_LEVEL ?? 'info' : 'info'
 
 const validLogLevels = [
   'fatal',
@@ -22,7 +25,6 @@ if (!validLogLevels.includes(logLevel)) {
 
 export const logger = pino({
   level: logLevel,
-  // timestamp: () => `,"time":"${format(new Date(), 'HH:mm:ss')}"`,
   transport: isProduction
     ? undefined
     : {

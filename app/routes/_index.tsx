@@ -4,6 +4,8 @@ import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
 import ImageCarousel from '../components/layout/image-carousel'
 import { Button, Stack, Text } from '@chakra-ui/react'
 
+// TODO: Workaround für Zertifikate finden
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 // export const loader: LoaderFunction = async ({ request }) => {
 //   return await authenticator.isAuthenticated(request, {
 //     failureRedirect: '/login',
@@ -30,6 +32,9 @@ export default function Index() {
         <ImageCarousel />
         <p id="ctb">
           <Link to="/search">Lets Search</Link>
+        </p>
+        <p id="search2">
+          <Link to="/search2">Lets Search2</Link>
         </p>
         <p id="create-link">
           <Link to="/create">Lets Create</Link>

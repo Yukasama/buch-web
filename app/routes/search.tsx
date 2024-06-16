@@ -3,8 +3,7 @@ import {
   Box,
   Heading,
   Text,
-  Radio,
-  RadioGroup,
+  Checkbox,
   VStack,
   HStack,
   Input,
@@ -14,19 +13,42 @@ import {
   Tr,
   Th,
   Td,
-  Button, // Import Button component
+  Button,
+  Radio,
+  RadioGroup,
 } from '@chakra-ui/react'
 import StarRating from '../components/star-rating'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from '@remix-run/react'
+import { Buch } from '../lib/validators/book'
+import { getAllBooks } from '../utils/rest/read-books'
+
+interface EmbeddedBooksResponse {
+  _embedded: {
+    buecher: Buch[]
+  }
+}
+
+type BooksResponse = Buch[] | EmbeddedBooksResponse
+
+function isEmbeddedBooksResponse(
+  data: BooksResponse,
+): data is EmbeddedBooksResponse {
+  return (data as EmbeddedBooksResponse)._embedded !== undefined
+}
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isbnQuery, setIsbnQuery] = useState('')
-  const [selectedValueKeywords, setSelectedValueKeywords] = useState('')
+  const [isTypeScript, setIsTypeScript] = useState(false)
+  const [isJavaScript, setIsJavaScript] = useState(false)
   const [selectedValueBookType, setSelectedValueBookType] = useState('')
-  const [rating, setRating] = useState(0) // New state for the rating
+  const [rating, setRating] = useState(0)
   const [searchParams] = useSearchParams()
+  const [searchResults, setSearchResults] = useState<Buch[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [books, setBooks] = useState<Buch[]>([])
 
   useEffect(() => {
     const query = searchParams.get('query')
@@ -39,21 +61,83 @@ export default function SearchPage() {
     }
   }, [searchParams])
 
-  // Reset all input elements to their initial state
+  useEffect(() => {
+    const fetchBooks = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const booksData: BooksResponse = await getAllBooks()
+        let booksArray: Buch[]
+
+        if (Array.isArray(booksData)) {
+          booksArray = booksData
+        } else if (isEmbeddedBooksResponse(booksData)) {
+          booksArray = booksData._embedded.buecher
+        } else {
+          booksArray = []
+        }
+
+        setBooks(booksArray)
+        setSearchResults(booksArray)
+      } catch (error) {
+        setError('Error fetching books data')
+        console.error('Error fetching books:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchBooks()
+  }, [])
+
   const resetInputs = () => {
     setSearchQuery('')
     setIsbnQuery('')
-    setSelectedValueKeywords('')
+    setIsTypeScript(false)
+    setIsJavaScript(false)
     setSelectedValueBookType('')
-    setRating(0) // Reset the rating
+    setRating(0)
+    setSearchResults(books)
   }
 
-  // Beispiel-Daten für die Tabelle
-  const exampleData = [
-    { column1: 'Data 1', column2: 'Data 2', column3: 'Data 3' },
-    { column1: 'Data 4', column2: 'Data 5', column3: 'Data 6' },
-    { column1: 'Data 7', column2: 'Data 8', column3: 'Data 9' },
-  ]
+  const handleSearchClick = () => {
+    const filteredBooks = books.filter((book) => {
+      const matchesSearchQuery = searchQuery
+        ? book.titel.titel.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+      const normalizedIsbn = book.isbn.replace(/-/g, '')
+      const normalizedQuery = isbnQuery.replace(/-/g, '').trim()
+      const matchesIsbnQuery = isbnQuery
+        ? normalizedIsbn.toString() === normalizedQuery.toString()
+        : true
+      const matchesTypeScript = isTypeScript
+        ? book.schlagwoerter?.some(
+            (keyword) => keyword.toLowerCase() === 'typescript',
+          )
+        : true
+      const matchesJavaScript = isJavaScript
+        ? book.schlagwoerter?.some(
+            (keyword) => keyword.toLowerCase() === 'javascript',
+          )
+        : true
+      const matchesBookType = selectedValueBookType
+        ? book.art.toUpperCase() === selectedValueBookType.toUpperCase()
+        : true
+      const matchesRating = rating ? book.rating === rating : true
+
+      return (
+        matchesSearchQuery &&
+        matchesIsbnQuery &&
+        matchesTypeScript &&
+        matchesJavaScript &&
+        matchesBookType &&
+        matchesRating
+      )
+    })
+
+    setSearchResults(filteredBooks)
+  }
 
   return (
     <Container as="section" maxW="1920px" py="20px" ml="15">
@@ -85,15 +169,18 @@ export default function SearchPage() {
           <Text mr="30px" fontWeight="bold">
             Schlagwörter
           </Text>
-          <RadioGroup
-            value={selectedValueKeywords}
-            onChange={setSelectedValueKeywords}
+          <Checkbox
+            isChecked={isTypeScript}
+            onChange={(e) => setIsTypeScript(e.target.checked)}
           >
-            <VStack align="start" spacing={2}>
-              <Radio value="option1">TypScript</Radio>
-              <Radio value="option2">JavaScript</Radio>
-            </VStack>
-          </RadioGroup>
+            TypeScript
+          </Checkbox>
+          <Checkbox
+            isChecked={isJavaScript}
+            onChange={(e) => setIsJavaScript(e.target.checked)}
+          >
+            JavaScript
+          </Checkbox>
         </VStack>
 
         <VStack align="start" spacing={2}>
@@ -105,45 +192,69 @@ export default function SearchPage() {
             onChange={setSelectedValueBookType}
           >
             <VStack align="start" spacing={2}>
-              <Radio value="option3">Kindle</Radio>
-              <Radio value="option4">Drukausgabe</Radio>
+              <Radio value="Kindle">Kindle</Radio>
+              <Radio value="Druckausgabe">Druckausgabe</Radio>
             </VStack>
           </RadioGroup>
         </VStack>
 
         <VStack align="flex-start" spacing={2}>
           <Text fontWeight="bold">Rating</Text>
-          <StarRating maxStars={5} rating={rating} setRating={setRating} />{' '}
-          {/* Pass rating state and setter */}
+          <StarRating maxStars={5} rating={rating} setRating={setRating} />
         </VStack>
       </HStack>
 
-      {/* Button to reset all input elements */}
-      <Box mt={4}>
+      <Box mt={4} display="flex" gap="20px">
+        <Button colorScheme="blue" onClick={handleSearchClick}>
+          Search
+        </Button>
         <Button colorScheme="gray" onClick={resetInputs}>
           Reset
         </Button>
       </Box>
 
-      {/* Tabelle für die Anzeige der Daten */}
-      <Table variant="simple" mt="15px">
-        <Thead>
-          <Tr>
-            <Th>Titel</Th>
-            <Th>ISBN</Th>
-            <Th>Preis</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {exampleData.map((row, index) => (
-            <Tr key={index}>
-              <Td>{row.column1}</Td>
-              <Td>{row.column2}</Td>
-              <Td>{row.column3}</Td>
+      {isLoading && <Text>Loading...</Text>}
+      {error && <Text color="red.500">Error: {error}</Text>}
+      {!isLoading && !error && (
+        <Table variant="simple" mt="15px">
+          <Thead>
+            <Tr>
+              <Th>Titel</Th>
+              <Th>ISBN</Th>
+              <Th>Preis</Th>
+              <Th>Rating</Th>
+              <Th>Art</Th>
+              <Th>Rabatt</Th>
+              <Th>Lieferbar</Th>
+              <Th>Datum</Th>
+              <Th>Homepage</Th>
+              <Th>Schlagwörter</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {searchResults.length > 0 ? (
+              searchResults.map((row) => (
+                <Tr key={row.id}>
+                  <Td>{row.titel.titel}</Td>
+                  <Td>{row.isbn}</Td>
+                  <Td>{row.preis}</Td>
+                  <Td>{row.rating}</Td>
+                  <Td>{row.art}</Td>
+                  <Td>{row.rabatt}</Td>
+                  <Td>{row.lieferbar ? 'True' : 'False'}</Td>
+                  <Td>{row.datum}</Td>
+                  <Td>{row.homepage}</Td>
+                  <Td>{row.schlagwoerter?.join(', ')}</Td>
+                </Tr>
+              ))
+            ) : (
+              <Tr>
+                <Td colSpan={10}>Keine Ergebnisse gefunden</Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
+      )}
     </Container>
   )
 }
