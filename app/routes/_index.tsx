@@ -30,11 +30,8 @@ export default function Index() {
           Buch-Web
         </Text>
         <ImageCarousel />
-        <p id="ctb">
+        <p id="search-link">
           <Link to="/search">Lets Search</Link>
-        </p>
-        <p id="search2">
-          <Link to="/search2">Lets Search2</Link>
         </p>
         <p id="create-link">
           <Link to="/create">Lets Create</Link>

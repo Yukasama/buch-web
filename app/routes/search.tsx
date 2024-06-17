@@ -3,6 +3,8 @@ import {
   Box,
   Heading,
   Text,
+  Radio,
+  RadioGroup,
   Checkbox,
   VStack,
   HStack,
@@ -14,14 +16,14 @@ import {
   Th,
   Td,
   Button,
-  Radio,
-  RadioGroup,
+  Tooltip,
 } from '@chakra-ui/react'
 import StarRating from '../components/star-rating'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from '@remix-run/react'
 import { Buch } from '../lib/validators/book'
 import { getAllBooks } from '../utils/rest/read-books'
+import { Info } from 'lucide-react'
 
 interface EmbeddedBooksResponse {
   _embedded: {
@@ -146,22 +148,64 @@ export default function SearchPage() {
           Search for Books
         </Heading>
       </Box>
-
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '20px',
+          marginBottom: '20px',
+          alignItems: 'center',
+        }}
+      >
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchClick()
+            }
+          }}
           placeholder="Search for books..."
           size="md"
           w="300px"
         />
-        <Input
-          value={isbnQuery}
-          onChange={(e) => setIsbnQuery(e.target.value)}
-          placeholder="Search for ISBN..."
-          size="md"
-          w="200px"
-        />
+        <Box position="relative" display="inline-block">
+          <Input
+            value={isbnQuery}
+            onChange={(e) => setIsbnQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchClick()
+              }
+            }}
+            placeholder="Search for ISBN..."
+            size="md"
+            w="200px"
+          />
+          <Tooltip
+            label={
+              <>
+                Erlaubte Formate:
+                <br />
+                123-1-123-12345-1
+                <br />
+                oder
+                <br />
+                1234567890123
+              </>
+            }
+            aria-label="ISBN info"
+          >
+            <Info
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+              }}
+            />
+          </Tooltip>
+        </Box>
       </div>
 
       <HStack spacing="40px">
