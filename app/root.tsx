@@ -2,7 +2,7 @@ import { ChakraProvider, cookieStorageManagerSSR, Flex } from '@chakra-ui/react'
 import {
   isRouteErrorResponse,
   Links,
-  //LiveReload,
+  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -117,6 +117,7 @@ export const Layout = withEmotionCache(
           </ChakraProvider>
           <ScrollRestoration />
           <Scripts />
+          <LiveReload />
         </body>
       </html>
     )
