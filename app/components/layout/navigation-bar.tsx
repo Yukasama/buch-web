@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Form, useNavigate } from '@remix-run/react'
+import { Form, useLoaderData, useNavigate } from '@remix-run/react'
 import {
   Box,
   Flex,
@@ -14,13 +14,19 @@ import {
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'
+import { LoaderFunction } from '@remix-run/node'
+import authenticator from '~/services/auth.server'
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return await authenticator.isAuthenticated(request)
+}
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const handleToggle = () => setIsOpen(!isOpen)
   const navigate = useNavigate()
 
-  const user = null
+  const user = useLoaderData<typeof loader>()
 
   const bg = useColorModeValue('gray.100', 'gray.900')
 
