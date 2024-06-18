@@ -1,4 +1,4 @@
-import { EditIcon, StarIcon } from '@chakra-ui/icons'
+import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   Modal,
@@ -106,14 +106,19 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     p={2}
                     px={4}
                   >
-                    <Text fontSize="md">{rating}.0</Text>
+                    <Text fontSize="md" w={6}>
+                      {rating}.0
+                    </Text>
                     {Array.from({ length: 5 }, (_, i) => (
                       <>
                         {i < rating ? (
-                          <StarIcon
+                          <Icon
                             key={i + 'b'}
+                            boxSize={18}
+                            as={Star}
                             onClick={() => setRating(i + 1)}
                             cursor="pointer"
+                            fill="white"
                           />
                         ) : (
                           <Icon
@@ -121,8 +126,10 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                             boxSize={18}
                             as={Star}
                             onClick={() => setRating(i + 1)}
-                            borderRadius="lg"
-                            _hover={{ cursor: 'pointer', background: 'gray' }}
+                            _hover={{
+                              cursor: 'pointer',
+                              fill: 'white',
+                            }}
                           />
                         )}
                       </>

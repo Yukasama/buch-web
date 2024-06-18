@@ -32,23 +32,25 @@ export const createBook = async ({ data }: { data: BuchUpdate }) => {
  * Update a book entry in the database
  * @param id Id of the book to update
  * @param version Version of the current book
- * @param data Data to update the book with
+ * @param mutateData Data to update the book with
+ * @param access_token JWT access token from the user
  * @returns New version of the book
  */
 export const updateBookById = async ({
   id,
-  version,
   mutateData,
+  access_token,
 }: {
   id: string
-  version: number
   mutateData: BuchUpdate
+  access_token: string
 }) => {
   logger.debug(
-    'updateBookById (attempt): id=%s, version=%s, mutateData=%o',
+    'updateBookById (attempt): id=%s, version=%s, mutateData=%o, access_token=%s',
     id,
-    version,
+    mutateData.version,
     mutateData,
+    access_token,
   )
 
   const bookDb = await getBookById({ id })
@@ -64,21 +66,27 @@ export const updateBookById = async ({
   }
 
   try {
-    const response = await client.put(`/rest/${id}`, {
-      headers: { 'E-Tag': `"${version}"` },
-      data: {
+    const response = await client.put(
+      `/rest/${id}`,
+      {
         ...bookDb,
         ...insertData,
       },
-    })
+      {
+        headers: {
+          'If-Match': `"${mutateData.version}"`,
+          Authorization: `Bearer ${access_token}`,
+        },
+      },
+    )
 
     logger.debug(
       'updateBookById (done): id=%s, version=%s',
       id,
-      response.headers['E-Tag'],
+      response.headers.ETag,
     )
 
-    return { ok: true }
+    return { version: response.headers.ETag as string }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('updateBookById (axios-error): message=%s', error.message)
@@ -86,5 +94,5 @@ export const updateBookById = async ({
       logger.error('updateBookById (error): error=%s', error)
     }
   }
-  return { ok: false }
+  return { version: mutateData.version }
 }

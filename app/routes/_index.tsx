@@ -4,11 +4,13 @@ import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
 import ImageCarousel from '../components/layout/image-carousel'
 import { Button, Stack, Text } from '@chakra-ui/react'
 
-// export const loader: LoaderFunction = async ({ request }) => {
-//   return await authenticator.isAuthenticated(request, {
-//     failureRedirect: '/login',
-//   })
-// }
+// TODO: Workaround für Zertifikate finden
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+export const loader: LoaderFunction = async ({ request }) => {
+  return await authenticator.isAuthenticated(request, {
+    failureRedirect: '/login',
+  })
+}
 
 // export const action: ActionFunction = async ({ request }) => {
 //   await authenticator.logout(request, { redirectTo: '/login' })

@@ -11,7 +11,7 @@ import {
   Skeleton,
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
-import { json, useLoaderData, Await } from '@remix-run/react'
+import { json, useLoaderData, Await, useActionData } from '@remix-run/react'
 import { BuyDetails } from '~/features/book/buy-details'
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
@@ -21,6 +21,7 @@ import { UpdateModal } from '~/features/book/update-modal'
 import { BuchUpdateSchema } from '~/lib/validators/book'
 import { logger } from '~/lib/logger'
 import { BuchTags } from '~/features/book/buch-tags'
+import authenticator from '~/services/auth.server'
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!params.id) {
@@ -35,12 +36,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  return json(buch)
+  const user = await authenticator.isAuthenticated(request)
+
+  return json({ user, buch })
 }
 
 export default function BookPage() {
-  const buch = useLoaderData<typeof loader>()
-  const isAdmin = true
+  const { buch, user } = useLoaderData<typeof loader>()
+  const { version } = useActionData<typeof action>()
+  const isAdmin = !!user
 
   return (
     <SimpleGrid
@@ -118,11 +122,17 @@ export default function BookPage() {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  const user = await authenticator.isAuthenticated(request)
+  if (!user) {
+    return json('Unauthorized', { status: 401 })
+  }
+
   if (!params.id) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  const isAdmin = true
+  // TODO
+  const isAdmin = !!user
   if (!isAdmin) {
     return json('No Access', { status: 403 })
   }
@@ -143,14 +153,11 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return json({ errors: validated.error.errors }, { status: 400 })
   }
 
-  const versionStr = request.headers.get('E-Tag')
-  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
-
-  const { ok } = await updateBookById({
+  const { version: newVersion } = await updateBookById({
     id: params.id,
-    version,
     mutateData: validated.data,
+    access_token: user.access_token,
   })
 
-  return json({ ok })
+  return json({ version: newVersion })
 }

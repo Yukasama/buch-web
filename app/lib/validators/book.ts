@@ -27,6 +27,7 @@ export const BuchSchema = z.object({
 })
 
 export const BuchUpdateSchema = z.object({
+  version: z.number(),
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
