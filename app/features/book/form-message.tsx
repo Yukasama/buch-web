@@ -1,19 +1,17 @@
 import { Text } from '@chakra-ui/react'
+import type { ZodIssue } from 'zod'
 
 interface Props {
-  actionData: unknown
+  errors?: ZodIssue[]
   field: string
 }
 
-export const FormMessage = ({ actionData, field }: Props) => {
+export const FormMessage = ({ errors, field }: Props) => {
   return (
     <>
-      {actionData?.errors.find((error) => error.path.includes(field)) && (
+      {errors?.find((error) => error.path.includes(field)) && (
         <Text fontSize="sm" color="red.500">
-          {
-            actionData.errors.find((error) => error.path.includes(field))
-              ?.message
-          }
+          {errors.find((error) => error.path.includes(field))?.message}
         </Text>
       )}
     </>

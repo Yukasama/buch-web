@@ -16,19 +16,19 @@ import {
   ServerStyleContext,
   ClientStyleContext,
 } from './utils/chakra-ui/context'
-import { LoaderFunction } from '@remix-run/node'
+import { json, LoaderFunctionArgs } from '@remix-run/node'
 import NavBar from './components/layout/navigation-bar'
+import authenticator from './services/auth.server'
 
 export default function App() {
-  return (
-    <>
-      <Outlet />
-    </>
-  )
+  return <Outlet />
 }
 
-export const loader: LoaderFunction = ({ request }) => {
-  return request.headers.get('cookie') ?? ''
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request)
+  const themeCookie = request.headers.get('cookie') ?? ''
+
+  return json({ user, themeCookie })
 }
 
 export const Layout = withEmotionCache(
@@ -44,18 +44,21 @@ export const Layout = withEmotionCache(
     const DEFAULT_COLOR_MODE: 'dark' | 'light' | null = 'dark'
     const CHAKRA_COOKIE_COLOR_KEY = 'chakra-ui-color-mode'
 
-    let cookies = useLoaderData()
+    const loaderData = useLoaderData<typeof loader>() || {}
+    let themeCookie = loaderData.themeCookie || ''
+    const user = loaderData.user ?? null
+
     if (typeof document !== 'undefined') {
-      cookies = document.cookie
+      themeCookie = document.cookie
     }
 
     const colorMode = useMemo(() => {
-      if (typeof cookies === 'string') {
-        let color = getColorMode(cookies)
+      if (typeof themeCookie === 'string') {
+        let color = getColorMode(themeCookie)
 
         if (!color && DEFAULT_COLOR_MODE) {
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          cookies = `${cookies} ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
+          themeCookie = `${themeCookie} ${CHAKRA_COOKIE_COLOR_KEY}=${DEFAULT_COLOR_MODE}`
           color = DEFAULT_COLOR_MODE
         }
 
@@ -63,7 +66,7 @@ export const Layout = withEmotionCache(
       }
 
       return DEFAULT_COLOR_MODE
-    }, [cookies])
+    }, [themeCookie])
 
     const serverStyleData = useContext(ServerStyleContext)
     const clientStyleData = useContext(ClientStyleContext)
@@ -108,10 +111,10 @@ export const Layout = withEmotionCache(
           })}
         >
           <ChakraProvider
-            colorModeManager={cookieStorageManagerSSR(cookies as string)}
+            colorModeManager={cookieStorageManagerSSR(themeCookie)}
           >
             <header>
-              <NavBar />
+              <NavBar user={user} />
             </header>
             {children}
           </ChakraProvider>

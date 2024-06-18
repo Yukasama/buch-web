@@ -33,19 +33,23 @@ export const getBookById = async ({
   version,
 }: {
   id: string
-  version?: number
+  version?: string
 }) => {
   try {
-    const { data }: AxiosResponse<Buch> = await client.get(`/rest/${id}`, {
-      headers: { 'E-Tag': `"${version}"` },
-    })
+    const { data, headers }: AxiosResponse<Buch> = await client.get(
+      `/rest/${id}`,
+      {
+        headers: { 'If-None-Match': `"${version}"` },
+      },
+    )
 
-    logger.debug('getBookById (done): id=%s, version=%s', id, version)
+    const currentVersion = headers.etag?.replace(/"/g, '') ?? '0'
+    logger.debug('getBookById (done): id=%s, version=%s', id, currentVersion)
 
     return {
       ...data,
       id,
-      version,
+      version: currentVersion,
     }
   } catch (error) {
     if (error instanceof AxiosError) {

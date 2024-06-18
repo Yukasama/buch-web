@@ -2,12 +2,12 @@ import { z } from 'zod'
 
 export const BuchSchema = z.object({
   id: z.string(),
-  version: z.number().optional(),
+  version: z.string().optional(),
   isbn: z.string().regex(/^978-\d-\d{3}-\d{5}-\d$/),
   rating: z.number().int(),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
-  preis: z.number(),
-  rabatt: z.number(),
+  preis: z.number().positive(),
+  rabatt: z.number().nonnegative(),
   lieferbar: z.boolean(),
   datum: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   homepage: z.string().url(),
@@ -27,7 +27,7 @@ export const BuchSchema = z.object({
 })
 
 export const BuchUpdateSchema = z.object({
-  version: z.number(),
+  version: z.string(),
   isbn: z
     .string()
     .min(1, 'ISBN is required.')

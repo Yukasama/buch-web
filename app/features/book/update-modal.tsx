@@ -28,7 +28,7 @@ import { action } from '~/routes/book.$id'
 import { FormMessage } from './form-message'
 
 export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
-  const actionData = useActionData<typeof action>()
+  const errors = useActionData<typeof action>()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
@@ -48,7 +48,12 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
           <ModalHeader>Modify Book Information</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Form method="put">
+            <Form reloadDocument method="put">
+              <Input
+                name="version"
+                display="none"
+                defaultValue={buch.version}
+              />
               <Stack gap={3}>
                 <Flex gap={3}>
                   <Box>
@@ -57,7 +62,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="titelwrapper"
                       defaultValue={buch.titel.titel}
                     />
-                    <FormMessage actionData={actionData} field="titelwrapper" />
+                    <FormMessage errors={errors} field="titelwrapper" />
                   </Box>
                   <Box>
                     <FormLabel>Untertitel</FormLabel>
@@ -65,22 +70,19 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="untertitelwrapper"
                       defaultValue={buch.titel.untertitel}
                     />
-                    <FormMessage
-                      actionData={actionData}
-                      field="untertitelwrapper"
-                    />
+                    <FormMessage errors={errors} field="untertitelwrapper" />
                   </Box>
                 </Flex>
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>ISBN</FormLabel>
                     <Input name="isbn" defaultValue={buch.isbn} />
-                    <FormMessage actionData={actionData} field="isbn" />
+                    <FormMessage errors={errors} field="isbn" />
                   </Box>
                   <Box>
                     <FormLabel>Homepage</FormLabel>
                     <Input name="homepage" defaultValue={buch.homepage} />
-                    <FormMessage actionData={actionData} field="homepage" />
+                    <FormMessage errors={errors} field="homepage" />
                   </Box>
                 </Flex>
                 <Box>
@@ -145,6 +147,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <Box>
                     <FormLabel>Price in €</FormLabel>
                     <Input name="preis" defaultValue={buch.preis} />
+                    <FormMessage errors={errors} field="preis" />
                   </Box>
                   <Box>
                     <Flex>
@@ -161,6 +164,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       value={onSale ? buch.rabatt : 0}
                       defaultValue={buch.rabatt}
                     />
+                    <FormMessage errors={errors} field="rabatt" />
                   </Box>
                 </Flex>
                 <Flex alignItems="center">

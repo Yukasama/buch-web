@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Form, useLoaderData, useNavigate } from '@remix-run/react'
+import { Form, useNavigate } from '@remix-run/react'
 import {
   Box,
   Flex,
@@ -14,19 +14,12 @@ import {
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'
-import { LoaderFunction } from '@remix-run/node'
-import authenticator from '~/services/auth.server'
+import type { User } from '~/utils/rest/login'
 
-export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request)
-}
-
-const NavBar = () => {
+const NavBar = ({ user }: { user?: User | null }) => {
   const [isOpen, setIsOpen] = useState(false)
   const handleToggle = () => setIsOpen(!isOpen)
   const navigate = useNavigate()
-
-  const user = useLoaderData<typeof loader>()
 
   const bg = useColorModeValue('gray.100', 'gray.900')
 
@@ -70,17 +63,23 @@ const NavBar = () => {
           </form>
         </HStack>
         <Spacer />
-        <ThemeToggle />
-        <Flex alignItems="center">
-          {user ? (
-            <Form method="post" action="/logout">
-              <Button type="submit">Log Out</Button>
-            </Form>
-          ) : (
-            <Button ml={4} colorScheme="blue">
-              <Link href="/login">Login</Link>
-            </Button>
-          )}
+        <Flex gap={2} alignItems="center">
+          <ThemeToggle />
+          <Flex>
+            {user ? (
+              <Form method="post" action="/logout">
+                <Button size="sm" type="submit">
+                  Sign Out
+                </Button>
+              </Form>
+            ) : (
+              <Button ml={4} colorScheme="blue">
+                <Link size="sm" href="/login">
+                  Sign In
+                </Link>
+              </Button>
+            )}
+          </Flex>
         </Flex>
       </Flex>
     </Box>

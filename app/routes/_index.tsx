@@ -1,15 +1,13 @@
 import authenticator from '~/services/auth.server'
-import { Form, Link, useLoaderData } from '@remix-run/react'
-import { ActionFunction, json, LoaderFunction } from '@remix-run/node'
+import { Link, useLoaderData } from '@remix-run/react'
+import { LoaderFunctionArgs } from '@remix-run/node'
 import ImageCarousel from '../components/layout/image-carousel'
-import { Button, Stack, Text } from '@chakra-ui/react'
+import { Stack, Text } from '@chakra-ui/react'
 
 // TODO: Workaround für Zertifikate finden
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
-    failureRedirect: '/login',
-  })
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  return await authenticator.isAuthenticated(request)
 }
 
 // export const action: ActionFunction = async ({ request }) => {
@@ -17,7 +15,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 // }
 
 export default function Index() {
-  const data = useLoaderData<{ name: string; token?: string }>()
+  const user = useLoaderData<typeof loader>()
+
   return (
     <main id="content">
       <Stack py={[14, 21]}>
@@ -33,15 +32,14 @@ export default function Index() {
         <p id="search-link">
           <Link to="/search">Lets Search</Link>
         </p>
-        <p id="create-link">
-          <Link to="/create">Lets Create</Link>
-        </p>
+        {user && (
+          <p id="create-link">
+            <Link to="/create">Lets Create</Link>
+          </p>
+        )}
         <p>
-          {data?.name} {data?.token}
+          {user?.username} {user?.access_token}
         </p>
-        <Form method="post" action="/logout">
-          <Button type="submit">Log Out</Button>
-        </Form>
       </Stack>
     </main>
   )
