@@ -81,20 +81,32 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: 8
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: pnpm
+
       - name: Install dependencies
         run: pnpm i
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
+
       - name: Run build
         run: pnpm build
-      - name: Start server
-        run: pnpm start
+
+      - name: Start application server
+        run: pnpm start &
+        env:
+          PORT: 5173
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:5173
+
       - name: Run Playwright tests
-        run: pnpm exec playwright test
+        run: pnpm e2e
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
