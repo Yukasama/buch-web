@@ -1,16 +1,12 @@
 import { test, expect } from '@playwright/test'
-import dotenv from 'dotenv'
-
-dotenv.config()
-const url = process.env.REMIX_URL ?? 'http://localhost:5173'
 
 const username = 'admin'
 const password = 'p'
 const wrongPassword = 'x'
 
 test('successful admin login and logout', async ({ page }) => {
-  await page.goto(url)
-  await page.getByRole('link', { name: 'Login' }).click()
+  await page.goto('/')
+  await page.getByRole('link', { name: 'Sign In' }).click()
 
   await page.getByPlaceholder('username').click()
   await page.getByPlaceholder('username').fill(username)
@@ -19,14 +15,14 @@ test('successful admin login and logout', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Log in' }).click()
 
-  const logoutButton = page.getByRole('button', { name: 'Log Out' })
+  const logoutButton = page.getByRole('button', { name: 'Sign Out' })
   expect(logoutButton).not.toBeNull()
   await logoutButton.click()
 })
 
 test('failed admin login', async ({ page }) => {
-  await page.goto(url)
-  await page.getByRole('link', { name: 'Login' }).click()
+  await page.goto('/')
+  await page.getByRole('link', { name: 'Sign In' }).click()
 
   await page.getByPlaceholder('username').click()
   await page.getByPlaceholder('username').fill(username)
