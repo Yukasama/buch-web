@@ -34,7 +34,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   const user = await authenticator.isAuthenticated(request)
-
   return json({ user, buch })
 }
 
@@ -117,20 +116,20 @@ export default function BookPage() {
   )
 }
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request)
   if (!user) {
     throw new Response('Unauthorized', { status: 401 })
   }
 
+  // TODO
+  // const isAdmin = !!user.roles.admin
+  // if (!isAdmin) {
+  //   throw new Response('No Access', { status: 403 })
+  // }
+
   if (!params.id) {
     throw new Response('Not Found', { status: 404 })
-  }
-
-  // TODO
-  const isAdmin = !!user
-  if (!isAdmin) {
-    throw new Response('No Access', { status: 403 })
   }
 
   const formData = await request.formData()
@@ -146,7 +145,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const validated = BuchUpdateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return json({ errors: validated.error.errors }, { status: 400 })
+    return { errors: validated.error.errors }
   }
 
   await updateBookById({
@@ -155,5 +154,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     access_token: user.access_token,
   })
 
-  return json({ errors: [] })
+  return { errors: [] }
 }

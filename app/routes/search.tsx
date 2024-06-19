@@ -25,20 +25,6 @@ import { Buch } from '../lib/validators/book'
 import { getAllBooks } from '../utils/rest/read-books'
 import { Info } from 'lucide-react'
 
-interface EmbeddedBooksResponse {
-  _embedded: {
-    buecher: Buch[]
-  }
-}
-
-type BooksResponse = Buch[] | EmbeddedBooksResponse
-
-function isEmbeddedBooksResponse(
-  data: BooksResponse,
-): data is EmbeddedBooksResponse {
-  return (data as EmbeddedBooksResponse)._embedded !== undefined
-}
-
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isbnQuery, setIsbnQuery] = useState('')
@@ -49,7 +35,7 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams()
   const [searchResults, setSearchResults] = useState<Buch[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState('')
   const [books, setBooks] = useState<Buch[]>([])
 
   useEffect(() => {
@@ -66,22 +52,13 @@ export default function SearchPage() {
   useEffect(() => {
     const fetchBooks = async () => {
       setIsLoading(true)
-      setError(null)
+      setError('')
 
       try {
-        const booksData: BooksResponse = await getAllBooks()
-        let booksArray: Buch[]
+        const booksData: Buch[] = await getAllBooks()
 
-        if (Array.isArray(booksData)) {
-          booksArray = booksData
-        } else if (isEmbeddedBooksResponse(booksData)) {
-          booksArray = booksData._embedded.buecher
-        } else {
-          booksArray = []
-        }
-
-        setBooks(booksArray)
-        setSearchResults(booksArray)
+        setBooks(booksData)
+        setSearchResults(booksData)
       } catch (error) {
         setError('Error fetching books data')
         console.error('Error fetching books:', error)

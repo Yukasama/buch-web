@@ -9,9 +9,10 @@ import { client } from '~/lib/axios-client'
  */
 export const getAllBooks = async () => {
   try {
-    const { data }: AxiosResponse<Buch[]> = await client.get(`/rest`)
-    logger.debug('getAllBooks (done) length=%s', data.length)
-    return data
+    const { data }: AxiosResponse<{ _embedded: Buch[] }> =
+      await client.get(`/rest`)
+    logger.debug('getAllBooks (done) length=%s', data._embedded.length)
+    return data._embedded
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('getAllBooks (axios-error): message=%s', error.message)
@@ -43,7 +44,8 @@ export const getBookById = async ({
       },
     )
 
-    const currentVersion = headers.etag?.replace(/"/g, '') ?? '0'
+    const eTag = headers.etag as string | undefined
+    const currentVersion = eTag?.replace(/"/g, '') ?? '0'
     logger.debug('getBookById (done): id=%s, version=%s', id, currentVersion)
 
     return {

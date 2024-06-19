@@ -49,11 +49,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
           <ModalCloseButton />
           <ModalBody>
             <Form reloadDocument method="put">
-              <Input
-                name="version"
-                display="none"
-                defaultValue={buch.version}
-              />
+              <VisuallyHiddenInput name="version" defaultValue={buch.version} />
               <Stack gap={3}>
                 <Flex gap={3}>
                   <Box>
@@ -62,6 +58,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="titelwrapper"
                       defaultValue={buch.titel.titel}
                     />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="titelwrapper" />
                   </Box>
                   <Box>
@@ -70,6 +67,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="untertitelwrapper"
                       defaultValue={buch.titel.untertitel}
                     />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="untertitelwrapper" />
                   </Box>
                 </Flex>
@@ -77,11 +75,13 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <Box>
                     <FormLabel>ISBN</FormLabel>
                     <Input name="isbn" defaultValue={buch.isbn} />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="isbn" />
                   </Box>
                   <Box>
                     <FormLabel>Homepage</FormLabel>
                     <Input name="homepage" defaultValue={buch.homepage} />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="homepage" />
                   </Box>
                 </Flex>
@@ -147,6 +147,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <Box>
                     <FormLabel>Price in €</FormLabel>
                     <Input name="preis" defaultValue={buch.preis} />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="preis" />
                   </Box>
                   <Box>
@@ -164,6 +165,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       value={onSale ? buch.rabatt : 0}
                       defaultValue={buch.rabatt}
                     />
+                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={errors} field="rabatt" />
                   </Box>
                 </Flex>

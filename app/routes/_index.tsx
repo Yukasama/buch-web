@@ -5,7 +5,8 @@ import ImageCarousel from '../components/layout/image-carousel'
 import { Stack, Text } from '@chakra-ui/react'
 
 // TODO: Workaround für Zertifikate finden
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return await authenticator.isAuthenticated(request)
 }
