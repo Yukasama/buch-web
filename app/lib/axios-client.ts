@@ -18,7 +18,7 @@ dotenv.config()
  * Axios client to communicate with the backend
  */
 export const client = axios.create({
-  baseURL: process.env.NEST_BACKEND_URL ?? 'http://localhost:3000',
+  baseURL: process.env.NEST_BACKEND_URL,
   httpsAgent: agent,
   headers: {
     'Content-Type': 'application/json',
