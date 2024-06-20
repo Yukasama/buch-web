@@ -1,15 +1,13 @@
 name: e2e Tests CI
 
 on:
-  push:
-    branches: [main, action]
-  pull_request:
-    branches: [main, action]
+  deployment_status:
   schedule:
     - cron: '0 2 * * *'
 
 jobs:
   test:
+    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -29,17 +27,6 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
-      - name: Run build
-        run: pnpm build
-
-      - name: Start application server
-        run: pnpm start &
-        env:
-          PORT: 5173
-
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:5173
-
       - name: Run Playwright tests
         run: pnpm e2e
 
@@ -49,3 +36,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+        env:
+          BASE_URL: ${{ github.event.deployment_status.environment_url }}
