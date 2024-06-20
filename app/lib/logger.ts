@@ -1,4 +1,7 @@
 import pino from 'pino'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const isProduction = process.env.NODE_ENV === 'production'
 const logLevel = process.env.LOG_LEVEL ?? 'info'

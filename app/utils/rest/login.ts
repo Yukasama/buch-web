@@ -1,6 +1,11 @@
 import { AxiosResponse } from 'axios'
 import { logger } from '~/lib/logger'
 import { client } from '../../lib/axios-client'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+export const loginPath = `${process.env.REMIX_URL}/auth/login`
 
 export const login = async (username: string, password: string) => {
   try {
@@ -33,5 +38,3 @@ export interface User {
   access_token: string
   refresh_token: string
 }
-
-export const loginPath = 'https://localhost:3000/auth/login'
