@@ -3,19 +3,21 @@ import { useFetcher } from '@remix-run/react'
 import { Check, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
+import { User } from '~/utils/rest/login'
 
 interface Props {
   buch: Pick<Buch, 'id' | 'art' | 'schlagwoerter'>
+  user: User | null
 }
 
-export const BuchTags = ({ buch }: Props) => {
+export const BuchTags = ({ buch, user }: Props) => {
   const fetcher = useFetcher()
 
   const [schlagwoerter, setSchlagwoerter] = useState(buch.schlagwoerter)
   const [active, setActive] = useState(false)
   const [input, setInput] = useState('')
 
-  const isAdmin = true
+  const isAdmin = !!user
 
   const onSubmit = () => {
     if (input) {
@@ -52,13 +54,12 @@ export const BuchTags = ({ buch }: Props) => {
         {buch.schlagwoerter?.map((word) => (
           <Button
             h={5}
-            disabled={!isAdmin}
             size="sm"
             rounded="sm"
             fontSize="xs"
             key={word + 'schlagwort'}
-            _hover={{ bg: 'red.500', opacity: 10 }}
-            onClick={() => onDeleteSubmit(word)}
+            _hover={isAdmin ? { bg: 'red.500', opacity: 10 } : {}}
+            onClick={isAdmin ? () => onDeleteSubmit(word) : undefined}
           >
             {word}
           </Button>

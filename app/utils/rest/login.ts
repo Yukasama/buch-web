@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export const loginPath = `${process.env.REMIX_URL}/auth/login`
+export const loginPath = `${process.env.NEST_BACKEND_URL}/auth/login`
 
 export const login = async (username: string, password: string) => {
   try {

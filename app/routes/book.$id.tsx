@@ -77,7 +77,7 @@ export default function BookPage() {
                   {isAdmin && <UpdateModal buch={buch} />}
                 </Flex>
 
-                <BuchTags buch={buch} />
+                <BuchTags buch={buch} user={user} />
 
                 <Flex alignItems="center" gap={2} my={2}>
                   <Text fontSize="md">{buch.rating}.0</Text>
