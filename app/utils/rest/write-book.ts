@@ -1,30 +1,75 @@
 import { logger } from '~/lib/logger'
-import { BuchUpdate } from '~/lib/validators/book'
+import { BuchCreate, BuchUpdate } from '~/lib/validators/book'
 import { getBookById } from './read-books'
 import { client } from '~/lib/axios-client'
-import { AxiosError } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 
 /**
  * Create a book entry in the database
  * @param data Data to create a book without id
  * @returns Location with id of the created book
  */
-export const createBook = async ({ data }: { data: BuchUpdate }) => {
-  logger.debug('createBook (attempt): data=%o', data)
+export const createBook = async ({
+  data,
+  access_token,
+}: {
+  data: BuchCreate
+  access_token: string
+}) => {
+  // const asdf = {
+  //   ...data,
+  //   titel: {
+  //     titel: data.titelwrapper,
+  //     untertitel: data.untertitelwrapper,
+  //   },
+  //   titelwrapper: undefined,
+  //   untertitelwrapper: undefined,
+  // }
+
+  const insertData = {
+    isbn: '978-1-123-45678-9',
+    rating: 1,
+    art: 'DRUCKAUSGABE',
+    preis: 99.99,
+    rabatt: 0.123,
+    lieferbar: true,
+    datum: '2022-02-28',
+    homepage: 'https://post.rest',
+    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
+    titel: {
+      titel: 'Titelpost',
+      untertitel: 'untertitelpos',
+    },
+    abbildungen: [
+      {
+        beschriftung: 'Abb. 1',
+        contentType: 'img/png',
+      },
+    ],
+  }
+
+  logger.debug('createBook (attempt): data=%o', insertData)
 
   try {
-    const response = await client.post(`/rest`, { data })
+    const response = await client.post(`/rest`, insertData, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+
     const location = response.headers.Location as string
 
     logger.debug('createBook (done): location=%s', location)
     return location
   } catch (error) {
+    logger.error(JSON.stringify(error).slice(0, 5000))
     if (error instanceof AxiosError) {
       logger.error('createBook (axios-error): message=%s', error.message)
+      return { error: error.message }
     } else {
       logger.error('createBook (error): error=%s', error)
     }
-    return { ok: false }
+    return { error: 'Internal server error' }
   }
 }
 

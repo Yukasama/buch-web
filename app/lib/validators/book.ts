@@ -42,5 +42,20 @@ export const BuchUpdateSchema = z.object({
   untertitelwrapper: z.string().min(1, 'Untertitel is required.'),
 })
 
+export const BuchCreateSchema = z.object({
+  isbn: z
+    .string()
+    .min(1, 'ISBN is required.')
+    .regex(/^978-\d-\d{3}-\d{5}-\d$/, 'Invalid ISBN.'),
+  rating: z.number().min(1).max(5),
+  art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
+  preis: z.number().positive(),
+  lieferbar: z.boolean(),
+  homepage: z.string().min(1, 'Homepage is required.').url('Invalid Homepage.'),
+  titelwrapper: z.string().min(1, 'Titel is required.'),
+  untertitelwrapper: z.string().min(1, 'Untertitel is required.'),
+})
+
 export type Buch = z.infer<typeof BuchSchema>
 export type BuchUpdate = z.infer<typeof BuchUpdateSchema>
+export type BuchCreate = z.infer<typeof BuchCreateSchema>

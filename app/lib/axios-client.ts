@@ -8,8 +8,7 @@ const certPath = path.resolve('app/config/tls/certificate.crt')
 const certificate = fs.readFileSync(certPath)
 
 const agent = new https.Agent({
-  ca: certificate,
-  rejectUnauthorized: true,
+  rejectUnauthorized: false,
 })
 
 dotenv.config()

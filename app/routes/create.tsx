@@ -2,58 +2,61 @@ import {
   Container,
   Box,
   Heading,
-  Radio,
-  RadioGroup,
   VStack,
-  HStack,
   Input,
   Button,
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  Checkbox,
-  CheckboxGroup,
+  Select,
+  Badge,
 } from '@chakra-ui/react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+import { LoaderFunctionArgs, json } from '@remix-run/node'
+import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { BuchCreateSchema } from '../lib/validators/book'
+import { createBook } from '~/utils/rest/write-book'
+import { FormMessage } from '~/features/book/form-message'
+import { logger } from '~/lib/logger'
+import authenticator from '~/services/auth.server'
 
-// Schema für die Validierung
-const bookSchema = z.object({
-  isbn: z
-    .string()
-    .min(10, { message: 'Ungültige ISBN, muss mindestens 10 Zahlen haben' })
-    .max(13, { message: 'Ungültige ISBN, darf höchstens 13 Zahlen haben' })
-    .regex(/^\d{10}$|^\d{13}$/, 'Ungültige ISBN, muss 10 oder 13 Zahlen haben'),
-  price: z
-    .number()
-    .positive({ message: 'Der Preis muss positiv sein' })
-    .min(1, { message: 'Der Preis muss mindestens 1 sein' }),
-  name: z.string().nonempty({ message: 'Der Name ist erforderlich' }),
-  bookType: z.enum(['Kindle', 'Druckausgabe'], {
-    errorMap: () => ({ message: 'Buchart ist erforderlich' }),
-  }),
-  keyword: z.array(z.enum(['TypeScript', 'JavaScript'])).optional(),
-})
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request)
+  return json({ user })
+}
 
-type BookFormValues = z.infer<typeof bookSchema>
+export async function action({ request }: { request: Request }) {
+  const user = await authenticator.isAuthenticated(request)
+  if (!user) {
+    throw new Response('Unauthorized', { status: 401 })
+  }
 
-export default function CreatePage() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<BookFormValues>({
-    resolver: zodResolver(bookSchema),
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  const values = {
+    ...data,
+    preis: Number(data.preis),
+    // rabatt: Number(data.rabatt),
+    rating: Number(data.rating),
+    lieferbar: data.lieferbar === 'true',
+    //schlagwoerter: formData.getAll('schlagwoerter') as string[],
+  }
+
+  const validated = BuchCreateSchema.safeParse(values)
+  if (!validated.success) {
+    logger.debug('create [action] (invalid-fields): values=%o', validated)
+    return json({ errors: validated.error.issues }, { status: 400 })
+  }
+
+  const { error } = await createBook({
+    data: validated.data,
+    access_token: user.access_token,
   })
 
-  const onSubmit: SubmitHandler<BookFormValues> = async (data) => {
-    // eslint-disable-next-line security-node/detect-crlf
-    console.log(data)
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simuliere eine Verzögerung für den asynchronen Vorgang
-    reset() // Formular zurücksetzen
-  }
+  return json({ error })
+}
+
+export default function CreatePage() {
+  const { user } = useLoaderData<typeof loader>()
+  const actionData = useActionData<typeof action>()
 
   return (
     <Container as="section" maxW="1920px" py="20px" ml="15">
@@ -63,92 +66,78 @@ export default function CreatePage() {
         </Heading>
       </Box>
 
-      <form
-        onSubmit={(e) => {
-          void handleSubmit((data) => {
-            onSubmit(data)
-          })(e)
-        }}
-      >
+      <Form method="post">
         <VStack spacing={4} align="stretch">
+          <Badge colorScheme="red" alignSelf="center">
+            {actionData?.error}
+          </Badge>
           {/* ISBN Input */}
-          <FormControl isInvalid={!!errors.isbn}>
+          <FormControl>
             <FormLabel>ISBN</FormLabel>
-            <Input type="text" placeholder="Enter ISBN" {...register('isbn')} />
-            <FormErrorMessage>{errors.isbn?.message}</FormErrorMessage>
+            <Input placeholder="Enter ISBN" name="isbn" />
+            <FormMessage errors={actionData?.errors} field="isbn" />
           </FormControl>
 
           {/* Price Input */}
-          <FormControl isInvalid={!!errors.price}>
+          <FormControl>
             <FormLabel>Price</FormLabel>
-            <Input
-              type="number"
-              placeholder="Enter Price"
-              {...register('price', { valueAsNumber: true })}
-            />
-            <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
+            <Input type="number" placeholder="Enter Price" name="preis" />
+            <FormMessage errors={actionData?.errors} field="preis" />
           </FormControl>
 
-          {/* Name Input */}
-          <FormControl isInvalid={!!errors.name}>
-            <FormLabel>Name</FormLabel>
+          <FormControl>
+            <FormLabel>Titel</FormLabel>
+            <Input placeholder="Enter Book Title" name="titelwrapper" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Untertitel</FormLabel>
             <Input
               type="text"
-              placeholder="Enter Book Name"
-              {...register('name')}
+              placeholder="Enter Book Subtitle"
+              name="untertitelwrapper"
             />
-            <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
           </FormControl>
 
-          {/* Book Type Radio Group */}
-          <FormControl isInvalid={!!errors.bookType}>
-            <FormLabel>Book Type</FormLabel>
-            <RadioGroup>
-              <HStack>
-                <Radio
-                  value="Kindle"
-                  {...register('bookType')}
-                  defaultChecked={false}
-                >
-                  Kindle
-                </Radio>
-                <Radio value="Druckausgabe" {...register('bookType')}>
-                  Druckausgabe
-                </Radio>
-              </HStack>
-            </RadioGroup>
-            <FormErrorMessage>{errors.bookType?.message}</FormErrorMessage>
-          </FormControl>
-
-          {/* Keyword Checkbox Group */}
           <FormControl>
-            <FormLabel>Schlagwort</FormLabel>
-            <CheckboxGroup>
-              <HStack spacing="24px">
-                <Checkbox
-                  value="TypeScript"
-                  {...register('keyword')}
-                  defaultChecked={false}
-                >
-                  TypeScript
-                </Checkbox>
-                <Checkbox
-                  value="JavaScript"
-                  {...register('keyword')}
-                  defaultChecked={false}
-                >
-                  JavaScript
-                </Checkbox>
-              </HStack>
-            </CheckboxGroup>
+            <FormLabel>Book Type</FormLabel>
+            <Select placeholder="Select book type" name="art">
+              <option value="KINDLE">KINDLE</option>
+              <option value="DRUCKAUSGABE">DRUCKAUSGABE</option>
+            </Select>
           </FormControl>
 
-          {/* Submit Button */}
+          <FormControl>
+            <FormLabel>Rating</FormLabel>
+            <Input
+              type="number"
+              placeholder="Enter Rating (1-5)"
+              name="rating"
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Lieferbar</FormLabel>
+            <Select placeholder="Is it available?" name="lieferbar">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Homepage</FormLabel>
+            <Input
+              type="url"
+              placeholder="Enter Homepage URL"
+              name="homepage"
+            />
+          </FormControl>
+
           <Button type="submit" colorScheme="blue">
             Create
           </Button>
         </VStack>
-      </form>
+      </Form>
     </Container>
   )
 }
