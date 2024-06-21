@@ -50,37 +50,35 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   const bookDb = await getBookById({ id: params.id })
 
+  const insertData = {
+    ...bookDb,
+    // schlagwoerter,
+  }
+
+  console.log(insertData, 'insertData')
+
   try {
-    const response = await client.put(
-      `/rest/${params.id}`,
-      {
-        ...bookDb,
-        ...schlagwoerter,
+    const { headers } = await client.put(`/rest/${params.id}`, insertData, {
+      headers: {
+        'If-Match': `"${version}"`,
+        Authorization: `Bearer ${access_token}`,
       },
-      {
-        headers: {
-          'If-Match': `"${version}"`,
-          Authorization: `Bearer ${access_token}`,
-        },
-      },
-    )
+    })
 
     logger.debug(
       'updateSchlagwoerter [action] (done): id=%s, version=%s',
       params.id,
-      response.headers.ETag,
+      headers.ETag,
     )
 
-    return json({ version: response.headers.ETag as string })
+    return json({ version: headers.ETag as string })
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error(
         'updateSchlagwoerter [action] (axios-error): message=%s',
         error.message,
       )
-      return {
-        error: formatErrorMsg(error),
-      }
+      return { error: formatErrorMsg(error) }
     } else {
       logger.error('updateSchlagwoerter [action] (error): error=%s', error)
     }

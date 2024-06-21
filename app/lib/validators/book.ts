@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const BuchSchema = z.object({
   id: z.string(),
   version: z.string().optional(),
-  isbn: z.string().regex(/^978-\d-\d{3}-\d{5}-\d$/),
+  isbn: z.string().regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/),
   rating: z.number().int(),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number().positive(),
@@ -31,22 +31,26 @@ export const BuchUpdateSchema = z.object({
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
-    .regex(/^978-\d-\d{3}-\d{5}-\d$/, 'Invalid ISBN.'),
+    .regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/, 'Invalid ISBN.'),
   rating: z.number().min(1).max(5),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number(),
-  rabatt: z.number(),
-  lieferbar: z.boolean(),
-  homepage: z.string().min(1, 'Homepage is required.').url('Invalid Homepage.'),
+  rabatt: z.number().min(0).max(1).optional(),
+  lieferbar: z.boolean().optional(),
+  homepage: z
+    .string()
+    .min(1, 'Homepage is required.')
+    .url('Invalid Homepage.')
+    .optional(),
   titelwrapper: z.string().min(1, 'Titel is required.'),
-  untertitelwrapper: z.string().min(1, 'Untertitel is required.'),
+  untertitelwrapper: z.string().min(1, 'Untertitel is required.').optional(),
 })
 
 export const BuchCreateSchema = z.object({
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
-    .regex(/^978-\d-\d{3}-\d{5}-\d$/, 'Invalid ISBN.'),
+    .regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/, 'Invalid ISBN.'),
   rating: z.number().min(1).max(5),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number().positive(),

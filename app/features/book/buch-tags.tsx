@@ -13,9 +13,7 @@ interface Props {
 
 export const BuchTags = ({ buch, user }: Props) => {
   const fetcher = useFetcher<typeof action>()
-
-  // TODO
-  // const actionData = useActionData<typeof action>()
+  const actionData = useActionData<typeof action>()
 
   const [schlagwoerter, setSchlagwoerter] = useState(buch.schlagwoerter)
   const [active, setActive] = useState(false)
@@ -25,8 +23,21 @@ export const BuchTags = ({ buch, user }: Props) => {
 
   const onSubmit = () => {
     if (input) {
-      setSchlagwoerter([...schlagwoerter, input.toUpperCase()])
-      submit()
+      const updatedSchlagwoerter = [input.toUpperCase(), ...schlagwoerter]
+      setSchlagwoerter(updatedSchlagwoerter)
+      setInput('')
+
+      fetcher.submit(
+        {
+          schlagwoerter: updatedSchlagwoerter,
+          version: buch.version ?? '0',
+          access_token: user?.access_token ?? '',
+        },
+        {
+          action: `/update-schlagwoerter/${buch.id}`,
+          method: 'put',
+        },
+      )
     }
     setActive(false)
   }
@@ -85,7 +96,7 @@ export const BuchTags = ({ buch, user }: Props) => {
             ) : (
               <fetcher.Form
                 action={`/update-schlagwoerter/${buch.id}`}
-                method="PUT"
+                method="put"
               >
                 <Flex gap={1}>
                   <Input

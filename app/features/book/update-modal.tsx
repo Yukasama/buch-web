@@ -33,8 +33,6 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
-  const [onSale, setOnSale] = useState(buch.rabatt !== 0)
-
   const KINDS = ['KINDLE', 'DRUCKAUSGABE']
 
   return (
@@ -147,6 +145,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     ))}
                     <VisuallyHiddenInput
                       name="rating"
+                      type="number"
                       value={rating}
                       defaultValue={buch.rating}
                     />
@@ -155,24 +154,20 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>Price in €</FormLabel>
-                    <Input name="preis" defaultValue={buch.preis} />
+                    <Input
+                      type="number"
+                      name="preis"
+                      defaultValue={buch.preis}
+                    />
                     {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={actionData?.errors} field="preis" />
                   </Box>
                   <Box>
-                    <Flex>
-                      <FormLabel>On Sale</FormLabel>
-                      <Checkbox
-                        mb={2}
-                        onChange={() => setOnSale(!onSale)}
-                        defaultChecked={onSale}
-                      />
-                    </Flex>
+                    <FormLabel>Discount in %</FormLabel>
                     <Input
                       name="rabatt"
-                      disabled={!onSale}
-                      value={onSale ? buch.rabatt : 0}
-                      defaultValue={buch.rabatt}
+                      type="number"
+                      defaultValue={buch.rabatt * 100}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={actionData?.errors} field="rabatt" />

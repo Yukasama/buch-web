@@ -38,9 +38,6 @@ export default function Index() {
             <Link to="/create">Lets Create</Link>
           </p>
         )}
-        <p>
-          {user?.username} {user?.access_token}
-        </p>
       </Stack>
     </main>
   )

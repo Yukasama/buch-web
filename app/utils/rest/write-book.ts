@@ -30,23 +30,25 @@ export const createBook = async ({
   logger.debug('createBook (attempt): data=%o', insertData)
 
   try {
-    const response = await client.post('/rest', insertData, {
+    const { headers } = await client.post('/rest', insertData, {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
     })
 
-    const location = response.headers.Location as string
+    const location = headers.location as string | undefined
+    const id = location?.split('/').pop()
 
-    logger.debug('createBook (done): location=%s', location)
-    return { location }
+    logger.debug('createBook (done): id=%s', id)
+    return { id }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('createBook (axios-error): message=%s', error.message)
-      return { error: error.message }
+      return { error: formatErrorMsg(error) }
     } else {
       logger.error('createBook (error): error=%s', error)
     }
+
     return { error: 'Internal server error' }
   }
 }
@@ -117,9 +119,7 @@ export const updateBookById = async ({
         id,
         error.message,
       )
-      return {
-        error: formatErrorMsg(error),
-      }
+      return { error: formatErrorMsg(error) }
     } else {
       logger.error('updateBookById (error): error=%s', error)
     }

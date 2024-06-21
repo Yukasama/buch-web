@@ -5,5 +5,7 @@ export const formatErrorMsg = (error: AxiosError) => {
     ? 'Your data is outdated. Please refresh the page.'
     : error.message.includes('401')
       ? 'You have to be logged in to make changes.'
-      : error.message
+      : error.message.includes('422')
+        ? 'This ISBN already exists in the system.'
+        : error.message
 }

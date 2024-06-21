@@ -10,14 +10,21 @@ import {
   Select,
   Badge,
   useToast,
+  Flex,
 } from '@chakra-ui/react'
 import { LoaderFunctionArgs, json, redirect } from '@remix-run/node'
-import { Form, useActionData, useNavigation } from '@remix-run/react'
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from '@remix-run/react'
 import { BuchCreateSchema } from '../lib/validators/book'
 import { createBook } from '~/utils/rest/write-book'
 import { FormMessage } from '~/features/book/form-message'
 import { logger } from '~/lib/logger'
 import authenticator from '~/services/auth.server'
+import { useEffect } from 'react'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request)
@@ -25,7 +32,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect('/login')
   }
 
-  return json({ user })
+  return json({ remixUrl: process.env.REMIX_URL })
 }
 
 export async function action({ request }: { request: Request }) {
@@ -48,24 +55,45 @@ export async function action({ request }: { request: Request }) {
   const validated = BuchCreateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('create [action] (invalid-fields): values=%o', validated)
-    return json({ errors: validated.error.issues }, { status: 400 })
+    return json({ errors: validated.error.errors }, { status: 400 })
   }
 
-  const { location, error } = await createBook({
+  const { id, error } = await createBook({
     data: validated.data,
     access_token: user.access_token,
   })
 
-  return json({ location, error })
+  return json({ id, error })
 }
 
 export default function CreatePage() {
   const actionData = useActionData<typeof action>()
+  const { remixUrl } = useLoaderData<typeof loader>()
   const toast = useToast()
   const navigation = useNavigation()
 
+  useEffect(() => {
+    if (actionData?.id) {
+      toast({
+        title: 'Book created.',
+        description: (
+          <a
+            href={`${remixUrl}/book/${actionData?.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Book at: {remixUrl}/book/{actionData?.id}
+          </a>
+        ),
+        status: 'success',
+        duration: 6000,
+        isClosable: true,
+      })
+    }
+  }, [actionData])
+
   return (
-    <Container as="section" maxW="1920px" py="20px" ml="15">
+    <Container flexDir="column">
       <Box display="flex" justifyContent="center">
         <Heading my="30px" p="20px" fontSize="60">
           Create Book
@@ -77,7 +105,30 @@ export default function CreatePage() {
           <Badge colorScheme="red" alignSelf="center">
             {actionData?.error}
           </Badge>
-          {/* ISBN Input */}
+
+          <FormControl>
+            <FormLabel>Title</FormLabel>
+            <Input
+              disabled={navigation.state === 'submitting'}
+              placeholder="Enter Book Title"
+              name="titelwrapper"
+            />
+            <FormMessage errors={actionData?.errors} field="titelwrapper" />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Subtitle</FormLabel>
+            <Input
+              disabled={navigation.state === 'submitting'}
+              placeholder="Enter Book Subtitle"
+              name="untertitelwrapper"
+            />
+            <FormMessage
+              errors={actionData?.errors}
+              field="untertitelwrapper"
+            />
+          </FormControl>
+
           <FormControl>
             <FormLabel>ISBN</FormLabel>
             <Input
@@ -88,59 +139,65 @@ export default function CreatePage() {
             <FormMessage errors={actionData?.errors} field="isbn" />
           </FormControl>
 
-          {/* Price Input */}
-          <FormControl>
-            <FormLabel>Price</FormLabel>
-            <Input type="number" placeholder="Enter Price" name="preis" />
-            <FormMessage errors={actionData?.errors} field="preis" />
-          </FormControl>
+          <Flex gap={4}>
+            <FormControl>
+              <FormLabel>Price</FormLabel>
+              <Input
+                disabled={navigation.state === 'submitting'}
+                type="number"
+                placeholder="Enter Price"
+                name="preis"
+              />
+              <FormMessage errors={actionData?.errors} field="preis" />
+            </FormControl>
 
-          <FormControl>
-            <FormLabel>Titel</FormLabel>
-            <Input placeholder="Enter Book Title" name="titelwrapper" />
-          </FormControl>
+            <FormControl>
+              <FormLabel>Available</FormLabel>
+              <Select
+                disabled={navigation.state === 'submitting'}
+                placeholder="Is it available?"
+                name="lieferbar"
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </Select>
+            </FormControl>
+          </Flex>
 
-          <FormControl>
-            <FormLabel>Untertitel</FormLabel>
-            <Input
-              type="text"
-              placeholder="Enter Book Subtitle"
-              name="untertitelwrapper"
-            />
-          </FormControl>
+          <Flex gap={4}>
+            <FormControl>
+              <FormLabel>Type</FormLabel>
+              <Select
+                disabled={navigation.state === 'submitting'}
+                placeholder="Select book type"
+                name="art"
+              >
+                <option value="KINDLE">KINDLE</option>
+                <option value="DRUCKAUSGABE">DRUCKAUSGABE</option>
+              </Select>
+            </FormControl>
 
-          <FormControl>
-            <FormLabel>Book Type</FormLabel>
-            <Select placeholder="Select book type" name="art">
-              <option value="KINDLE">KINDLE</option>
-              <option value="DRUCKAUSGABE">DRUCKAUSGABE</option>
-            </Select>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Rating</FormLabel>
-            <Input
-              type="number"
-              placeholder="Enter Rating (1-5)"
-              name="rating"
-            />
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>Lieferbar</FormLabel>
-            <Select placeholder="Is it available?" name="lieferbar">
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </Select>
-          </FormControl>
+            <FormControl>
+              <FormLabel>Rating</FormLabel>
+              <Input
+                type="number"
+                disabled={navigation.state === 'submitting'}
+                placeholder="Enter Rating (1-5)"
+                name="rating"
+              />
+              <FormMessage errors={actionData?.errors} field="rating" />
+            </FormControl>
+          </Flex>
 
           <FormControl>
             <FormLabel>Homepage</FormLabel>
             <Input
               type="url"
+              disabled={navigation.state === 'submitting'}
               placeholder="Enter Homepage URL"
               name="homepage"
             />
+            <FormMessage errors={actionData?.errors} field="homepage" />
           </FormControl>
 
           <Button

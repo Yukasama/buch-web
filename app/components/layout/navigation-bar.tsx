@@ -1,16 +1,14 @@
 import { useState } from 'react'
-import { Form, useNavigate } from '@remix-run/react'
+import { Form } from '@remix-run/react'
 import {
-  Box,
   Flex,
-  HStack,
   Link,
   Button,
   IconButton,
   Image,
-  Spacer,
   useColorModeValue,
   Input,
+  Box,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
 import { ThemeToggle } from './theme-toggle'
@@ -19,66 +17,53 @@ import type { User } from '~/utils/rest/login'
 const NavBar = ({ user }: { user?: User | null }) => {
   const [isOpen, setIsOpen] = useState(false)
   const handleToggle = () => setIsOpen(!isOpen)
-  const navigate = useNavigate()
 
   const bg = useColorModeValue('gray.100', 'gray.900')
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const searchQuery = formData.get('searchQuery')
-    if (searchQuery && typeof searchQuery === 'string') {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`)
-    }
-  }
-
   return (
-    <Box bg={bg} px={4}>
-      <Flex h={16} alignItems="center" justifyContent="space-between">
-        <IconButton
-          size="md"
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label="Open Menu"
-          display={{ md: 'none' }}
-          onClick={handleToggle}
-        />
-        <Link href="/">
-          <Image
-            src="/logo.png"
-            alt="Buch-Web Logo"
-            height={12}
-            width={12}
-            rounded="full"
-            cursor="pointer"
+    <Box>
+      <Flex bg={bg} px={4} h={16} alignItems="center">
+        <Flex alignItems="center" flex="1">
+          <IconButton
+            size="sm"
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label="Open Menu"
+            display={{ md: 'none' }}
+            onClick={handleToggle}
           />
-        </Link>
-        <Spacer />
-        <HStack spacing={8} alignItems="center">
-          <form onSubmit={handleSearch}>
-            <Input
-              name="searchQuery"
-              placeholder="Search books"
-              variant="filled"
+          <Link href="/">
+            <Image
+              src="/logo.png"
+              alt="Buch-Web Logo"
+              height={12}
+              width={12}
+              rounded="full"
+              cursor="pointer"
             />
-          </form>
-        </HStack>
-        <Spacer />
-        <Flex gap={2} alignItems="center">
-          <ThemeToggle />
-          <Flex>
-            {user ? (
-              <Form method="post" action="/logout">
-                <Button size="sm" type="submit">
-                  Sign Out
-                </Button>
-              </Form>
-            ) : (
-              <Button ml={4} colorScheme="blue">
-                <Link size="sm" href="/login">
+          </Link>
+        </Flex>
+        <Flex justifyContent="center" flex="1">
+          <Form action="/search">
+            <Input name="q" placeholder="Search books" variant="filled" />
+            <Button type="submit" hidden />
+          </Form>
+        </Flex>
+        <Flex justifyContent="end" flex="1">
+          <Flex gap={2} alignItems="center">
+            <ThemeToggle />
+            <Flex>
+              {user ? (
+                <Form method="post" action="/logout">
+                  <Button size="sm" type="submit">
+                    Sign Out
+                  </Button>
+                </Form>
+              ) : (
+                <Button as={Link} href="/login" size="sm" colorScheme="blue">
                   Sign In
-                </Link>
-              </Button>
-            )}
+                </Button>
+              )}
+            </Flex>
           </Flex>
         </Flex>
       </Flex>

@@ -137,7 +137,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     ...data,
     rating: Number(data.rating),
     preis: Number(data.preis),
-    rabatt: Number(data.rabatt),
+    rabatt: Number(data.rabatt) / 100,
     lieferbar: 'lieferbar' in data,
   }
 
