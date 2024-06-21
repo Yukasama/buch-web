@@ -3,7 +3,7 @@ name: e2e Tests CI
 on:
   deployment_status:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   test:
@@ -37,5 +37,5 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-        env:
-          BASE_URL: ${{ github.event.deployment_status.environment_url }}
+        # env:
+        #   BASE_URL: ${{ github.event.deployment_status.environment_url }}

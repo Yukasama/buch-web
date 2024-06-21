@@ -2,11 +2,11 @@ name: Buch-Web CI
 
 on:
   push:
-    branches: [main, action]
+    branches: [main]
   pull_request:
-    branches: [main, action]
+    branches: [main]
   schedule:
-    - cron: '0 2 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   setup:
