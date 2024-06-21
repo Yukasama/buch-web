@@ -39,7 +39,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function BookPage() {
   const { buch, user } = useLoaderData<typeof loader>()
-  const isAdmin = !!user
+  const isAdmin = user?.username === 'admin'
 
   return (
     <SimpleGrid
@@ -122,11 +122,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     throw new Response('Unauthorized', { status: 401 })
   }
 
-  // TODO
-  // const isAdmin = !!user.roles.admin
-  // if (!isAdmin) {
-  //   throw new Response('No Access', { status: 403 })
-  // }
+  const isAdmin = user.username === 'admin'
+  if (!isAdmin) {
+    throw new Response('No Access', { status: 403 })
+  }
 
   if (!params.id) {
     throw new Response('Not Found', { status: 404 })
@@ -136,23 +135,23 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const data = Object.fromEntries(formData)
   const values = {
     ...data,
-    rating: Number(formData.get('rating')),
-    preis: Number(formData.get('preis')),
-    rabatt: Number(formData.get('rabatt')),
-    lieferbar: formData.get('lieferbar') === 'on',
+    rating: Number(data.rating),
+    preis: Number(data.preis),
+    rabatt: Number(data.rabatt),
+    lieferbar: 'lieferbar' in data,
   }
 
   const validated = BuchUpdateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return { errors: validated.error.issues }
+    return json({ errors: validated.error.issues }, { status: 400 })
   }
 
-  await updateBookById({
+  const { error, version } = await updateBookById({
     id: params.id,
     mutateData: validated.data,
     access_token: user.access_token,
   })
 
-  return { errors: [] }
+  return { error, version }
 }

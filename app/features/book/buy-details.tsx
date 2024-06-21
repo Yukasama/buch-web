@@ -62,7 +62,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
         </Text>
       )}
       <Flex direction="column" gap={1}>
-        {buch.lieferbar && (
+        {buch.lieferbar ? (
           <>
             <Flex gap={1.5}>
               <Text fontSize="small">Versand durch:</Text>
@@ -87,7 +87,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
               </Text>
             </Flex>
           </>
-        )}
+        ) : null}
       </Flex>
       <Flex direction="column" gap={2} mt={2}>
         <Button colorScheme="blue">Jetzt bestellen</Button>

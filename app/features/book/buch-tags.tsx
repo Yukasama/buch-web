@@ -1,49 +1,53 @@
 import { Box, Flex, Icon, Button, Input } from '@chakra-ui/react'
-import { useFetcher } from '@remix-run/react'
+import { useActionData, useFetcher } from '@remix-run/react'
 import { Check, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { Buch } from '~/lib/validators/book'
+import { action } from '~/routes/update-schlagwoerter.$id'
 import { User } from '~/utils/rest/login'
 
 interface Props {
-  buch: Pick<Buch, 'id' | 'art' | 'schlagwoerter'>
+  buch: Pick<Buch, 'id' | 'version' | 'art' | 'schlagwoerter'>
   user: User | null
 }
 
 export const BuchTags = ({ buch, user }: Props) => {
-  const fetcher = useFetcher()
+  const fetcher = useFetcher<typeof action>()
+
+  // TODO
+  // const actionData = useActionData<typeof action>()
 
   const [schlagwoerter, setSchlagwoerter] = useState(buch.schlagwoerter)
   const [active, setActive] = useState(false)
   const [input, setInput] = useState('')
 
-  const isAdmin = !!user
+  const isAdmin = user?.username === 'admin'
 
   const onSubmit = () => {
     if (input) {
       setSchlagwoerter([...schlagwoerter, input.toUpperCase()])
-      fetcher.submit(
-        { schlagwoerter },
-        {
-          action: `/update-schlagwoerter/${buch.id}`,
-          method: 'PUT',
-        },
-      )
+      submit()
     }
     setActive(false)
   }
 
   const onDeleteSubmit = (tag?: string) => {
     setSchlagwoerter(schlagwoerter.filter((word) => word !== tag))
+    submit()
+  }
 
+  const submit = () =>
     fetcher.submit(
-      { schlagwoerter },
+      {
+        schlagwoerter,
+        version: buch.version ?? '0',
+        access_token: user?.access_token ?? '',
+      },
       {
         action: `/update-schlagwoerter/${buch.id}`,
         method: 'PUT',
       },
     )
-  }
 
   return (
     <Box>
@@ -51,13 +55,13 @@ export const BuchTags = ({ buch, user }: Props) => {
         <Button h={5} disabled rounded="sm" size="sm" fontSize="xs">
           {buch.art}
         </Button>
-        {buch.schlagwoerter?.map((word) => (
+        {buch.schlagwoerter?.map((word, i) => (
           <Button
             h={5}
             size="sm"
             rounded="sm"
             fontSize="xs"
-            key={word + 'schlagwort'}
+            key={word + i + 'schlagwort'}
             _hover={isAdmin ? { bg: 'red.500', opacity: 10 } : {}}
             onClick={isAdmin ? () => onDeleteSubmit(word) : undefined}
           >

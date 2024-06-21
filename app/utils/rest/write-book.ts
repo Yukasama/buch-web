@@ -2,7 +2,8 @@ import { logger } from '~/lib/logger'
 import { BuchCreate, BuchUpdate } from '~/lib/validators/book'
 import { getBookById } from './read-books'
 import { client } from '~/lib/axios-client'
-import { AxiosError, AxiosResponse } from 'axios'
+import { AxiosError } from 'axios'
+import { formatErrorMsg } from './format-error-msg'
 
 /**
  * Create a book entry in the database
@@ -16,42 +17,20 @@ export const createBook = async ({
   data: BuchCreate
   access_token: string
 }) => {
-  // const asdf = {
-  //   ...data,
-  //   titel: {
-  //     titel: data.titelwrapper,
-  //     untertitel: data.untertitelwrapper,
-  //   },
-  //   titelwrapper: undefined,
-  //   untertitelwrapper: undefined,
-  // }
-
   const insertData = {
-    isbn: '978-1-123-45678-9',
-    rating: 1,
-    art: 'DRUCKAUSGABE',
-    preis: 99.99,
-    rabatt: 0.123,
-    lieferbar: true,
-    datum: '2022-02-28',
-    homepage: 'https://post.rest',
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
+    ...data,
     titel: {
-      titel: 'Titelpost',
-      untertitel: 'untertitelpos',
+      titel: data.titelwrapper,
+      untertitel: data.untertitelwrapper,
     },
-    abbildungen: [
-      {
-        beschriftung: 'Abb. 1',
-        contentType: 'img/png',
-      },
-    ],
+    titelwrapper: undefined,
+    untertitelwrapper: undefined,
   }
 
   logger.debug('createBook (attempt): data=%o', insertData)
 
   try {
-    const response = await client.post(`/rest`, insertData, {
+    const response = await client.post('/rest', insertData, {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
@@ -60,9 +39,8 @@ export const createBook = async ({
     const location = response.headers.Location as string
 
     logger.debug('createBook (done): location=%s', location)
-    return location
+    return { location }
   } catch (error) {
-    logger.error(JSON.stringify(error).slice(0, 5000))
     if (error instanceof AxiosError) {
       logger.error('createBook (axios-error): message=%s', error.message)
       return { error: error.message }
@@ -95,7 +73,7 @@ export const updateBookById = async ({
     id,
     mutateData.version,
     mutateData,
-    access_token,
+    access_token ? `${access_token?.slice(0, 10)}...` : 'undefined',
   )
 
   const bookDb = await getBookById({ id })
@@ -134,10 +112,18 @@ export const updateBookById = async ({
     return { version: response.headers.ETag as string }
   } catch (error) {
     if (error instanceof AxiosError) {
-      logger.error('updateBookById (axios-error): message=%s', error.message)
+      logger.error(
+        'updateBookById (axios-error): id=%s message=%s',
+        id,
+        error.message,
+      )
+      return {
+        error: formatErrorMsg(error),
+      }
     } else {
       logger.error('updateBookById (error): error=%s', error)
     }
   }
-  return { version: mutateData.version }
+
+  return { error: 'Internal Server Error' }
 }

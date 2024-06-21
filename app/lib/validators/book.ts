@@ -56,6 +56,15 @@ export const BuchCreateSchema = z.object({
   untertitelwrapper: z.string().min(1, 'Untertitel is required.'),
 })
 
+export const BuchUpdateSchlagwoerterSchema = z.object({
+  version: z.string(),
+  access_token: z.string(),
+  schlagwoerter: z.string(),
+})
+
 export type Buch = z.infer<typeof BuchSchema>
 export type BuchUpdate = z.infer<typeof BuchUpdateSchema>
 export type BuchCreate = z.infer<typeof BuchCreateSchema>
+export type BuchUpdateSchlagwoerter = z.infer<
+  typeof BuchUpdateSchlagwoerterSchema
+>

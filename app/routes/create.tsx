@@ -9,9 +9,10 @@ import {
   FormLabel,
   Select,
   Badge,
+  useToast,
 } from '@chakra-ui/react'
-import { LoaderFunctionArgs, json } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { LoaderFunctionArgs, json, redirect } from '@remix-run/node'
+import { Form, useActionData, useNavigation } from '@remix-run/react'
 import { BuchCreateSchema } from '../lib/validators/book'
 import { createBook } from '~/utils/rest/write-book'
 import { FormMessage } from '~/features/book/form-message'
@@ -20,6 +21,10 @@ import authenticator from '~/services/auth.server'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request)
+  if (!user) {
+    return redirect('/login')
+  }
+
   return json({ user })
 }
 
@@ -46,17 +51,18 @@ export async function action({ request }: { request: Request }) {
     return json({ errors: validated.error.issues }, { status: 400 })
   }
 
-  const { error } = await createBook({
+  const { location, error } = await createBook({
     data: validated.data,
     access_token: user.access_token,
   })
 
-  return json({ error })
+  return json({ location, error })
 }
 
 export default function CreatePage() {
-  const { user } = useLoaderData<typeof loader>()
   const actionData = useActionData<typeof action>()
+  const toast = useToast()
+  const navigation = useNavigation()
 
   return (
     <Container as="section" maxW="1920px" py="20px" ml="15">
@@ -74,7 +80,11 @@ export default function CreatePage() {
           {/* ISBN Input */}
           <FormControl>
             <FormLabel>ISBN</FormLabel>
-            <Input placeholder="Enter ISBN" name="isbn" />
+            <Input
+              disabled={navigation.state === 'submitting'}
+              placeholder="Enter ISBN"
+              name="isbn"
+            />
             <FormMessage errors={actionData?.errors} field="isbn" />
           </FormControl>
 
@@ -133,7 +143,11 @@ export default function CreatePage() {
             />
           </FormControl>
 
-          <Button type="submit" colorScheme="blue">
+          <Button
+            isLoading={navigation.state === 'submitting'}
+            type="submit"
+            colorScheme="blue"
+          >
             Create
           </Button>
         </VStack>

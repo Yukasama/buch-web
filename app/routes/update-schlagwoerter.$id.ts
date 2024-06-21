@@ -2,9 +2,22 @@ import { ActionFunctionArgs, json } from '@remix-run/node'
 import { AxiosError } from 'axios'
 import { client } from '~/lib/axios-client'
 import { logger } from '~/lib/logger'
+import { BuchUpdateSchlagwoerterSchema } from '~/lib/validators/book'
+import authenticator from '~/services/auth.server'
 import { getBookById } from '~/utils/rest/read-books'
+import { formatErrorMsg } from '~/utils/rest/format-error-msg'
 
 export async function action({ request, params }: ActionFunctionArgs) {
+  const user = await authenticator.isAuthenticated(request)
+  if (!user) {
+    throw new Response('Unauthorized', { status: 401 })
+  }
+
+  const isAdmin = user.username === 'admin'
+  if (!isAdmin) {
+    throw new Response('No Access', { status: 403 })
+  }
+
   if (!params.id) {
     throw new Response('Not Found', { status: 404 })
   }
@@ -12,53 +25,66 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
 
-  const { schlagwoerter: schlagwoerterStr } = data
+  const validated = BuchUpdateSchlagwoerterSchema.safeParse(data)
+  if (!validated.success) {
+    logger.debug('book [action] (invalid-fields): values=%o', validated)
+    return json({ error: 'Invalid fields' }, { status: 400 })
+  }
+
+  const {
+    schlagwoerter: schlagwoerterStr,
+    version,
+    access_token,
+  } = validated.data
 
   let schlagwoerter = []
   try {
-    schlagwoerter = (schlagwoerterStr as string).split(',').map((s) => s.trim())
+    schlagwoerter = schlagwoerterStr.split(',').map((s) => s.trim())
   } catch (error) {
     logger.debug(
-      'Invalid JSON format for schlagwoerter: %o',
+      'updateSchlagwoerter [action] Invalid JSON format for schlagwoerter: %o',
       data.schlagwoerter,
     )
-    return json(
-      { errors: [{ message: 'Invalid format for schlagwoerter' }] },
-      { status: 400 },
-    )
+    return json({ error: 'Invalid format for schlagwoerter' }, { status: 400 })
   }
-
-  const versionStr = request.headers.get('E-Tag')
-  const version = versionStr ? Number(versionStr.replace(/"/g, '')) : 0
 
   const bookDb = await getBookById({ id: params.id })
 
   try {
-    const response = await client.put(`/rest/${params.id}`, {
-      headers: { 'E-Tag': `"${version}"` },
-      data: {
+    const response = await client.put(
+      `/rest/${params.id}`,
+      {
         ...bookDb,
         ...schlagwoerter,
       },
-    })
-
-    logger.debug(
-      'updateSchlagwoerter (done): id=%s, version=%s',
-      params.id,
-      response.headers['E-Tag'],
+      {
+        headers: {
+          'If-Match': `"${version}"`,
+          Authorization: `Bearer ${access_token}`,
+        },
+      },
     )
 
-    return { ok: true }
+    logger.debug(
+      'updateSchlagwoerter [action] (done): id=%s, version=%s',
+      params.id,
+      response.headers.ETag,
+    )
+
+    return json({ version: response.headers.ETag as string })
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error(
-        'updateSchlagwoerter [action] (axios-error): id=%s message=%s',
-        params.id,
+        'updateSchlagwoerter [action] (axios-error): message=%s',
         error.message,
       )
+      return {
+        error: formatErrorMsg(error),
+      }
     } else {
       logger.error('updateSchlagwoerter [action] (error): error=%s', error)
     }
+
+    return json({ error: 'Internal Server Error' }, { status: 500 })
   }
-  return { ok: false }
 }

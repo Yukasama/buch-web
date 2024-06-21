@@ -19,6 +19,7 @@ import {
   Checkbox,
   Stack,
   VisuallyHiddenInput,
+  Badge,
 } from '@chakra-ui/react'
 import { Star } from 'lucide-react'
 import { useState } from 'react'
@@ -28,7 +29,7 @@ import { action } from '~/routes/book.$id'
 import { FormMessage } from './form-message'
 
 export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
-  const errors = useActionData<typeof action>()
+  const actionData = useActionData<typeof action>()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
@@ -46,9 +47,12 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Modify Book Information</ModalHeader>
+          <Badge alignSelf="center" colorScheme="red">
+            {actionData?.error}
+          </Badge>
           <ModalCloseButton />
           <ModalBody>
-            <Form reloadDocument method="put">
+            <Form method="put">
               <VisuallyHiddenInput name="version" defaultValue={buch.version} />
               <Stack gap={3}>
                 <Flex gap={3}>
@@ -58,8 +62,10 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="titelwrapper"
                       defaultValue={buch.titel.titel}
                     />
-                    {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="titelwrapper" />
+                    <FormMessage
+                      errors={actionData?.errors}
+                      field="titelwrapper"
+                    />
                   </Box>
                   <Box>
                     <FormLabel>Untertitel</FormLabel>
@@ -68,7 +74,10 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       defaultValue={buch.titel.untertitel}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="untertitelwrapper" />
+                    <FormMessage
+                      errors={actionData?.errors}
+                      field="untertitelwrapper"
+                    />
                   </Box>
                 </Flex>
                 <Flex gap={3}>
@@ -76,13 +85,13 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <FormLabel>ISBN</FormLabel>
                     <Input name="isbn" defaultValue={buch.isbn} />
                     {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="isbn" />
+                    <FormMessage errors={actionData?.errors} field="isbn" />
                   </Box>
                   <Box>
                     <FormLabel>Homepage</FormLabel>
                     <Input name="homepage" defaultValue={buch.homepage} />
                     {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="homepage" />
+                    <FormMessage errors={actionData?.errors} field="homepage" />
                   </Box>
                 </Flex>
                 <Box>
@@ -148,7 +157,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <FormLabel>Price in €</FormLabel>
                     <Input name="preis" defaultValue={buch.preis} />
                     {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="preis" />
+                    <FormMessage errors={actionData?.errors} field="preis" />
                   </Box>
                   <Box>
                     <Flex>
@@ -166,7 +175,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       defaultValue={buch.rabatt}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}
-                    <FormMessage errors={errors} field="rabatt" />
+                    <FormMessage errors={actionData?.errors} field="rabatt" />
                   </Box>
                 </Flex>
                 <Flex alignItems="center">
