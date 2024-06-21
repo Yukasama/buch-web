@@ -145,7 +145,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const validated = BuchUpdateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return { errors: validated.error.errors }
+    return { errors: validated.error.issues }
   }
 
   await updateBookById({
