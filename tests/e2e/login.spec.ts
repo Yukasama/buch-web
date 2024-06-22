@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { logger } from '~/lib/logger'
 
 const username = 'admin'
 const password = 'p'
@@ -6,7 +7,8 @@ const wrongPassword = 'x'
 
 const prodUrl = 'https://buch-web.zenathra.com'
 
-test('successful admin login and logout', async ({ page }) => {
+test('successful admin login and logout', async ({ page, baseURL }) => {
+  logger.info('prodUrl', baseURL)
   await page.goto(prodUrl)
   await page.getByRole('link', { name: 'Sign In' }).click()
 
