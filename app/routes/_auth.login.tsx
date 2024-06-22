@@ -9,7 +9,7 @@ import {
   Flex,
 } from '@chakra-ui/react'
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { Form } from '@remix-run/react'
+import { Form, useNavigation } from '@remix-run/react'
 import authenticator from '~/services/auth.server'
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -26,6 +26,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Login() {
+  const navigation = useNavigation()
+
   return (
     <Center mt="120px">
       <Flex flexDir="column" width={400} gap={7}>
@@ -44,6 +46,7 @@ export default function Login() {
               <FormLabel>Username</FormLabel>
               <Input
                 name="username"
+                disabled={navigation.state === 'submitting'}
                 placeholder="Enter your username"
                 required
               />
@@ -53,12 +56,18 @@ export default function Login() {
               <Input
                 type="password"
                 name="password"
+                disabled={navigation.state === 'submitting'}
                 placeholder="Enter your password"
                 autoComplete="current-password"
                 required
               />
             </Box>
-            <Button colorScheme="blue" mt="12px" type="submit">
+            <Button
+              isLoading={navigation.state === 'submitting'}
+              colorScheme="blue"
+              mt="12px"
+              type="submit"
+            >
               Sign In
             </Button>
           </Flex>

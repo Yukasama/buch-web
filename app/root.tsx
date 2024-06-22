@@ -17,7 +17,7 @@ import {
   ClientStyleContext,
 } from './utils/chakra-ui/context'
 import { json, LoaderFunctionArgs } from '@remix-run/node'
-import NavBar from './components/layout/navigation-bar'
+import NavBar from './features/home/navigation-bar'
 import authenticator from './services/auth.server'
 
 export default function App() {

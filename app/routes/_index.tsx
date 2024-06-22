@@ -1,7 +1,7 @@
 import authenticator from '~/services/auth.server'
 import { Link, useLoaderData } from '@remix-run/react'
 import { LoaderFunctionArgs } from '@remix-run/node'
-import ImageCarousel from '../components/layout/image-carousel'
+import ImageCarousel from '../features/home/image-carousel'
 import { Stack, Text } from '@chakra-ui/react'
 
 // TODO: Workaround für Zertifikate finden

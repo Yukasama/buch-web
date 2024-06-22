@@ -55,7 +55,10 @@ export async function action({ request }: { request: Request }) {
   const validated = BuchCreateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('create [action] (invalid-fields): values=%o', validated)
-    return json({ errors: validated.error.errors }, { status: 400 })
+    return json(
+      { errors: validated.error.issues, error: '', id: '' },
+      { status: 400 },
+    )
   }
 
   const { id, error } = await createBook({
@@ -63,12 +66,13 @@ export async function action({ request }: { request: Request }) {
     access_token: user.access_token,
   })
 
-  return json({ id, error })
+  return json({ id, error, errors: [] })
 }
 
 export default function CreatePage() {
   const actionData = useActionData<typeof action>()
   const { remixUrl } = useLoaderData<typeof loader>()
+
   const toast = useToast()
   const navigation = useNavigation()
 
@@ -90,6 +94,8 @@ export default function CreatePage() {
         isClosable: true,
       })
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actionData])
 
   return (
@@ -113,6 +119,7 @@ export default function CreatePage() {
               placeholder="Enter Book Title"
               name="titelwrapper"
             />
+            {/* @ts-expect-error ts-remix-type-issue */}
             <FormMessage errors={actionData?.errors} field="titelwrapper" />
           </FormControl>
 
@@ -124,6 +131,7 @@ export default function CreatePage() {
               name="untertitelwrapper"
             />
             <FormMessage
+              // @ts-expect-error ts-remix-type-issue
               errors={actionData?.errors}
               field="untertitelwrapper"
             />
@@ -136,6 +144,7 @@ export default function CreatePage() {
               placeholder="Enter ISBN"
               name="isbn"
             />
+            {/* @ts-expect-error ts-remix-type-issue */}
             <FormMessage errors={actionData?.errors} field="isbn" />
           </FormControl>
 
@@ -147,7 +156,9 @@ export default function CreatePage() {
                 type="number"
                 placeholder="Enter Price"
                 name="preis"
+                step="any"
               />
+              {/* @ts-expect-error ts-remix-type-issue */}
               <FormMessage errors={actionData?.errors} field="preis" />
             </FormControl>
 
@@ -175,6 +186,8 @@ export default function CreatePage() {
                 <option value="KINDLE">KINDLE</option>
                 <option value="DRUCKAUSGABE">DRUCKAUSGABE</option>
               </Select>
+              {/* @ts-expect-error ts-remix-type-issue */}
+              <FormMessage errors={actionData?.errors} field="art" />
             </FormControl>
 
             <FormControl>
@@ -185,6 +198,7 @@ export default function CreatePage() {
                 placeholder="Enter Rating (1-5)"
                 name="rating"
               />
+              {/* @ts-expect-error ts-remix-type-issue */}
               <FormMessage errors={actionData?.errors} field="rating" />
             </FormControl>
           </Flex>
@@ -197,6 +211,7 @@ export default function CreatePage() {
               placeholder="Enter Homepage URL"
               name="homepage"
             />
+            {/* @ts-expect-error ts-remix-type-issue */}
             <FormMessage errors={actionData?.errors} field="homepage" />
           </FormControl>
 
