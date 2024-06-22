@@ -5,6 +5,7 @@
 # Generierte Dateien
 /.cache
 .DS_Store
+.scannerwork
 
 # dotenv environment variable files
 .env
