@@ -12,7 +12,7 @@
     "prettier": "prettier --write .",
     "e2e": "npx playwright test",
     "e2e:ui": "npx playwright test --ui",
-    "e2e:report": "npx playwright show-report",
+    "e2e:report": "pnpm exec playwright show-report",
     "e2e:codegen": "npx playwright codegen localhost:5173"
   },
   "dependencies": {
