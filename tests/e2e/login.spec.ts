@@ -8,7 +8,7 @@ const wrongPassword = 'x'
 const prodUrl = 'https://buch-web.zenathra.com'
 
 test('successful admin login and logout', async ({ page, baseURL }) => {
-  logger.info('prodUrl', baseURL)
+  logger.info('prodUrl=%s', baseURL)
   await page.goto(prodUrl)
   await page.getByRole('link', { name: 'Sign In' }).click()
 

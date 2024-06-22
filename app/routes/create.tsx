@@ -46,7 +46,7 @@ export async function action({ request }: { request: Request }) {
   const values = {
     ...data,
     preis: Number(data.preis),
-    // rabatt: Number(data.rabatt),
+    rabatt: Number(data.rabatt),
     rating: Number(data.rating),
     lieferbar: data.lieferbar === 'true',
     //schlagwoerter: formData.getAll('schlagwoerter') as string[],
@@ -163,17 +163,31 @@ export default function CreatePage() {
             </FormControl>
 
             <FormControl>
-              <FormLabel>Available</FormLabel>
-              <Select
+              <FormLabel>Discount</FormLabel>
+              <Input
                 disabled={navigation.state === 'submitting'}
-                placeholder="Is it available?"
-                name="lieferbar"
-              >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </Select>
+                type="number"
+                placeholder="Enter Discount"
+                name="rabatt"
+                defaultValue={0}
+                step="any"
+              />
+              {/* @ts-expect-error ts-remix-type-issue */}
+              <FormMessage errors={actionData?.errors} field="rabatt" />
             </FormControl>
           </Flex>
+
+          <FormControl>
+            <FormLabel>Available</FormLabel>
+            <Select
+              disabled={navigation.state === 'submitting'}
+              placeholder="Is it available?"
+              name="lieferbar"
+            >
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </Select>
+          </FormControl>
 
           <Flex gap={4}>
             <FormControl>
