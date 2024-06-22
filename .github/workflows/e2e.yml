@@ -2,8 +2,6 @@ name: e2e Tests CI
 
 on:
   deployment_status:
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
   test:

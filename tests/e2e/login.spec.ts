@@ -4,7 +4,7 @@ const username = 'admin'
 const password = 'p'
 const wrongPassword = 'x'
 
-const prodUrl = '/https://buch-web.zenathra.com'
+const prodUrl = 'https://buch-web.zenathra.com'
 
 test('successful admin login and logout', async ({ page }) => {
   await page.goto(prodUrl)
