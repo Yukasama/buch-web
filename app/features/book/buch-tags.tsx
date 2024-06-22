@@ -1,7 +1,7 @@
-import { Box, Flex, Icon, Button, Input } from '@chakra-ui/react'
+import { Box, Flex, Icon, Button, Input, useToast } from '@chakra-ui/react'
 import { useActionData, useFetcher } from '@remix-run/react'
 import { Check, Plus, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 import { action } from '~/routes/update-schlagwoerter.$id'
 import { User } from '~/utils/rest/login'
@@ -19,6 +19,7 @@ export const BuchTags = ({ buch, user }: Props) => {
   const [active, setActive] = useState(false)
   const [input, setInput] = useState('')
 
+  const toast = useToast()
   const isAdmin = user?.username === 'admin'
 
   const onSubmit = () => {
@@ -26,39 +27,43 @@ export const BuchTags = ({ buch, user }: Props) => {
       const updatedSchlagwoerter = [input.toUpperCase(), ...schlagwoerter]
       setSchlagwoerter(updatedSchlagwoerter)
       setInput('')
-
-      fetcher.submit(
-        {
-          schlagwoerter: updatedSchlagwoerter,
-          version: buch.version ?? '0',
-          access_token: user?.access_token ?? '',
-        },
-        {
-          action: `/update-schlagwoerter/${buch.id}`,
-          method: 'put',
-        },
-      )
+      submit(updatedSchlagwoerter)
     }
     setActive(false)
   }
 
   const onDeleteSubmit = (tag?: string) => {
-    setSchlagwoerter(schlagwoerter.filter((word) => word !== tag))
-    submit()
+    const updatedSchlagwoerter = schlagwoerter.filter((word) => word !== tag)
+    setSchlagwoerter(updatedSchlagwoerter)
+    submit(updatedSchlagwoerter)
   }
 
-  const submit = () =>
+  const submit = (schlagwoerter: string[]) => {
     fetcher.submit(
       {
         schlagwoerter,
         version: buch.version ?? '0',
-        access_token: user?.access_token ?? '',
       },
       {
         action: `/update-schlagwoerter/${buch.id}`,
         method: 'PUT',
       },
     )
+  }
+
+  useEffect(() => {
+    if (actionData?.error) {
+      toast({
+        title: 'Failed to update Book.',
+        description: actionData?.error,
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      })
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData])
 
   return (
     <Box>

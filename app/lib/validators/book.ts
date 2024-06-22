@@ -1,9 +1,12 @@
 import { z } from 'zod'
 
+// eslint-disable-next-line security/detect-unsafe-regex
+const isbnRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+
 export const BuchSchema = z.object({
   id: z.string(),
   version: z.string().optional(),
-  isbn: z.string().regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/),
+  isbn: z.string().regex(isbnRegex),
   rating: z.number().int(),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number().positive(),
@@ -26,15 +29,37 @@ export const BuchSchema = z.object({
     .optional(),
 })
 
+export const BuchCreateSchema = z.object({
+  isbn: z
+    .string()
+    .min(1, 'ISBN is required.')
+    .regex(isbnRegex, 'Invalid ISBN.'),
+  rating: z.number().min(1).max(5),
+  art: z
+    .enum(['DRUCKAUSGABE', 'KINDLE'])
+    .refine((val) => val === 'DRUCKAUSGABE' || val === 'KINDLE', {
+      message: "Type must be 'DRUCKAUSGABE' or 'KINDLE'.",
+    }),
+  preis: z.number().positive("Book can't be sold for 0 or lower."),
+  lieferbar: z.boolean().optional(),
+  homepage: z.string().url('Invalid Homepage.').optional(),
+  titelwrapper: z.string().min(1, 'Title is required.'),
+  untertitelwrapper: z.string().optional(),
+})
+
 export const BuchUpdateSchema = z.object({
   version: z.string(),
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
-    .regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/, 'Invalid ISBN.'),
+    .regex(isbnRegex, 'Invalid ISBN.'),
   rating: z.number().min(1).max(5),
-  art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
-  preis: z.number(),
+  art: z
+    .enum(['DRUCKAUSGABE', 'KINDLE'])
+    .refine((val) => val === 'DRUCKAUSGABE' || val === 'KINDLE', {
+      message: "Type must be 'DRUCKAUSGABE' or 'KINDLE'.",
+    }),
+  preis: z.number().positive("Book can't be sold for 0 or lower."),
   rabatt: z.number().min(0).max(1).optional(),
   lieferbar: z.boolean().optional(),
   homepage: z
@@ -42,27 +67,12 @@ export const BuchUpdateSchema = z.object({
     .min(1, 'Homepage is required.')
     .url('Invalid Homepage.')
     .optional(),
-  titelwrapper: z.string().min(1, 'Titel is required.'),
-  untertitelwrapper: z.string().min(1, 'Untertitel is required.').optional(),
-})
-
-export const BuchCreateSchema = z.object({
-  isbn: z
-    .string()
-    .min(1, 'ISBN is required.')
-    .regex(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/, 'Invalid ISBN.'),
-  rating: z.number().min(1).max(5),
-  art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
-  preis: z.number().positive(),
-  lieferbar: z.boolean(),
-  homepage: z.string().min(1, 'Homepage is required.').url('Invalid Homepage.'),
-  titelwrapper: z.string().min(1, 'Titel is required.'),
-  untertitelwrapper: z.string().min(1, 'Untertitel is required.'),
+  titelwrapper: z.string().min(1, 'Title is required.'),
+  untertitelwrapper: z.string().optional(),
 })
 
 export const BuchUpdateSchlagwoerterSchema = z.object({
   version: z.string(),
-  access_token: z.string(),
   schlagwoerter: z.string(),
 })
 

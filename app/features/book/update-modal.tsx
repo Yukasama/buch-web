@@ -61,6 +61,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       defaultValue={buch.titel.titel}
                     />
                     <FormMessage
+                      // @ts-expect-error ts-remix-type-issue
                       errors={actionData?.errors}
                       field="titelwrapper"
                     />
@@ -71,8 +72,8 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="untertitelwrapper"
                       defaultValue={buch.titel.untertitel}
                     />
-                    {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage
+                      // @ts-expect-error ts-remix-type-issue
                       errors={actionData?.errors}
                       field="untertitelwrapper"
                     />
@@ -157,6 +158,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <Input
                       type="number"
                       name="preis"
+                      step="any"
                       defaultValue={buch.preis}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}
@@ -167,6 +169,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <Input
                       name="rabatt"
                       type="number"
+                      step="any"
                       defaultValue={buch.rabatt * 100}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}

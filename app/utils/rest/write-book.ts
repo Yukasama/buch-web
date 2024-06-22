@@ -67,7 +67,7 @@ export const updateBookById = async ({
   access_token,
 }: {
   id: string
-  mutateData: BuchUpdate
+  mutateData: Partial<BuchUpdate>
   access_token: string
 }) => {
   logger.debug(
@@ -80,38 +80,23 @@ export const updateBookById = async ({
 
   const bookDb = await getBookById({ id })
 
-  const insertData = {
+  const payload = {
+    ...bookDb,
     ...mutateData,
-    titel: {
-      titel: mutateData.titelwrapper,
-      untertitel: mutateData.untertitelwrapper,
-    },
-    titelwrapper: undefined,
-    untertitelwrapper: undefined,
+    lieferbar: Number(mutateData.lieferbar) === 1,
   }
 
   try {
-    const response = await client.put(
-      `/rest/${id}`,
-      {
-        ...bookDb,
-        ...insertData,
+    const { headers } = await client.put(`/rest/${id}`, payload, {
+      headers: {
+        'If-Match': `"${mutateData.version}"`,
+        Authorization: `Bearer ${access_token}`,
       },
-      {
-        headers: {
-          'If-Match': `"${mutateData.version}"`,
-          Authorization: `Bearer ${access_token}`,
-        },
-      },
-    )
+    })
 
-    logger.debug(
-      'updateBookById (done): id=%s, version=%s',
-      id,
-      response.headers.ETag,
-    )
+    logger.debug('updateBookById (done): id=%s, version=%s', id, headers.ETag)
 
-    return { version: response.headers.ETag as string }
+    return { version: headers.ETag as string }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error(

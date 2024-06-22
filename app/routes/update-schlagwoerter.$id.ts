@@ -1,11 +1,8 @@
 import { ActionFunctionArgs, json } from '@remix-run/node'
-import { AxiosError } from 'axios'
-import { client } from '~/lib/axios-client'
 import { logger } from '~/lib/logger'
 import { BuchUpdateSchlagwoerterSchema } from '~/lib/validators/book'
 import authenticator from '~/services/auth.server'
-import { getBookById } from '~/utils/rest/read-books'
-import { formatErrorMsg } from '~/utils/rest/format-error-msg'
+import { updateBookById } from '~/utils/rest/write-book'
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const user = await authenticator.isAuthenticated(request)
@@ -31,11 +28,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return json({ error: 'Invalid fields' }, { status: 400 })
   }
 
-  const {
-    schlagwoerter: schlagwoerterStr,
-    version,
-    access_token,
-  } = validated.data
+  const { schlagwoerter: schlagwoerterStr, version } = validated.data
 
   let schlagwoerter = []
   try {
@@ -48,41 +41,16 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return json({ error: 'Invalid format for schlagwoerter' }, { status: 400 })
   }
 
-  const bookDb = await getBookById({ id: params.id })
-
-  const insertData = {
-    ...bookDb,
-    // schlagwoerter,
+  const mutateData = {
+    version,
+    schlagwoerter,
   }
 
-  console.log(insertData, 'insertData')
+  const { error, version: newVersion } = await updateBookById({
+    id: params.id,
+    mutateData,
+    access_token: user.access_token,
+  })
 
-  try {
-    const { headers } = await client.put(`/rest/${params.id}`, insertData, {
-      headers: {
-        'If-Match': `"${version}"`,
-        Authorization: `Bearer ${access_token}`,
-      },
-    })
-
-    logger.debug(
-      'updateSchlagwoerter [action] (done): id=%s, version=%s',
-      params.id,
-      headers.ETag,
-    )
-
-    return json({ version: headers.ETag as string })
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      logger.error(
-        'updateSchlagwoerter [action] (axios-error): message=%s',
-        error.message,
-      )
-      return { error: formatErrorMsg(error) }
-    } else {
-      logger.error('updateSchlagwoerter [action] (error): error=%s', error)
-    }
-
-    return json({ error: 'Internal Server Error' }, { status: 500 })
-  }
+  return { error, version: newVersion, errors: [] }
 }
