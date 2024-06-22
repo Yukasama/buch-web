@@ -144,7 +144,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const validated = BuchUpdateSchema.safeParse(values)
   if (!validated.success) {
     logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return json({ errors: validated.error.issues, error: '' }, { status: 400 })
+    return json(
+      { errors: validated.error.issues, error: '', version: '' },
+      { status: 400 },
+    )
   }
 
   const mutateData = {

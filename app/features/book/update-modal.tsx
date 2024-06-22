@@ -22,7 +22,7 @@ import {
   Badge,
 } from '@chakra-ui/react'
 import { Star } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Buch } from '~/lib/validators/book'
 import { Form, useActionData } from '@remix-run/react'
 import { action } from '~/routes/book.$id'
@@ -33,7 +33,15 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
+  const [version, setVersion] = useState(buch.version)
+
   const KINDS = ['KINDLE', 'DRUCKAUSGABE']
+
+  useEffect(() => {
+    if (actionData?.version) {
+      setVersion(actionData.version)
+    }
+  }, [actionData])
 
   return (
     <>
@@ -51,7 +59,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
           <ModalCloseButton />
           <ModalBody>
             <Form method="put">
-              <VisuallyHiddenInput name="version" defaultValue={buch.version} />
+              <VisuallyHiddenInput name="version" value={version} />
               <Stack gap={3}>
                 <Flex gap={3}>
                   <Box>

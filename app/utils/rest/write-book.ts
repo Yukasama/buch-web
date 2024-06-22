@@ -83,7 +83,10 @@ export const updateBookById = async ({
   const payload = {
     ...bookDb,
     ...mutateData,
-    lieferbar: Number(mutateData.lieferbar) === 1,
+    lieferbar:
+      'lieferbar' in mutateData
+        ? Boolean(mutateData.lieferbar)
+        : Boolean(bookDb?.lieferbar),
   }
 
   try {
@@ -94,9 +97,11 @@ export const updateBookById = async ({
       },
     })
 
-    logger.debug('updateBookById (done): id=%s, version=%s', id, headers.ETag)
+    const eTag = headers.etag as string | undefined
+    const currentVersion = eTag?.replace(/"/g, '') ?? '0'
+    logger.debug('updateBookById (done): id=%s, version=%s', id, currentVersion)
 
-    return { version: headers.ETag as string }
+    return { version: currentVersion }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error(
