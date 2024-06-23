@@ -10,11 +10,14 @@ dotenv.config()
 const username = 'admin'
 const password = 'p'
 
+const loginUrl = '/login'
+const homeUrl = '/'
+
 const titel = 'Titel'
 const subtitel = 'Subtitel'
-const isbn = generateISBN('ISBN-13') //'978-1-60309-511-2'
+const isbn = generateISBN('ISBN-13')
 const price = '20'
-const discount = '0.9'
+const discount = '10'
 const available = 'true'
 const type = 'KINDLE'
 const rating = '4'
@@ -33,8 +36,6 @@ const wrongPrice = '-1'
 const wrongDiscountHigh = '200'
 const wrongDiscountLow = '-1'
 
-const loginPageUrl = '/login'
-
 test.describe('authenticated', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
@@ -46,6 +47,11 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('password').fill(password)
 
     await page.getByRole('button', { name: 'Sign In' }).click()
+
+    await page.waitForURL(homeUrl)
+    const currentUrl = new URL(page.url())
+    expect(currentUrl.pathname).toBe(homeUrl)
+
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
   })
 
@@ -207,9 +213,9 @@ test('book not mutable due no login', async ({ page }) => {
 
   await page.goto('/create')
 
-  await page.waitForURL(`**${loginPageUrl}`)
+  await page.waitForURL(`**${loginUrl}`)
   const currentUrl = new URL(page.url())
-  expect(currentUrl.pathname).toBe(loginPageUrl)
+  expect(currentUrl.pathname).toBe(loginUrl)
 
   await page.goto(`/book/${updateId1}`)
   await expect(

@@ -11,26 +11,27 @@ import { formatErrorMsg } from './format-error-msg'
  * @returns Location with id of the created book
  */
 export const createBook = async ({
-  data,
+  insertData,
   access_token,
 }: {
-  data: BuchCreate
+  insertData: BuchCreate
   access_token: string
 }) => {
-  const insertData = {
-    ...data,
+  const payload = {
+    ...insertData,
     titel: {
-      titel: data.titelwrapper,
-      untertitel: data.untertitelwrapper,
+      titel: insertData.titelwrapper,
+      untertitel: insertData.untertitelwrapper,
     },
+    rabatt: Number(insertData.rabatt) / 100,
     titelwrapper: undefined,
     untertitelwrapper: undefined,
   }
 
-  logger.debug('createBook (attempt): data=%o', insertData)
+  logger.debug('createBook (attempt): payload=%o', payload)
 
   try {
-    const { headers } = await client.post('/rest', insertData, {
+    const { headers } = await client.post('/rest', payload, {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },

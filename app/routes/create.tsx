@@ -62,7 +62,7 @@ export async function action({ request }: { request: Request }) {
   }
 
   const { id, error } = await createBook({
-    data: validated.data,
+    insertData: validated.data,
     access_token: user.access_token,
   })
 
@@ -163,7 +163,7 @@ export default function CreatePage() {
             </FormControl>
 
             <FormControl>
-              <FormLabel>Discount</FormLabel>
+              <FormLabel>Discount in %</FormLabel>
               <Input
                 disabled={navigation.state === 'submitting'}
                 type="number"

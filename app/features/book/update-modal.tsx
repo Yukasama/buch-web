@@ -134,7 +134,8 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     gap={2}
                     my={2}
                     border="1px"
-                    borderColor="gray.600"
+                    borderColor={'gray.600'}
+                    opacity={navigation.state === 'submitting' ? 0.5 : 1}
                     borderRadius="lg"
                     p={2}
                     px={4}
@@ -149,6 +150,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                         as={Star}
                         onClick={() => setRating(i + 1)}
                         cursor="pointer"
+                        opacity={navigation.state === 'submitting' ? 0.5 : 1}
                         fill={i < rating ? 'white' : 'none'}
                       />
                     ))}

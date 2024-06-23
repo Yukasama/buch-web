@@ -44,7 +44,11 @@ export const BuchCreateSchema = z.object({
       message: "Type must be 'DRUCKAUSGABE' or 'KINDLE'.",
     }),
   preis: z.number().positive("Book can't be sold for 0 or lower."),
-  rabatt: z.number().min(0).max(1),
+  rabatt: z
+    .number()
+    .min(0, "Discount can't be less than 0%.")
+    .max(100, "Discount can't be more than 100%.")
+    .optional(),
   lieferbar: z.boolean().optional(),
   homepage: z.string().url('Invalid Homepage.').optional(),
   titelwrapper: z.string().min(1, 'Title is required.'),
