@@ -128,7 +128,16 @@ export const Layout = withEmotionCache(
 )
 
 export function ErrorBoundary() {
-  const error = useRouteError()
+  const thrownError = useRouteError()
+
+  let error
+  if (isRouteErrorResponse(thrownError)) {
+    error = `${thrownError.status} ${thrownError.statusText}`
+  } else if (thrownError instanceof Error) {
+    error = thrownError.message
+  } else {
+    error = 'Unknown Error'
+  }
 
   return (
     <html lang="en">
@@ -140,13 +149,7 @@ export function ErrorBoundary() {
       </head>
       <body>
         <Flex justifyContent="center" alignItems="center" pt={350}>
-          <h1>
-            {isRouteErrorResponse(error)
-              ? `${error.status} ${error.statusText}`
-              : error instanceof Error
-                ? error.message
-                : 'Unknown Error'}
-          </h1>
+          <h1>{error}</h1>
         </Flex>
         <Scripts />
       </body>

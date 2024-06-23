@@ -99,7 +99,13 @@ export const updateBookById = async ({
 
     const eTag = headers.etag as string | undefined
     const currentVersion = eTag?.replace(/"/g, '') ?? '0'
-    logger.debug('updateBookById (done): id=%s, version=%s', id, currentVersion)
+
+    logger.debug(
+      'updateBookById (done): id=%s, version=%s payload=%o',
+      id,
+      currentVersion,
+      payload,
+    )
 
     return { version: currentVersion }
   } catch (error) {

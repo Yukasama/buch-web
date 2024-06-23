@@ -94,6 +94,7 @@ export const BuchTags = ({ buch, user }: Props) => {
                 rounded="sm"
                 px={2}
                 display="flex"
+                aria-label="Add Tag"
                 onClick={() => setActive(true)}
               >
                 <Icon as={Plus} />
@@ -109,6 +110,7 @@ export const BuchTags = ({ buch, user }: Props) => {
                     w={24}
                     px={0.5}
                     rounded="sm"
+                    aria-label="Tag Input"
                     onChange={(e) => setInput(e.target.value)}
                   />
                   <Button
@@ -117,6 +119,7 @@ export const BuchTags = ({ buch, user }: Props) => {
                     size="sm"
                     rounded="sm"
                     fontSize="sm"
+                    aria-label="Confirm Tag"
                     type="submit"
                     onClick={onSubmit}
                   >
@@ -127,6 +130,7 @@ export const BuchTags = ({ buch, user }: Props) => {
                     h={5}
                     size="sm"
                     rounded="sm"
+                    aria-label="Discard Tag"
                     fontSize="sm"
                     onClick={() => setActive(false)}
                   >

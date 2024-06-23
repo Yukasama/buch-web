@@ -18,7 +18,7 @@ import {
   Button,
   Tooltip,
 } from '@chakra-ui/react'
-import StarRating from '../features/search/star-rating'
+import { StarRating } from '../features/search/star-rating'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from '@remix-run/react'
 import { Buch } from '../lib/validators/book'

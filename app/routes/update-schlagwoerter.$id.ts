@@ -25,7 +25,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const validated = BuchUpdateSchlagwoerterSchema.safeParse(data)
   if (!validated.success) {
     logger.debug('book [action] (invalid-fields): values=%o', validated)
-    return json({ error: 'Invalid fields' }, { status: 400 })
+    return json({ error: 'Invalid fields', version: '' }, { status: 400 })
   }
 
   const { schlagwoerter: schlagwoerterStr, version } = validated.data
@@ -38,7 +38,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
       'updateSchlagwoerter [action] Invalid JSON format for schlagwoerter: %o',
       data.schlagwoerter,
     )
-    return json({ error: 'Invalid format for schlagwoerter' }, { status: 400 })
+    return json(
+      { error: 'Invalid format for schlagwoerter', version: '' },
+      { status: 400 },
+    )
   }
 
   const mutateData = {
@@ -52,5 +55,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     access_token: user.access_token,
   })
 
-  return { error, version: newVersion, errors: [] }
+  return { error, version: newVersion }
 }

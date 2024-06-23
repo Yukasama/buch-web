@@ -7,17 +7,20 @@ export const BuchSchema = z.object({
   id: z.string(),
   version: z.string().optional(),
   isbn: z.string().regex(isbnRegex),
-  rating: z.number().int(),
+  rating: z.number().min(1).max(5),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number().positive(),
-  rabatt: z.number().nonnegative(),
-  lieferbar: z.boolean(),
-  datum: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  homepage: z.string().url(),
+  rabatt: z.number().min(1).max(5),
+  lieferbar: z.boolean().optional(),
+  datum: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  homepage: z.string().url().optional(),
   schlagwoerter: z.array(z.string()),
   titel: z.object({
     titel: z.string(),
-    untertitel: z.string(),
+    untertitel: z.string().optional(),
   }),
   abbildungen: z
     .array(

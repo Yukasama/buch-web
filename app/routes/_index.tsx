@@ -4,16 +4,9 @@ import { LoaderFunctionArgs } from '@remix-run/node'
 import ImageCarousel from '../features/home/image-carousel'
 import { Stack, Text } from '@chakra-ui/react'
 
-// TODO: Workaround für Zertifikate finden
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return await authenticator.isAuthenticated(request)
 }
-
-// export const action: ActionFunction = async ({ request }) => {
-//   await authenticator.logout(request, { redirectTo: '/login' })
-// }
 
 export default function Index() {
   const user = useLoaderData<typeof loader>()

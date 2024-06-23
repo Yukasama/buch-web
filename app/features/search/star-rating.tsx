@@ -4,11 +4,11 @@ import { Star } from 'lucide-react'
 
 interface StarRatingProps {
   maxStars?: number
-  rating: number // Add rating prop
-  setRating: (rating: number) => void // Add setRating prop
+  rating: number
+  setRating: (rating: number) => void
 }
 
-const StarRating: React.FC<StarRatingProps> = ({
+export const StarRating: React.FC<StarRatingProps> = ({
   maxStars = 5,
   rating,
   setRating,
@@ -27,44 +27,34 @@ const StarRating: React.FC<StarRatingProps> = ({
     setHoverIndex(null)
   }
 
-  // Reset hoverIndex when rating prop changes
   useEffect(() => {
     setHoverIndex(null)
   }, [rating])
 
   return (
     <Box display="flex" alignItems="center">
-      {Array.from({ length: maxStars }, (_, index) => (
-        <IconButton
-          key={index}
-          icon={
-            <Star
-              fill={
-                index < (hoverIndex !== null ? hoverIndex + 1 : rating)
-                  ? 'yellow'
-                  : 'none'
-              }
-            />
-          }
-          onClick={() => handleClick(index)}
-          onMouseEnter={() => handleMouseEnter(index)}
-          onMouseLeave={handleMouseLeave}
-          aria-label={`Rate ${index + 1} stars`}
-          variant="unstyled"
-          color={
-            index < (hoverIndex !== null ? hoverIndex + 1 : rating)
-              ? 'yellow.400'
-              : 'gray.300'
-          }
-          size="sm"
-          p={0} // Remove padding
-          m={0} // Remove margin
-          _hover={{ backgroundColor: 'transparent' }} // Remove background color on hover
-          _focus={{ boxShadow: 'none' }} // Remove focus ring
-        />
-      ))}
+      {Array.from({ length: maxStars }, (_, i) => {
+        const isCorrectIndex =
+          i < (hoverIndex !== null ? hoverIndex + 1 : rating)
+
+        return (
+          <IconButton
+            key={i}
+            icon={<Star fill={isCorrectIndex ? 'yellow' : 'none'} />}
+            onClick={() => handleClick(i)}
+            onMouseEnter={() => handleMouseEnter(i)}
+            onMouseLeave={handleMouseLeave}
+            aria-label={`Rate ${i + 1} stars`}
+            variant="unstyled"
+            color={isCorrectIndex ? 'yellow.400' : 'gray.300'}
+            size="sm"
+            p={0}
+            m={0}
+            _hover={{ backgroundColor: 'transparent' }}
+            _focus={{ boxShadow: 'none' }}
+          />
+        )
+      })}
     </Box>
   )
 }
-
-export default StarRating

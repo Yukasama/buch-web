@@ -1,4 +1,3 @@
-import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   Modal,
@@ -40,13 +39,14 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   useEffect(() => {
     if (actionData?.version) {
       setVersion(actionData.version)
+      onClose()
     }
-  }, [actionData])
+  }, [actionData, onClose])
 
   return (
     <>
-      <Button onClick={onOpen}>
-        <EditIcon />
+      <Button colorScheme="blue" onClick={onOpen}>
+        Edit Book
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -106,7 +106,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <Select name="art" defaultValue={buch.art}>
                     <option value={buch.art}>{buch.art}</option>
                     {KINDS.filter((map) => map !== buch.art).map((kind) => (
-                      <option key={kind} value={kind}>
+                      <option key={kind + '1'} value={kind}>
                         {kind}
                       </option>
                     ))}
@@ -131,7 +131,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       <>
                         {i < rating ? (
                           <Icon
-                            key={i + 'b'}
+                            key={i * rating + 'b'}
                             boxSize={18}
                             as={Star}
                             onClick={() => setRating(i + 1)}
@@ -156,7 +156,6 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       name="rating"
                       type="number"
                       value={rating}
-                      defaultValue={buch.rating}
                     />
                   </Flex>
                 </Box>
