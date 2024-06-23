@@ -20,8 +20,8 @@ const type = 'KINDLE'
 const rating = '4'
 const homepage = 'https://book.com'
 
-const updateId = process.env.NODE_ENV === 'production' ? '1000' : '1'
-const tag = 'Typescript'
+const updateId = process.env.NODE_ENV === 'production' ? '1003' : '1'
+const tag = 'typescript'
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/')
