@@ -28,7 +28,7 @@ jobs:
       - name: Run Playwright tests
         run: pnpm e2e
         env:
-          REMIX_URL: ${{ vars.REMIX_URL }}
+          REMIX_URL: 'https://buch-web.zenathra.com'
         # env:
         #   REMIX_URL: ${{ github.event.deployment_status.environment_url }}
 
