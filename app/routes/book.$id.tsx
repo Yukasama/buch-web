@@ -137,7 +137,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     ...data,
     rating: Number(data.rating),
     preis: Number(data.preis),
-    rabatt: Number(data.rabatt) / 100,
+    rabatt: Number(data.rabatt),
     lieferbar: 'lieferbar' in data,
   }
 
@@ -156,6 +156,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       titel: validated.data.titelwrapper,
       untertitel: validated.data.untertitelwrapper,
     },
+    rabatt: Number(data.rabatt) / 100,
     titelwrapper: undefined,
     untertitelwrapper: undefined,
   }

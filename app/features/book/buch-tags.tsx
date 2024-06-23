@@ -61,9 +61,7 @@ export const BuchTags = ({ buch, user }: Props) => {
         isClosable: true,
       })
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionData])
+  }, [actionData, toast])
 
   return (
     <Box>

@@ -23,12 +23,13 @@ import {
 import { Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Buch } from '~/lib/validators/book'
-import { Form, useActionData } from '@remix-run/react'
+import { Form, useActionData, useNavigation } from '@remix-run/react'
 import { action } from '~/routes/book.$id'
 import { FormMessage } from './form-message'
 
 export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const actionData = useActionData<typeof action>()
+  const navigation = useNavigation()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [rating, setRating] = useState(buch.rating)
@@ -66,6 +67,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <FormLabel>Title</FormLabel>
                     <Input
                       name="titelwrapper"
+                      disabled={navigation.state === 'submitting'}
                       defaultValue={buch.titel.titel}
                     />
                     <FormMessage
@@ -78,6 +80,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <FormLabel>Untertitel</FormLabel>
                     <Input
                       name="untertitelwrapper"
+                      disabled={navigation.state === 'submitting'}
                       defaultValue={buch.titel.untertitel}
                     />
                     <FormMessage
@@ -90,20 +93,32 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                 <Flex gap={3}>
                   <Box>
                     <FormLabel>ISBN</FormLabel>
-                    <Input name="isbn" defaultValue={buch.isbn} />
+                    <Input
+                      name="isbn"
+                      disabled={navigation.state === 'submitting'}
+                      defaultValue={buch.isbn}
+                    />
                     {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={actionData?.errors} field="isbn" />
                   </Box>
                   <Box>
                     <FormLabel>Homepage</FormLabel>
-                    <Input name="homepage" defaultValue={buch.homepage} />
+                    <Input
+                      name="homepage"
+                      disabled={navigation.state === 'submitting'}
+                      defaultValue={buch.homepage}
+                    />
                     {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={actionData?.errors} field="homepage" />
                   </Box>
                 </Flex>
                 <Box>
                   <FormLabel>Type</FormLabel>
-                  <Select name="art" defaultValue={buch.art}>
+                  <Select
+                    name="art"
+                    disabled={navigation.state === 'submitting'}
+                    defaultValue={buch.art}
+                  >
                     <option value={buch.art}>{buch.art}</option>
                     {KINDS.filter((map) => map !== buch.art).map((kind) => (
                       <option key={kind + '1'} value={kind}>
@@ -128,29 +143,14 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                       {rating}.0
                     </Text>
                     {Array.from({ length: 5 }, (_, i) => (
-                      <>
-                        {i < rating ? (
-                          <Icon
-                            key={i * rating + 'b'}
-                            boxSize={18}
-                            as={Star}
-                            onClick={() => setRating(i + 1)}
-                            cursor="pointer"
-                            fill="white"
-                          />
-                        ) : (
-                          <Icon
-                            key={i + 'a'}
-                            boxSize={18}
-                            as={Star}
-                            onClick={() => setRating(i + 1)}
-                            _hover={{
-                              cursor: 'pointer',
-                              fill: 'white',
-                            }}
-                          />
-                        )}
-                      </>
+                      <Icon
+                        key={i}
+                        boxSize={18}
+                        as={Star}
+                        onClick={() => setRating(i + 1)}
+                        cursor="pointer"
+                        fill={i < rating ? 'white' : 'none'}
+                      />
                     ))}
                     <VisuallyHiddenInput
                       name="rating"
@@ -165,6 +165,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <Input
                       type="number"
                       name="preis"
+                      disabled={navigation.state === 'submitting'}
                       step="any"
                       defaultValue={buch.preis}
                     />
@@ -176,8 +177,9 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     <Input
                       name="rabatt"
                       type="number"
+                      disabled={navigation.state === 'submitting'}
                       step="any"
-                      defaultValue={buch.rabatt * 100}
+                      defaultValue={(buch.rabatt * 100).toFixed(2)}
                     />
                     {/* @ts-expect-error ts-remix-type-issue */}
                     <FormMessage errors={actionData?.errors} field="rabatt" />
@@ -187,6 +189,7 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                   <FormLabel>In Stock</FormLabel>
                   <Checkbox
                     mb={2}
+                    disabled={navigation.state === 'submitting'}
                     name="lieferbar"
                     defaultChecked={!!buch.lieferbar}
                   />
@@ -197,7 +200,11 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                 <Button colorScheme="gray" mr={3} onClick={onClose}>
                   Close
                 </Button>
-                <Button colorScheme="blue" type="submit">
+                <Button
+                  colorScheme="blue"
+                  isLoading={navigation.state === 'submitting'}
+                  type="submit"
+                >
                   Update
                 </Button>
               </ModalFooter>
