@@ -36,7 +36,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
             </Flex>
 
             <Flex gap={2} alignItems="center" fontSize="small" color="gray.400">
-              <Text>Listenpreis:</Text>
+              <Text>Old Price:</Text>
               <Text as="del" fontWeight={500}>
                 {buch.preis}€
               </Text>
@@ -48,24 +48,24 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
           </Text>
         )}
         <Text fontSize="small" mt="5px" color="gray.400">
-          inkl. MwSt., zzgl. Versand
+          including VAT, plus shipping
         </Text>
       </Box>
 
       {buch.lieferbar ? (
         <Text color={lieferbarColor} fontSize="large">
-          Lieferbar
+          In Stock
         </Text>
       ) : (
         <Text color="red.400" fontSize="large">
-          Nicht lieferbar
+          Currently not in stock
         </Text>
       )}
       <Flex direction="column" gap={1}>
         {buch.lieferbar ? (
           <>
             <Flex gap={1.5}>
-              <Text fontSize="small">Versand durch:</Text>
+              <Text fontSize="small">Shipped by:</Text>
               <Text
                 fontSize="small"
                 color="blue.300"
@@ -76,7 +76,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
               </Text>
             </Flex>
             <Flex gap={1.5}>
-              <Text fontSize="small">Lieferung durch:</Text>
+              <Text fontSize="small">Delivered by:</Text>
               <Text
                 fontSize="small"
                 color="blue.300"
@@ -90,8 +90,8 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
         ) : null}
       </Flex>
       <Flex direction="column" gap={2} mt={2}>
-        <Button colorScheme="blue">Jetzt bestellen</Button>
-        <Button colorScheme="gray">In den Warenkorb</Button>
+        <Button colorScheme="blue">Buy now</Button>
+        <Button colorScheme="gray">Add to Cart</Button>
       </Flex>
     </GridItem>
   )

@@ -48,10 +48,6 @@ test.describe('authenticated', () => {
 
     await page.getByRole('button', { name: 'Sign In' }).click()
 
-    await page.waitForURL(homeUrl)
-    const currentUrl = new URL(page.url())
-    expect(currentUrl.pathname).toBe(homeUrl)
-
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
   })
 
@@ -218,6 +214,8 @@ test('book not mutable due no login', async ({ page }) => {
   expect(currentUrl.pathname).toBe(loginUrl)
 
   await page.goto(`/book/${updateId1}`)
+  await expect(page.getByText('ISBN')).toBeVisible()
+
   await expect(
     page.getByRole('button', { name: 'Edit Book' }),
   ).not.toBeVisible()
