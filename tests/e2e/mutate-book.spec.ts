@@ -11,7 +11,6 @@ const username = 'admin'
 const password = 'p'
 
 const loginUrl = '/login'
-const homeUrl = '/'
 
 const titel = 'Titel'
 const subtitel = 'Subtitel'
