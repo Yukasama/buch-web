@@ -74,7 +74,7 @@
     "eslint-plugin-sonarjs": "0.24.0",
     "prettier": "^3.3.2",
     "sonarqube-scanner": "^3.5.0",
-    "typescript": "^5.5.2",
+    "typescript": "~5.3.3",
     "vite": "^5.3.1",
     "vite-tsconfig-paths": "^4.3.2"
   }

@@ -121,5 +121,6 @@ module.exports = {
     'build',
     '__generated__',
     '.eslintrc.cjs',
+    'scripts/*',
   ],
 }

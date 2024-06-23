@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto'
+
 function generateChecksum10(isbn: string) {
   let sum = 0
   for (let i = 0; i < 9; i++) {
@@ -16,17 +18,22 @@ function generateChecksum13(isbn: string) {
   return checksum === 10 ? '0' : checksum.toString()
 }
 
+function getSecureRandomDigit(): number {
+  const randomBuffer = randomBytes(1)
+  return randomBuffer[0] % 10
+}
+
 export function generateISBN(type: string) {
   let isbn = ''
   if (type === 'ISBN-10') {
     for (let i = 0; i < 9; i++) {
-      isbn += Math.floor(Math.random() * 10)
+      isbn += getSecureRandomDigit().toString()
     }
     isbn += generateChecksum10(isbn)
   } else if (type === 'ISBN-13') {
-    isbn = '978' // Most ISBN-13 codes start with 978
+    isbn = '978'
     for (let i = 3; i < 12; i++) {
-      isbn += Math.floor(Math.random() * 10)
+      isbn += getSecureRandomDigit().toString()
     }
     isbn += generateChecksum13(isbn)
   }
