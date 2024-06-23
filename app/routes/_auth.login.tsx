@@ -12,16 +12,16 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useNavigation } from '@remix-run/react'
 import authenticator from '~/services/auth.server'
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/',
+  })
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   return await authenticator.authenticate('form', request, {
     successRedirect: '/',
     failureRedirect: '/login',
-  })
-}
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  return await authenticator.isAuthenticated(request, {
-    successRedirect: '/',
   })
 }
 
@@ -76,5 +76,3 @@ export default function Login() {
     </Center>
   )
 }
-
-// {/* {loaderData?.error ? <p>ERROR: {loaderData?.error?.message}</p> : null} */}
