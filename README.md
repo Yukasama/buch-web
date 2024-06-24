@@ -1,46 +1,24 @@
-# Welcome to Remix + Vite
+# Buch-Web
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
+## Setup
 
-## Time Recording
-
-[Excell Sheet](https://docs.google.com/spreadsheets/d/1oLMuQetIe_q7bHLv5ST57yzq3hoEpzUm/edit?usp=sharing&ouid=109904203276183428284&rtpof=true&sd=true)
-
-## Install
-
-```shellscript
-pnpm install
-```
-
-## Development
-
-Run the Vite dev server:
-
-```shellscript
+```bash
+pnpm i
 pnpm dev
 ```
 
-## Deployment
+### Features
 
-First, build your app for production:
-
-```sh
-pnpm build
-```
-
-Then run the app in production mode:
-
-```sh
-pnpm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### DIY
-
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
-
-Make sure to deploy the output of `pnpm build`
-
-- `build/server`
-- `build/client`
+- React Framework: Remix
+- Type Checking: TypeScript
+- Authentication: Keycloak + Remix-Auth
+- Logging: Pino
+- e2e Tests: Playwright
+- CSS Framework: Chakra UI
+- Validation: Zod
+- HTTP Client: Axios
+- Icons: Lucide-React
+- Formatter: Prettier
+- Code Analysis: ESLint(-Plugins) + SonarQube
+- Documentation: PlantUML
+- Bundler: Vite
