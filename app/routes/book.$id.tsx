@@ -39,7 +39,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
 export default function BookPage() {
   const { buch, user } = useLoaderData<typeof loader>()
-  const isAdmin = user?.username === 'admin'
+  const isAdmin = user?.role?.includes('admin')
 
   return (
     <SimpleGrid
@@ -122,7 +122,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     throw new Response('Unauthorized', { status: 401 })
   }
 
-  const isAdmin = user.username === 'admin'
+  const isAdmin = user?.role?.includes('admin')
   if (!isAdmin) {
     throw new Response('No Access', { status: 403 })
   }

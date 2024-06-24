@@ -9,17 +9,18 @@ import { client } from '~/lib/axios-client'
  */
 export const getAllBooks = async () => {
   try {
-    const { data }: AxiosResponse<{ _embedded: Buch[] }> =
-      await client.get(`/rest`)
-    logger.debug('getAllBooks (done) length=%s', data._embedded.length)
-    return data._embedded
+    const { data }: AxiosResponse<{ _embedded: { buecher: Buch[] } }> =
+      await client.get('/rest')
+    logger.debug('getAllBooks (done) length=%s', data._embedded.buecher.length)
+    return { data: data._embedded.buecher }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('getAllBooks (axios-error): message=%s', error.message)
+      return { error: error.message }
     } else {
       logger.error('getAllBooks (error): error=%s', error)
     }
-    return []
+    return { error: 'Unknown error' }
   }
 }
 

@@ -9,7 +9,7 @@ dotenv.config()
 export const loginPath = `${process.env.NEST_BACKEND_URL}/auth/login`
 
 export const login = async (username: string, password: string) => {
-  const headers: Record<string, string> = {
+  const headers = {
     'Content-Type': 'application/x-www-form-urlencoded', // eslint-disable-line @typescript-eslint/naming-convention
   }
   const response: AxiosResponse<LoginResult> = await client.post(
@@ -17,7 +17,7 @@ export const login = async (username: string, password: string) => {
     `username=${username}&password=${password}`,
     { headers },
   )
-  logger.debug('login (success)')
+  logger.debug('login (done): username=%s, password=%s', username, password)
 
   return {
     username: username,

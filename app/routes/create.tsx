@@ -25,10 +25,11 @@ import { FormMessage } from '~/features/book/form-message'
 import { logger } from '~/lib/logger'
 import authenticator from '~/services/auth.server'
 import { useEffect } from 'react'
+import { BOOK_KINDS } from '~/config/book'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request)
-  if (!user || !user.role.includes('admin')) {
+  if (!user?.role?.includes('admin')) {
     return redirect('/login')
   }
 
@@ -178,10 +179,10 @@ export default function CreatePage() {
           </Flex>
 
           <FormControl>
-            <FormLabel>Available</FormLabel>
+            <FormLabel>In Stock</FormLabel>
             <Select
               disabled={navigation.state === 'submitting'}
-              placeholder="Is it available?"
+              placeholder="Is it in stock?"
               name="lieferbar"
             >
               <option value="true">Yes</option>
@@ -192,16 +193,14 @@ export default function CreatePage() {
           <Flex gap={4}>
             <FormControl>
               <FormLabel>Type</FormLabel>
-              <Select
-                disabled={navigation.state === 'submitting'}
-                placeholder="Select book type"
-                name="art"
-              >
+              <Select name="art" disabled={navigation.state === 'submitting'}>
                 <option value="KINDLE">KINDLE</option>
-                <option value="DRUCKAUSGABE">DRUCKAUSGABE</option>
+                {BOOK_KINDS.filter((map) => map !== 'KINDLE').map((kind) => (
+                  <option key={kind + '1'} value={kind}>
+                    {kind}
+                  </option>
+                ))}
               </Select>
-              {/* @ts-expect-error ts-remix-type-issue */}
-              <FormMessage errors={actionData?.errors} field="art" />
             </FormControl>
 
             <FormControl>

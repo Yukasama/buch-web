@@ -8,7 +8,7 @@ import {
   Input,
   Box,
 } from '@chakra-ui/react'
-import { ThemeToggle } from '../../components/layout/theme-toggle'
+import { ThemeToggle } from '../../components/theme-toggle'
 import type { User } from '~/utils/rest/login'
 
 const NavBar = ({ user }: { user?: User | null }) => {
@@ -28,13 +28,16 @@ const NavBar = ({ user }: { user?: User | null }) => {
               cursor="pointer"
             />
           </Link>
-          {user?.role.includes('admin') ? (
-            <Button as={Link} href="/create" size="sm">
+          {user?.role?.includes('admin') ? (
+            <Button
+              as={Link}
+              href="/create"
+              size="sm"
+              _hover={{ textDecoration: 'none' }}
+            >
               New Book
             </Button>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </Flex>
         <Flex justifyContent="center" flex="1">
           <Form action="/search">
@@ -53,7 +56,13 @@ const NavBar = ({ user }: { user?: User | null }) => {
                   </Button>
                 </Form>
               ) : (
-                <Button as={Link} href="/login" size="sm" colorScheme="blue">
+                <Button
+                  as={Link}
+                  href="/login"
+                  size="sm"
+                  colorScheme="blue"
+                  _hover={{ textDecoration: 'none' }}
+                >
                   Sign In
                 </Button>
               )}

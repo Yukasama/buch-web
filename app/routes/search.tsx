@@ -17,15 +17,26 @@ import {
   Td,
   Button,
   Tooltip,
+  Flex,
+  Skeleton,
+  Badge,
 } from '@chakra-ui/react'
 import { StarRating } from '../features/search/star-rating'
-import { useState, useEffect } from 'react'
-import { useSearchParams } from '@remix-run/react'
+import { useState, useEffect, Suspense } from 'react'
+import { Await, useLoaderData, useSearchParams } from '@remix-run/react'
 import { Buch } from '../lib/validators/book'
 import { getAllBooks } from '../utils/rest/read-books'
 import { Info } from 'lucide-react'
+import { json } from '@remix-run/node'
+
+export const loader = async () => {
+  const { data: books, error } = await getAllBooks()
+  return json({ books, error })
+}
 
 export default function SearchPage() {
+  const { books, error } = useLoaderData<typeof loader>()
+
   const [searchQuery, setSearchQuery] = useState('')
   const [isbnQuery, setIsbnQuery] = useState('')
   const [isTypeScript, setIsTypeScript] = useState(false)
@@ -33,42 +44,23 @@ export default function SearchPage() {
   const [selectedValueBookType, setSelectedValueBookType] = useState('')
   const [rating, setRating] = useState(0)
   const [searchParams] = useSearchParams()
-  const [searchResults, setSearchResults] = useState<Buch[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [books, setBooks] = useState<Buch[]>([])
+  const [searchResults, setSearchResults] = useState<Buch[] | undefined>(books)
 
   useEffect(() => {
-    const query = searchParams.get('query')
+    const query = searchParams.get('q')
     if (query) {
       if (/^\d{10}$|^\d{13}$/.test(query)) {
-        setIsbnQuery(query)
-      } else {
-        setSearchQuery(query)
+        return setIsbnQuery(query)
       }
+      setSearchQuery(query)
     }
   }, [searchParams])
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      setIsLoading(true)
-      setError('')
+    handleSearchClick()
 
-      try {
-        const booksData: Buch[] = await getAllBooks()
-
-        setBooks(booksData)
-        setSearchResults(booksData)
-      } catch (error) {
-        setError('Error fetching books data')
-        console.error('Error fetching books:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    void fetchBooks()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResults])
 
   const resetInputs = () => {
     setSearchQuery('')
@@ -81,29 +73,29 @@ export default function SearchPage() {
   }
 
   const handleSearchClick = () => {
-    const filteredBooks = books.filter((book) => {
+    const filteredBooks = books?.filter((book) => {
       const matchesSearchQuery = searchQuery
-        ? book.titel.titel.toLowerCase().includes(searchQuery.toLowerCase())
+        ? book?.titel.titel.toLowerCase().includes(searchQuery.toLowerCase())
         : true
-      const normalizedIsbn = book.isbn.replace(/-/g, '')
+      const normalizedIsbn = book?.isbn.replace(/-/g, '')
       const normalizedQuery = isbnQuery.replace(/-/g, '').trim()
       const matchesIsbnQuery = isbnQuery
-        ? normalizedIsbn.toString() === normalizedQuery.toString()
+        ? normalizedIsbn?.toString() === normalizedQuery.toString()
         : true
       const matchesTypeScript = isTypeScript
-        ? book.schlagwoerter?.some(
+        ? book?.schlagwoerter?.some(
             (keyword) => keyword.toLowerCase() === 'typescript',
           )
         : true
       const matchesJavaScript = isJavaScript
-        ? book.schlagwoerter?.some(
+        ? book?.schlagwoerter?.some(
             (keyword) => keyword.toLowerCase() === 'javascript',
           )
         : true
       const matchesBookType = selectedValueBookType
-        ? book.art.toUpperCase() === selectedValueBookType.toUpperCase()
+        ? book?.art.toUpperCase() === selectedValueBookType.toUpperCase()
         : true
-      const matchesRating = rating ? book.rating === rating : true
+      const matchesRating = rating ? book?.rating === rating : true
 
       return (
         matchesSearchQuery &&
@@ -125,14 +117,7 @@ export default function SearchPage() {
           Search for Books
         </Heading>
       </Box>
-      <div
-        style={{
-          display: 'flex',
-          gap: '20px',
-          marginBottom: '20px',
-          alignItems: 'center',
-        }}
-      >
+      <Flex gap="20px" mb="20px" alignItems="center">
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -161,13 +146,10 @@ export default function SearchPage() {
           <Tooltip
             label={
               <>
-                Erlaubte Formate:
-                <br />
-                123-1-123-12345-1
-                <br />
-                oder
-                <br />
-                1234567890123
+                <p>Erlaubte Formate:</p>
+                <p>123-1-123-12345-1</p>
+                <p>oder</p>
+                <p>1234567890123</p>
               </>
             }
             aria-label="ISBN info"
@@ -183,7 +165,7 @@ export default function SearchPage() {
             />
           </Tooltip>
         </Box>
-      </div>
+      </Flex>
 
       <HStack spacing="40px">
         <VStack align="start" spacing={2}>
@@ -234,47 +216,55 @@ export default function SearchPage() {
         </Button>
       </Box>
 
-      {isLoading && <Text>Loading...</Text>}
-      {error && <Text color="red.500">Error: {error}</Text>}
-      {!isLoading && !error && (
-        <Table variant="simple" mt="15px">
-          <Thead>
-            <Tr>
-              <Th>Titel</Th>
-              <Th>ISBN</Th>
-              <Th>Preis</Th>
-              <Th>Rating</Th>
-              <Th>Art</Th>
-              <Th>Rabatt</Th>
-              <Th>Lieferbar</Th>
-              <Th>Datum</Th>
-              <Th>Homepage</Th>
-              <Th>Schlagwörter</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {searchResults.length > 0 ? (
-              searchResults.map((row) => (
-                <Tr key={row.id}>
-                  <Td>{row.titel.titel}</Td>
-                  <Td>{row.isbn}</Td>
-                  <Td>{row.preis}</Td>
-                  <Td>{row.rating}</Td>
-                  <Td>{row.art}</Td>
-                  <Td>{row.rabatt}</Td>
-                  <Td>{row.lieferbar ? 'True' : 'False'}</Td>
-                  <Td>{row.datum}</Td>
-                  <Td>{row.homepage}</Td>
-                  <Td>{row.schlagwoerter?.join(', ')}</Td>
-                </Tr>
-              ))
-            ) : (
-              <Tr>
-                <Td colSpan={10}>Keine Ergebnisse gefunden</Td>
-              </Tr>
+      {error ? (
+        <Badge colorScheme="red" alignSelf="center">
+          {error}
+        </Badge>
+      ) : (
+        <Suspense fallback={<Skeleton />}>
+          <Await resolve={searchResults}>
+            {(searchResults) => (
+              <Table variant="simple" mt="15px">
+                <Thead>
+                  <Tr>
+                    <Th>Titel</Th>
+                    <Th>ISBN</Th>
+                    <Th>Preis</Th>
+                    <Th>Rating</Th>
+                    <Th>Art</Th>
+                    <Th>Rabatt</Th>
+                    <Th>Lieferbar</Th>
+                    <Th>Datum</Th>
+                    <Th>Homepage</Th>
+                    <Th>Schlagwörter</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {(searchResults?.length ?? 0) > 0 ? (
+                    searchResults?.map((row) => (
+                      <Tr key={row.id}>
+                        <Td>{row.titel.titel}</Td>
+                        <Td>{row.isbn}</Td>
+                        <Td>{row.preis}</Td>
+                        <Td>{row.rating}</Td>
+                        <Td>{row.art}</Td>
+                        <Td>{row.rabatt}</Td>
+                        <Td>{row.lieferbar ? 'True' : 'False'}</Td>
+                        <Td>{row.datum}</Td>
+                        <Td>{row.homepage}</Td>
+                        <Td>{row.schlagwoerter?.join(', ')}</Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={10}>Keine Ergebnisse gefunden</Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
             )}
-          </Tbody>
-        </Table>
+          </Await>
+        </Suspense>
       )}
     </Container>
   )

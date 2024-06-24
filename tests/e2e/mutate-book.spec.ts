@@ -46,7 +46,6 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('password').fill(password)
 
     await page.getByRole('button', { name: 'Sign In' }).click()
-
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
   })
 
@@ -55,7 +54,7 @@ test.describe('authenticated', () => {
   })
 
   test('create book', async ({ page }) => {
-    await page.getByRole('link', { name: 'Lets Create' }).click()
+    await page.getByRole('link', { name: 'New Book' }).click()
 
     await page.getByPlaceholder('Enter Book Title').click()
     await page.getByPlaceholder('Enter Book Title').fill(titel)
@@ -67,7 +66,7 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('Enter Price').fill(price)
     await page.getByPlaceholder('Enter Discount').click()
     await page.getByPlaceholder('Enter Discount').fill(discount)
-    await page.getByLabel('Available').selectOption(available)
+    await page.getByLabel('In Stock').selectOption(available)
     await page.getByLabel('Type').selectOption(type)
     await page.getByPlaceholder('Enter Rating (1-5)').click()
     await page.getByPlaceholder('Enter Rating (1-5)').fill(rating)
@@ -79,6 +78,22 @@ test.describe('authenticated', () => {
     await page.getByRole('link', { name: 'View Book at: http://' }).click()
     const bookPage = await createPopup
     expect(bookPage.url()).toContain('/book/')
+  })
+
+  test('check create validation', async ({ page }) => {
+    await page.getByRole('link', { name: 'New Book' }).click()
+
+    await page.getByRole('button', { name: 'Create' }).click()
+
+    await expect(page.getByText('Title is required.')).toBeVisible()
+    await expect(page.getByText('ISBN is required.')).toBeVisible()
+    await expect(
+      page.getByText("Book can't be sold for 0 or lower."),
+    ).toBeVisible()
+    await expect(
+      page.getByText('Number must be greater than or equal to 1'),
+    ).toBeVisible()
+    await expect(page.getByText('Invalid Homepage.')).toBeVisible()
   })
 
   test('update book data', async ({ page }) => {
@@ -109,7 +124,7 @@ test.describe('authenticated', () => {
     await expect(page.getByText(tag)).toBeVisible()
   })
 
-  test('check book validation', async ({ page }) => {
+  test('check update validation', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
     await page.getByRole('button', { name: 'Edit Book' }).click()
 
@@ -202,9 +217,7 @@ test.describe('authenticated', () => {
 test('book not mutable due no login', async ({ page }) => {
   await page.goto('/')
 
-  await expect(
-    page.getByRole('link', { name: 'Lets Create' }),
-  ).not.toBeVisible()
+  await expect(page.getByRole('link', { name: 'New Book' })).not.toBeVisible()
 
   await page.goto('/create')
 

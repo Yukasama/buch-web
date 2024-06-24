@@ -26,6 +26,7 @@ import { Buch } from '~/lib/validators/book'
 import { Form, useActionData, useNavigation } from '@remix-run/react'
 import { action } from '~/routes/book.$id'
 import { FormMessage } from './form-message'
+import { BOOK_KINDS } from '~/config/book'
 
 export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
   const actionData = useActionData<typeof action>()
@@ -34,8 +35,6 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
 
   const [rating, setRating] = useState(buch.rating)
   const [version, setVersion] = useState(buch.version)
-
-  const KINDS = ['KINDLE', 'DRUCKAUSGABE']
 
   useEffect(() => {
     if (actionData?.version) {
@@ -120,11 +119,13 @@ export const UpdateModal = ({ buch }: Readonly<{ buch: Buch }>) => {
                     defaultValue={buch.art}
                   >
                     <option value={buch.art}>{buch.art}</option>
-                    {KINDS.filter((map) => map !== buch.art).map((kind) => (
-                      <option key={kind + '1'} value={kind}>
-                        {kind}
-                      </option>
-                    ))}
+                    {BOOK_KINDS.filter((map) => map !== buch.art).map(
+                      (kind) => (
+                        <option key={kind + '1'} value={kind}>
+                          {kind}
+                        </option>
+                      ),
+                    )}
                   </Select>
                 </Box>
                 <Box>

@@ -10,7 +10,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     throw new Response('Unauthorized', { status: 401 })
   }
 
-  const isAdmin = user.username === 'admin'
+  const isAdmin = user?.role?.includes('admin')
   if (!isAdmin) {
     throw new Response('No Access', { status: 403 })
   }

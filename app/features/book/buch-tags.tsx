@@ -20,7 +20,7 @@ export const BuchTags = ({ buch, user }: Props) => {
   const [input, setInput] = useState('')
 
   const toast = useToast()
-  const isAdmin = user?.username === 'admin'
+  const isAdmin = user?.role?.includes('admin')
 
   const onSubmit = () => {
     if (input) {

@@ -37,7 +37,10 @@ export const BuchCreateSchema = z.object({
     .string()
     .min(1, 'ISBN is required.')
     .regex(isbnRegex, 'Invalid ISBN.'),
-  rating: z.number().min(1).max(5),
+  rating: z
+    .number()
+    .min(1, 'Rating must be atleast 1 Star')
+    .max(5, "Rating can't be more than 5 Stars."),
   art: z
     .enum(['DRUCKAUSGABE', 'KINDLE'])
     .refine((val) => val === 'DRUCKAUSGABE' || val === 'KINDLE', {
@@ -61,7 +64,10 @@ export const BuchUpdateSchema = z.object({
     .string()
     .min(1, 'ISBN is required.')
     .regex(isbnRegex, 'Invalid ISBN.'),
-  rating: z.number().min(1).max(5),
+  rating: z
+    .number()
+    .min(1, 'Rating must be atleast 1 Star')
+    .max(5, "Rating can't be more than 5 Stars."),
   art: z
     .enum(['DRUCKAUSGABE', 'KINDLE'])
     .refine((val) => val === 'DRUCKAUSGABE' || val === 'KINDLE', {
