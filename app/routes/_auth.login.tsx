@@ -23,11 +23,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   try {
-    const user = await authenticator.authenticate('form', request, {
+    return await authenticator.authenticate('form', request, {
       successRedirect: '/',
       throwOnError: true,
     })
-    return user
   } catch (error) {
     if (error instanceof Response) return error
     if (error instanceof AuthorizationError) {
@@ -39,10 +38,11 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Login() {
   const navigation = useNavigation()
   const toast = useToast()
-  const actionData = useActionData()
-  // logger.debug('actionData: actionData=%o', actionData.cause.status)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const actionData = useActionData<typeof action>()
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (actionData?.cause.status === 401) {
       toast({
         title: 'Sign in failed',

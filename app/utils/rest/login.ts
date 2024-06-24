@@ -18,13 +18,16 @@ export const login = async (username: string, password: string) => {
     { headers },
   )
   logger.debug('login (success)')
+
   return {
     username: username,
     access_token: response.data.access_token,
     refresh_token: response.data.refresh_token,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    role: jwtDecode(response.data.access_token).resource_access['buch-client']
-      .roles,
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+    role: (jwtDecode(response.data.access_token) as any).resource_access[
+      'buch-client'
+    ].roles,
   }
 }
 
