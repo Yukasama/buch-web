@@ -7,9 +7,12 @@ import {
   Center,
   Image,
   Flex,
+  useToast,
 } from '@chakra-ui/react'
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { Form, useNavigation } from '@remix-run/react'
+import { Form, useNavigation, useActionData } from '@remix-run/react'
+import { useEffect } from 'react'
+import { AuthorizationError } from 'remix-auth'
 import authenticator from '~/services/auth.server'
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -19,14 +22,39 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  return await authenticator.authenticate('form', request, {
-    successRedirect: '/',
-    throwOnError: true,
-  })
+  try {
+    const user = await authenticator.authenticate('form', request, {
+      successRedirect: '/',
+      throwOnError: true,
+    })
+    return user
+  } catch (error) {
+    if (error instanceof Response) return error
+    if (error instanceof AuthorizationError) {
+      return error
+    }
+  }
 }
 
 export default function Login() {
   const navigation = useNavigation()
+  const toast = useToast()
+  const actionData = useActionData()
+  // logger.debug('actionData: actionData=%o', actionData.cause.status)
+
+  useEffect(() => {
+    if (actionData?.cause.status === 401) {
+      toast({
+        title: 'Sign in failed',
+        description: 'Credentials are incorrect',
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      })
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionData])
 
   return (
     <Center mt="120px">

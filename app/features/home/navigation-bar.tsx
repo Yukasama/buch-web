@@ -28,12 +28,10 @@ const NavBar = ({ user }: { user?: User | null }) => {
               cursor="pointer"
             />
           </Link>
-          {user ? (
-            <Form method="post" action="/logout">
-              <Button as={Link} href="/create" size="sm">
-                New Book
-              </Button>
-            </Form>
+          {user?.role.includes('admin') ? (
+            <Button as={Link} href="/create" size="sm">
+              New Book
+            </Button>
           ) : (
             <></>
           )}

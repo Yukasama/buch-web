@@ -28,7 +28,7 @@ import { useEffect } from 'react'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request)
-  if (!user) {
+  if (!user || !user.role.includes('admin')) {
     return redirect('/login')
   }
 

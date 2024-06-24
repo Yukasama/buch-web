@@ -10,3 +10,7 @@ export async function action() {
     },
   })
 }
+
+export function loader() {
+  return redirect('/')
+}
