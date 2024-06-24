@@ -7,42 +7,25 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
+  env: {
+    browser: true,
+    commonjs: true,
+    es6: true,
+  },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true,
     ecmaVersion: 'latest',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
+      impliedStrict: true,
     },
   },
-  env: {
-    browser: true,
-    commonjs: true,
-    es6: true,
-  },
 
-  // Base config
-  extends: [
-    'plugin:@typescript-eslint/recommended-type-checked',
-    'plugin:@typescript-eslint/stylistic-type-checked',
-    'eslint:recommended',
-    'plugin:prettier/recommended',
-    'plugin:sonarjs/recommended',
-    'plugin:promise/recommended',
-    'plugin:security/recommended-legacy',
-    'plugin:security-node/recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:import/typescript',
-    'plugin:@eslint-community/eslint-comments/recommended',
-    'plugin:regexp/recommended',
-    // 'plugin:jest/recommended',
-    // 'plugin:jest/style',
-    // 'plugin:jest-formatting/strict',
-  ],
-
-  // Base plugins
   plugins: [
+    '@typescript-eslint',
+    'unicorn', 
     'sonarjs',
     'prettier',
     'promise',
@@ -51,21 +34,41 @@ module.exports = {
     'prefer-arrow',
     'regexp',
     '@stylistic',
-    'jest',
-    'jest-formatting',
+    'react', 
+    'jsx-a11y',
+    'import',
   ],
 
+  extends: [
+    'plugin:@typescript-eslint/recommended-type-checked',
+    'plugin:@typescript-eslint/stylistic-type-checked',
+    'plugin:@typescript-eslint/recommended',
+    'eslint:recommended',
+    'plugin:unicorn/recommended',
+    'plugin:prettier/recommended',
+    'plugin:sonarjs/recommended',
+    'plugin:n/recommended',
+    'plugin:promise/recommended',
+    'plugin:security/recommended-legacy',
+    'plugin:security-node/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+    'plugin:@eslint-community/eslint-comments/recommended',
+    'plugin:regexp/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
+  ],
+
+  rules: {
+    'unicorn/naming-convention': 'off',
+  },
+
   overrides: [
-    // React
     {
       files: ['**/*.{js,jsx,ts,tsx}'],
-      plugins: ['react', 'jsx-a11y'],
-      extends: [
-        'plugin:react/recommended',
-        'plugin:react/jsx-runtime',
-        'plugin:react-hooks/recommended',
-        'plugin:jsx-a11y/recommended',
-      ],
       settings: {
         react: {
           version: 'detect',
@@ -81,36 +84,28 @@ module.exports = {
       },
     },
 
-    // Typescript
     {
-      files: ['**/*.{ts,tsx}'],
-      plugins: ['@typescript-eslint', 'import'],
-      parser: '@typescript-eslint/parser',
-      settings: {
-        'import/internal-regex': '^~/',
-        'import/resolver': {
-          node: {
-            extensions: ['.ts', '.tsx'],
-          },
-          typescript: {
-            alwaysTryTypes: true,
-          },
+    files: ['**/*.{ts,tsx}'],
+    parser: '@typescript-eslint/parser',
+    settings: {
+      'import/internal-regex': '^~/',
+      'import/resolver': {
+        node: {
+          extensions: ['.ts', '.tsx'],
+        },
+        typescript: {
+          alwaysTryTypes: true,
         },
       },
-      extends: [
-        'plugin:@typescript-eslint/recommended',
-        'plugin:import/recommended',
-        'plugin:import/typescript',
-      ],
     },
+  },
 
-    // Node
-    {
-      files: ['.eslintrc.cjs'],
-      env: {
-        node: true,
-      },
+  {
+    files: ['.eslintrc.cjs'],
+    env: {
+      node: true,
     },
+  },
   ],
 
   ignorePatterns: [

@@ -4,11 +4,11 @@
  * For more information, see https://remix.run/file-conventions/entry.client
  */
 
+import { CacheProvider } from '@emotion/react'
 import { RemixBrowser } from '@remix-run/react'
 import { startTransition, StrictMode, useMemo, useState } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { ClientStyleContext } from './utils/chakra-ui/context'
-import { CacheProvider } from '@emotion/react'
 import createEmotionCache, {
   defaultCache,
 } from './utils/chakra-ui/create-emotion-cache'

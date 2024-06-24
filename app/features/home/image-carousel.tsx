@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Image, Flex } from '@chakra-ui/react'
+import { Flex, Image } from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 
 const ImageCarousel = () => {
   const totalImages = 5

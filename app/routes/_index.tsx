@@ -1,9 +1,9 @@
-import authenticator from '~/services/auth.server'
-import { useLoaderData } from '@remix-run/react'
-import { LoaderFunctionArgs } from '@remix-run/node'
-import ImageCarousel from '../features/home/image-carousel'
 import { Stack, useToast } from '@chakra-ui/react'
+import { LoaderFunctionArgs } from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
+import authenticator from '~/services/auth.server'
+import ImageCarousel from '../features/home/image-carousel'
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   return await authenticator.isAuthenticated(request)

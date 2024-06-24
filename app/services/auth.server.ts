@@ -1,7 +1,7 @@
 // app/services/auth.server.ts
 import { Authenticator } from 'remix-auth'
-import { sessionStorage } from '~/services/session.server'
 import { FormStrategy } from 'remix-auth-form'
+import { sessionStorage } from '~/services/session.server'
 import { login, User } from '~/utils/rest/login'
 
 const authenticator = new Authenticator<User>(sessionStorage)

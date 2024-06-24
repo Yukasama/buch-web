@@ -1,4 +1,6 @@
 import { ChakraProvider, cookieStorageManagerSSR, Flex } from '@chakra-ui/react'
+import { withEmotionCache } from '@emotion/react'
+import { json, LoaderFunctionArgs } from '@remix-run/node'
 import {
   isRouteErrorResponse,
   Links,
@@ -10,15 +12,13 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react'
-import { withEmotionCache } from '@emotion/react'
 import { useContext, useEffect, useMemo } from 'react'
-import {
-  ServerStyleContext,
-  ClientStyleContext,
-} from './utils/chakra-ui/context'
-import { json, LoaderFunctionArgs } from '@remix-run/node'
 import NavBar from './features/home/navigation-bar'
 import authenticator from './services/auth.server'
+import {
+  ClientStyleContext,
+  ServerStyleContext,
+} from './utils/chakra-ui/context'
 
 export default function App() {
   return <Outlet />

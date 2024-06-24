@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios'
+import dotenv from 'dotenv'
+import { jwtDecode } from 'jwt-decode'
 import { logger } from '~/lib/logger'
 import { client } from '../../lib/axios-client'
-import { jwtDecode } from 'jwt-decode'
-import dotenv from 'dotenv'
 
 dotenv.config()
 

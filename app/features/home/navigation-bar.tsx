@@ -1,15 +1,15 @@
-import { Form } from '@remix-run/react'
 import {
-  Flex,
-  Link,
-  Button,
-  Image,
-  useColorModeValue,
-  Input,
   Box,
+  Button,
+  Flex,
+  Image,
+  Input,
+  Link,
+  useColorModeValue,
 } from '@chakra-ui/react'
-import { ThemeToggle } from '../../components/theme-toggle'
+import { Form } from '@remix-run/react'
 import type { User } from '~/utils/rest/login'
+import { ThemeToggle } from '../../components/theme-toggle'
 
 const NavBar = ({ user }: { user?: User | null }) => {
   const bg = useColorModeValue('gray.100', 'gray.900')

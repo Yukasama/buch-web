@@ -1,7 +1,7 @@
 // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
 /* eslint-disable sonarjs/no-duplicate-string */
 
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import dotenv from 'dotenv'
 
 dotenv.config()

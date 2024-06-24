@@ -7,21 +7,21 @@ import {
   Icon,
   Image,
   SimpleGrid,
-  Text,
   Skeleton,
+  Text,
 } from '@chakra-ui/react'
-import { LoaderFunctionArgs, ActionFunctionArgs } from '@remix-run/node'
-import { json, useLoaderData, Await } from '@remix-run/react'
-import { BuyDetails } from '~/features/book/buy-details'
+import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
+import { Await, json, useLoaderData } from '@remix-run/react'
 import { Star } from 'lucide-react'
 import { Suspense } from 'react'
+import { BuchTags } from '~/features/book/buch-tags'
+import { BuyDetails } from '~/features/book/buy-details'
+import { UpdateModal } from '~/features/book/update-modal'
+import { logger } from '~/lib/logger'
+import { BuchUpdateSchema } from '~/lib/validators/book'
+import authenticator from '~/services/auth.server'
 import { getBookById } from '~/utils/rest/read-books'
 import { updateBookById } from '~/utils/rest/write-book'
-import { UpdateModal } from '~/features/book/update-modal'
-import { BuchUpdateSchema } from '~/lib/validators/book'
-import { logger } from '~/lib/logger'
-import { BuchTags } from '~/features/book/buch-tags'
-import authenticator from '~/services/auth.server'
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!params.id) {

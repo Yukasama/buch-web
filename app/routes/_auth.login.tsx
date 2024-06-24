@@ -1,16 +1,16 @@
 import {
   Box,
   Button,
+  Center,
+  Flex,
   FormLabel,
+  Image,
   Input,
   Text,
-  Center,
-  Image,
-  Flex,
   useToast,
 } from '@chakra-ui/react'
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
-import { Form, useNavigation, useActionData } from '@remix-run/react'
+import { Form, useActionData, useNavigation } from '@remix-run/react'
 import { useEffect } from 'react'
 import { AuthorizationError } from 'remix-auth'
 import authenticator from '~/services/auth.server'

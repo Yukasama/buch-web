@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
 import { Box, IconButton } from '@chakra-ui/react'
 import { Star } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 
 interface StarRatingProps {
   maxStars?: number
