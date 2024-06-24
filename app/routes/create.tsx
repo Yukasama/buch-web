@@ -50,7 +50,6 @@ export async function action({ request }: { request: Request }) {
     rabatt: Number(data.rabatt),
     rating: Number(data.rating),
     lieferbar: data.lieferbar === 'true',
-    //schlagwoerter: formData.getAll('schlagwoerter') as string[],
   }
 
   const validated = BuchCreateSchema.safeParse(values)
