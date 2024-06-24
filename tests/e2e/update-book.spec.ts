@@ -2,7 +2,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
 import { test, expect } from '@playwright/test'
-import { generateISBN } from '~/utils/generate-isbn'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -11,16 +10,6 @@ const username = 'admin'
 const password = 'p'
 
 const loginUrl = '/login'
-
-const titel = 'Titel'
-const subtitel = 'Subtitel'
-const isbn = generateISBN('ISBN-13')
-const price = '20'
-const discount = '10'
-const available = 'true'
-const type = 'KINDLE'
-const rating = '4'
-const homepage = 'https://book.com'
 
 const updateId1 = process.env.NODE_ENV === 'production' ? '1003' : '1'
 const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
@@ -51,49 +40,6 @@ test.describe('authenticated', () => {
 
   test.afterEach(async ({ page }) => {
     await page.getByRole('button', { name: 'Sign Out' }).click()
-  })
-
-  test('create book', async ({ page }) => {
-    await page.getByRole('link', { name: 'New Book' }).click()
-
-    await page.getByPlaceholder('Enter Book Title').click()
-    await page.getByPlaceholder('Enter Book Title').fill(titel)
-    await page.getByPlaceholder('Enter Book Subtitle').click()
-    await page.getByPlaceholder('Enter Book Subtitle').fill(subtitel)
-    await page.getByPlaceholder('Enter ISBN').click()
-    await page.getByPlaceholder('Enter ISBN').fill(isbn)
-    await page.getByPlaceholder('Enter Price').click()
-    await page.getByPlaceholder('Enter Price').fill(price)
-    await page.getByPlaceholder('Enter Discount').click()
-    await page.getByPlaceholder('Enter Discount').fill(discount)
-    await page.getByLabel('In Stock').selectOption(available)
-    await page.getByLabel('Type').selectOption(type)
-    await page.getByPlaceholder('Enter Rating (1-5)').click()
-    await page.getByPlaceholder('Enter Rating (1-5)').fill(rating)
-    await page.getByPlaceholder('Enter Homepage URL').click()
-    await page.getByPlaceholder('Enter Homepage URL').fill(homepage)
-    await page.getByRole('button', { name: 'Create' }).click()
-
-    const createPopup = page.waitForEvent('popup')
-    await page.getByRole('link', { name: 'View Book at: http://' }).click()
-    const bookPage = await createPopup
-    expect(bookPage.url()).toContain('/book/')
-  })
-
-  test('check create validation', async ({ page }) => {
-    await page.getByRole('link', { name: 'New Book' }).click()
-
-    await page.getByRole('button', { name: 'Create' }).click()
-
-    await expect(page.getByText('Title is required.')).toBeVisible()
-    await expect(page.getByText('ISBN is required.')).toBeVisible()
-    await expect(
-      page.getByText("Book can't be sold for 0 or lower."),
-    ).toBeVisible()
-    await expect(
-      page.getByText('Number must be greater than or equal to 1'),
-    ).toBeVisible()
-    await expect(page.getByText('Invalid Homepage.')).toBeVisible()
   })
 
   test('update book data', async ({ page }) => {
@@ -214,7 +160,7 @@ test.describe('authenticated', () => {
   })
 })
 
-test('book not mutable due no login', async ({ page }) => {
+test('book not updateable due no login', async ({ page }) => {
   await page.goto('/')
 
   await expect(page.getByRole('link', { name: 'New Book' })).not.toBeVisible()

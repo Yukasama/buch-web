@@ -257,7 +257,9 @@ export default function SearchPage() {
                     ))
                   ) : (
                     <Tr>
-                      <Td colSpan={10}>Keine Ergebnisse gefunden</Td>
+                      <Td colSpan={10}>
+                        No books found for the search term: {searchQuery}
+                      </Td>
                     </Tr>
                   )}
                 </Tbody>
