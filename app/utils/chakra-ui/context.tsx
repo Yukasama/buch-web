@@ -8,6 +8,7 @@ export interface ServerStyleContextData {
 
 export const ServerStyleContext = createContext<
   ServerStyleContextData[] | null
+  // eslint-disable-next-line unicorn/no-null
 >(null)
 
 export interface ClientStyleContextData {
@@ -15,5 +16,6 @@ export interface ClientStyleContextData {
 }
 
 export const ClientStyleContext = createContext<ClientStyleContextData | null>(
+  // eslint-disable-next-line unicorn/no-null
   null,
 )

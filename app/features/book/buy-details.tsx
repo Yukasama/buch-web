@@ -87,7 +87,7 @@ export const BuyDetails = ({ buch }: Readonly<{ buch: Buch }>) => {
               </Text>
             </Flex>
           </>
-        ) : null}
+        ) : undefined}
       </Flex>
       <Flex direction="column" gap={2} mt={2}>
         <Button colorScheme="blue">Buy now</Button>

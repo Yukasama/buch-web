@@ -37,7 +37,7 @@ const NavBar = ({ user }: { user?: User | null }) => {
             >
               New Book
             </Button>
-          ) : null}
+          ) : undefined}
         </Flex>
         <Flex justifyContent="center" flex="1">
           <Form action="/search">

@@ -77,8 +77,8 @@ export default function SearchPage() {
       const matchesSearchQuery = searchQuery
         ? book?.titel.titel.toLowerCase().includes(searchQuery.toLowerCase())
         : true
-      const normalizedIsbn = book?.isbn.replace(/-/g, '')
-      const normalizedQuery = isbnQuery.replace(/-/g, '').trim()
+      const normalizedIsbn = book?.isbn.replaceAll('-', '')
+      const normalizedQuery = isbnQuery.replaceAll('-', '').trim()
       const matchesIsbnQuery = isbnQuery
         ? normalizedIsbn?.toString() === normalizedQuery.toString()
         : true

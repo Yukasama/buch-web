@@ -1,9 +1,9 @@
-import { randomBytes } from 'crypto'
+import { randomBytes } from 'node:crypto'
 
 function generateChecksum10(isbn: string) {
   let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += (10 - i) * parseInt(isbn.charAt(i), 10)
+    sum += (10 - i) * Number.parseInt(isbn.charAt(i), 10)
   }
   const checksum = 11 - (sum % 11)
   return checksum === 10 ? 'X' : checksum.toString()
@@ -12,7 +12,7 @@ function generateChecksum10(isbn: string) {
 function generateChecksum13(isbn: string) {
   let sum = 0
   for (let i = 0; i < 12; i++) {
-    sum += (i % 2 === 0 ? 1 : 3) * parseInt(isbn.charAt(i), 10)
+    sum += (i % 2 === 0 ? 1 : 3) * Number.parseInt(isbn.charAt(i), 10)
   }
   const checksum = 10 - (sum % 10)
   return checksum === 10 ? '0' : checksum.toString()

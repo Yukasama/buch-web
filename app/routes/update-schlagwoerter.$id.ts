@@ -33,7 +33,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   let schlagwoerter = []
   try {
     schlagwoerter = schlagwoerterStr.split(',').map((s) => s.trim())
-  } catch (error) {
+  } catch {
     logger.debug(
       'updateSchlagwoerter [action] Invalid JSON format for schlagwoerter: %o',
       data.schlagwoerter,

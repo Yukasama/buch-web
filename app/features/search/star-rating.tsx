@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 interface StarRatingProps {
   maxStars?: number
   rating: number
+  // eslint-disable-next-line no-unused-vars
   setRating: (rating: number) => void
 }
 
@@ -13,7 +14,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
   rating,
   setRating,
 }) => {
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null)
+  const [hoverIndex, setHoverIndex] = useState<number | undefined>()
 
   const handleClick = (index: number) => {
     setRating(index + 1)
@@ -24,18 +25,18 @@ export const StarRating: React.FC<StarRatingProps> = ({
   }
 
   const handleMouseLeave = () => {
-    setHoverIndex(null)
+    setHoverIndex(undefined)
   }
 
   useEffect(() => {
-    setHoverIndex(null)
+    setHoverIndex(undefined)
   }, [rating])
 
   return (
     <Box display="flex" alignItems="center">
       {Array.from({ length: maxStars }, (_, i) => {
         const isCorrectIndex =
-          i < (hoverIndex !== null ? hoverIndex + 1 : rating)
+          i < (hoverIndex === undefined ? rating : hoverIndex + 1)
 
         return (
           <IconButton

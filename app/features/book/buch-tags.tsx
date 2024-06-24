@@ -84,7 +84,7 @@ export const BuchTags = ({ buch, user }: Props) => {
         ))}
         {isAdmin && (
           <>
-            {!active ? (
+            {active ? (
               <Button
                 h={5}
                 w={4}

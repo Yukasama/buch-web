@@ -1,9 +1,3 @@
-/**
- * This is intended to be a basic starting point for linting in your app.
- * It relies on recommended configs out of the box for simplicity, but you can
- * and should modify this configuration to best suit your team's needs.
- */
-
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
@@ -25,7 +19,7 @@ module.exports = {
 
   plugins: [
     '@typescript-eslint',
-    'unicorn', 
+    'unicorn',
     'sonarjs',
     'prettier',
     'promise',
@@ -34,7 +28,7 @@ module.exports = {
     'prefer-arrow',
     'regexp',
     '@stylistic',
-    'react', 
+    'react',
     'jsx-a11y',
     'import',
   ],
@@ -63,7 +57,9 @@ module.exports = {
   ],
 
   rules: {
-    'unicorn/naming-convention': 'off',
+    'unicorn/prevent-abbreviations': 'off',
+    'n/no-missing-import': 'off',
+    'n/no-unsupported-features/node-builtins': 'off',
   },
 
   overrides: [
@@ -85,27 +81,27 @@ module.exports = {
     },
 
     {
-    files: ['**/*.{ts,tsx}'],
-    parser: '@typescript-eslint/parser',
-    settings: {
-      'import/internal-regex': '^~/',
-      'import/resolver': {
-        node: {
-          extensions: ['.ts', '.tsx'],
-        },
-        typescript: {
-          alwaysTryTypes: true,
+      files: ['**/*.{ts,tsx}'],
+      parser: '@typescript-eslint/parser',
+      settings: {
+        'import/internal-regex': '^~/',
+        'import/resolver': {
+          node: {
+            extensions: ['.ts', '.tsx'],
+          },
+          typescript: {
+            alwaysTryTypes: true,
+          },
         },
       },
     },
-  },
 
-  {
-    files: ['.eslintrc.cjs'],
-    env: {
-      node: true,
+    {
+      files: ['.eslintrc.cjs'],
+      env: {
+        node: true,
+      },
     },
-  },
   ],
 
   ignorePatterns: [

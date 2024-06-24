@@ -12,7 +12,7 @@ import {
   useLoaderData,
   useRouteError,
 } from '@remix-run/react'
-import { useContext, useEffect, useMemo } from 'react'
+import { ReactNode, useContext, useEffect, useMemo } from 'react'
 import NavBar from './features/home/navigation-bar'
 import authenticator from './services/auth.server'
 import {
@@ -32,13 +32,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export const Layout = withEmotionCache(
-  ({ children }: { children: React.ReactNode }, emotionCache) => {
+  ({ children }: { children: ReactNode }, emotionCache) => {
     function getColorMode(cookies: string) {
-      const match = RegExp(
+      // eslint-disable-next-line security/detect-non-literal-regexp
+      const match = new RegExp(
         // eslint-disable-next-line security-node/non-literal-reg-expr
         new RegExp(`(^| )${CHAKRA_COOKIE_COLOR_KEY}=([^;]+)`),
       ).exec(cookies)
-      return match == null ? void 0 : match[2]
+      return match == undefined ? void 0 : match[2]
     }
 
     const DEFAULT_COLOR_MODE: 'dark' | 'light' | null = 'dark'
@@ -46,7 +47,7 @@ export const Layout = withEmotionCache(
 
     const loaderData = useLoaderData<typeof loader>() || {}
     let themeCookie = loaderData.themeCookie || ''
-    const user = loaderData.user ?? null
+    const user = loaderData.user ?? undefined
 
     if (typeof document !== 'undefined') {
       themeCookie = document.cookie
@@ -76,7 +77,7 @@ export const Layout = withEmotionCache(
       const tags = emotionCache.sheet.tags
       emotionCache.sheet.flush()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      tags.forEach((tag) => (emotionCache.sheet as any)._insertTag(tag))
+      for (const tag of tags) (emotionCache.sheet as any)._insertTag(tag)
       clientStyleData?.reset()
 
       // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -11,15 +11,20 @@ export const formatErrorMsg = (error: AxiosError): string => {
   const statusCode = error.response?.status
 
   switch (statusCode) {
-    case 400:
+    case 400: {
       return errorMessages[400]
-    case 401:
+    }
+    case 401: {
       return errorMessages[401]
-    case 412:
+    }
+    case 412: {
       return errorMessages[412]
-    case 422:
+    }
+    case 422: {
       return errorMessages[422]
-    default:
+    }
+    default: {
       return error.message
+    }
   }
 }

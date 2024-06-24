@@ -6,7 +6,13 @@
 
 import { CacheProvider } from '@emotion/react'
 import { RemixBrowser } from '@remix-run/react'
-import { startTransition, StrictMode, useMemo, useState } from 'react'
+import {
+  ReactNode,
+  startTransition,
+  StrictMode,
+  useMemo,
+  useState,
+} from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import { ClientStyleContext } from './utils/chakra-ui/context'
 import createEmotionCache, {
@@ -14,7 +20,7 @@ import createEmotionCache, {
 } from './utils/chakra-ui/create-emotion-cache'
 
 interface ClientCacheProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 function ClientCacheProvider({ children }: Readonly<ClientCacheProviderProps>) {
