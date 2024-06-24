@@ -17,14 +17,15 @@ export const login = async (username: string, password: string) => {
       `username=${username}&password=${password}`,
       { headers },
     )
-
+    logger.debug('login (success)')
     return {
       username: username,
       access_token: response.data.access_token,
       refresh_token: response.data.refresh_token,
     }
   } catch (error) {
-    logger.error(error)
+    logger.error('login (error): username=%s, password=%s', username, password)
+    throw { error: 'Internal server error' }
   }
 }
 
