@@ -66,31 +66,8 @@ export const BuchCreateSchema = z.object({
   untertitelwrapper: z.string().optional(),
 })
 
-export const BuchUpdateSchema = z.object({
+export const BuchUpdateSchema = BuchCreateSchema.extend({
   version: z.string(),
-  isbn: z
-    .string()
-    .min(1, 'ISBN is required.')
-    .regex(ISBN_REGEX, 'Invalid ISBN.'),
-  rating: z
-    .number()
-    .min(1, 'Rating must be atleast 1 Star')
-    .max(5, "Rating can't be more than 5 Stars."),
-  art: z
-    .enum(['DRUCKAUSGABE', 'KINDLE'])
-    .refine((val) => val === 'DRUCKAUSGABE' || val === 'KINDLE', {
-      message: "Type must be 'DRUCKAUSGABE' or 'KINDLE'.",
-    }),
-  preis: z.number().positive("Book can't be sold for 0 or lower."),
-  rabatt: z
-    .number()
-    .min(0, "Discount can't be less than 0%.")
-    .max(100, "Discount can't be more than 100%.")
-    .optional(),
-  lieferbar: z.boolean().optional(),
-  homepage: z.string().url('Invalid Homepage.').optional(),
-  titelwrapper: z.string().min(1, 'Title is required.'),
-  untertitelwrapper: z.string().optional(),
 })
 
 export const BuchUpdateSchlagwoerterSchema = z.object({
