@@ -11,9 +11,9 @@ const password = 'p'
 
 const loginUrl = '/login'
 
-const updateId1 = '1003'
-const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
-const updateId3 = process.env.NODE_ENV === 'production' ? '1005' : '30'
+const updateId1 = process.env.NODE_ENV === 'development' ? '1' : '1003'
+const updateId2 = process.env.NODE_ENV === 'development' ? '20' : '1004'
+const updateId3 = process.env.NODE_ENV === 'development' ? '30' : '1005'
 const tag = 'typescript'
 
 const wrongTitle = ''
@@ -46,10 +46,7 @@ test.describe('authenticated', () => {
   test('update book data', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
 
-    const editBook = page.getByRole('button', { name: 'Edit Book' })
-    await editBook.waitFor({ state: 'visible' })
-    await editBook.click()
-
+    await page.getByRole('button', { name: 'Edit Book' }).click()
     await page.locator('input[name="homepage"]').click()
     await page.locator('input[name="homepage"]').fill('https://book-web.com')
     await page
@@ -77,10 +74,7 @@ test.describe('authenticated', () => {
   test('check update validation', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
 
-    const editBook = page.getByRole('button', { name: 'Edit Book' })
-    await editBook.waitFor({ state: 'visible' })
-    await editBook.click()
-
+    await page.getByRole('button', { name: 'Edit Book' }).click()
     await page.locator('input[name="titelwrapper"]').click()
     await page.locator('input[name="titelwrapper"]').fill(wrongTitle)
     await page.locator('input[name="isbn"]').click()
@@ -131,10 +125,7 @@ test.describe('authenticated', () => {
   test('add and remove book tag', async ({ page }) => {
     await page.goto(`/book/${updateId2}`)
 
-    const addTag = page.getByLabel('Add Tag')
-    await addTag.waitFor({ state: 'visible' })
-    await addTag.click()
-
+    await page.getByLabel('Add Tag').click()
     await page.getByLabel('Tag Input').click()
     await page.getByLabel('Tag Input').fill(tag)
     await page.getByLabel('Confirm Tag').click()
@@ -147,10 +138,7 @@ test.describe('authenticated', () => {
   test('version number mismatch', async ({ page }) => {
     await page.goto(`/book/${updateId3}`)
 
-    const addTag = page.getByLabel('Add Tag')
-    await addTag.waitFor({ state: 'visible' })
-    await addTag.click()
-
+    await page.getByLabel('Add Tag').click()
     await page.getByLabel('Tag Input').click()
     await page.getByLabel('Tag Input').fill(tag)
     await page.getByLabel('Confirm Tag').click()
