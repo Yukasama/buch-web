@@ -1,0 +1,56 @@
+@startuml Zustandsdiagramm
+' Preview durch <Alt>d
+
+hide empty description
+state App {
+    AuthProvider --> [*]: Logout
+
+    state BookSearch{
+        [*] --> Suchformular: Suchkriterien eingeben
+        Suchformular --> Waiting: Button "Search"
+        Suchformular --> Suchformular: Button "Reset"
+        state SearchChoice <<choice>>
+        Waiting --> SearchChoice: Suchergebnis eingetroffen
+
+        state SuchergebnisTabelle {
+
+
+            SearchChoice--> GefundeneBuecher: mind. 1 passendes Buch gefunden
+            SearchChoice--> Fehlermeldung: keine passenden Bücher gefunden
+            Fehlermeldung --> [*]
+        }
+    }
+    [*] --> BookSearch: Navigationsleiste "Suche"
+    GefundeneBuecher --> Details: Büchertabellen Zeile auswählen
+
+    state AuthProvider {
+        AuthProvider : token
+        AuthProvider : writeAccess
+        Details --> Update: Button "Bearbeiten"
+        Details --> Löschen: Button "Löschen"
+        Löschen --> BookSearch: Löschen des Buches
+
+        state Create {
+            [*] ---> Eingabefelder: Daten eines Buches eintragen
+            state AddChoice <<choice>>
+            Eingabefelder--> AddChoice: Button "Buch anlegen"
+            AddChoice --> CreateBook: valide Daten
+            AddChoice --> CreateFehlermeldung: invalide Daten
+            CreateBook --> Create: Buch wird hochgeladen
+            CreateFehlermeldung --> Create: Daten abändern
+        }
+        state Update {
+            [*] ---> Datenfelder: Änderungen eintragen
+            state UpdateChoice <<choice>>
+            Datenfelder--> UpdateChoice: Button "Bearbeiten"
+            UpdateBuch --> Update: hochladen der Daten
+            UpdateChoice --> UpdateFehlermeldung: fehlerhafte Daten
+            UpdateChoice --> UpdateBuch: valide Daten
+            UpdateFehlermeldung --> Update: Daten abändern
+        }
+
+    }
+
+    [*] --> AuthProvider: Benutzer eingeloggt
+}
+@enduml
