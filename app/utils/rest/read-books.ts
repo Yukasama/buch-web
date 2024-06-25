@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from 'axios'
 import { client } from '~/lib/axios-client'
 import { logger } from '~/lib/logger'
-import { Buch } from '~/lib/validators/book'
+import { Buch, BuchWithLink } from '~/lib/validators/book'
 
 /**
  * Get all books from the database
@@ -9,10 +9,17 @@ import { Buch } from '~/lib/validators/book'
  */
 export const getAllBooks = async () => {
   try {
-    const { data }: AxiosResponse<{ _embedded: { buecher: Buch[] } }> =
+    const { data }: AxiosResponse<{ _embedded: { buecher: BuchWithLink[] } }> =
       await client.get('/rest')
-    logger.debug('getAllBooks (done) length=%s', data._embedded.buecher.length)
-    return { data: data._embedded.buecher }
+
+    const books: Buch[] = data._embedded.buecher.map((book) => ({
+      ...book,
+      id: book._links.self.href.split('/').pop()!,
+    }))
+
+    logger.debug('getAllBooks (done) length=%s', books.length)
+
+    return { data: books }
   } catch (error) {
     if (error instanceof AxiosError) {
       logger.error('getAllBooks (axios-error): message=%s', error.message)
@@ -20,7 +27,7 @@ export const getAllBooks = async () => {
     } else {
       logger.error('getAllBooks (error): error=%s', error)
     }
-    return { error: 'Unknown error' }
+    return { error: 'Internal server error' }
   }
 }
 

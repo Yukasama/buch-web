@@ -1,12 +1,12 @@
 import { z } from 'zod'
 
 // eslint-disable-next-line security/detect-unsafe-regex
-const isbnRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+export const ISBN_REGEX = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
 
 export const BuchSchema = z.object({
   id: z.string(),
   version: z.string().optional(),
-  isbn: z.string().regex(isbnRegex),
+  isbn: z.string().regex(ISBN_REGEX),
   rating: z.number().min(1).max(5),
   art: z.enum(['DRUCKAUSGABE', 'KINDLE']),
   preis: z.number().positive(),
@@ -32,11 +32,19 @@ export const BuchSchema = z.object({
     .optional(),
 })
 
+export const BuchWithLinkSchema = BuchSchema.extend({
+  _links: z.object({
+    self: z.object({
+      href: z.string(),
+    }),
+  }),
+})
+
 export const BuchCreateSchema = z.object({
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
-    .regex(isbnRegex, 'Invalid ISBN.'),
+    .regex(ISBN_REGEX, 'Invalid ISBN.'),
   rating: z
     .number()
     .min(1, 'Rating must be atleast 1 Star')
@@ -63,7 +71,7 @@ export const BuchUpdateSchema = z.object({
   isbn: z
     .string()
     .min(1, 'ISBN is required.')
-    .regex(isbnRegex, 'Invalid ISBN.'),
+    .regex(ISBN_REGEX, 'Invalid ISBN.'),
   rating: z
     .number()
     .min(1, 'Rating must be atleast 1 Star')
@@ -91,8 +99,9 @@ export const BuchUpdateSchlagwoerterSchema = z.object({
 })
 
 export type Buch = z.infer<typeof BuchSchema>
-export type BuchUpdate = z.infer<typeof BuchUpdateSchema>
+export type BuchWithLink = z.infer<typeof BuchWithLinkSchema>
 export type BuchCreate = z.infer<typeof BuchCreateSchema>
+export type BuchUpdate = z.infer<typeof BuchUpdateSchema>
 export type BuchUpdateSchlagwoerter = z.infer<
   typeof BuchUpdateSchlagwoerterSchema
 >

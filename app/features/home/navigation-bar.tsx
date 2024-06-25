@@ -4,10 +4,9 @@ import {
   Flex,
   Image,
   Input,
-  Link,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { Form } from '@remix-run/react'
+import { Form, Link } from '@remix-run/react'
 import type { User } from '~/utils/rest/login'
 import { ThemeToggle } from '../../components/theme-toggle'
 
@@ -18,7 +17,7 @@ const NavBar = ({ user }: { user?: User | null }) => {
     <Box>
       <Flex bg={bg} px={4} h={16} alignItems="center">
         <Flex alignItems="center" flex="1" gap={2}>
-          <Link href="/">
+          <Link to="/">
             <Image
               src="/logo.png"
               alt="Buch-Web Logo"
@@ -31,7 +30,7 @@ const NavBar = ({ user }: { user?: User | null }) => {
           {user?.role?.includes('admin') ? (
             <Button
               as={Link}
-              href="/create"
+              to="/create"
               size="sm"
               _hover={{ textDecoration: 'none' }}
             >
@@ -58,7 +57,7 @@ const NavBar = ({ user }: { user?: User | null }) => {
               ) : (
                 <Button
                   as={Link}
-                  href="/login"
+                  to="/login"
                   size="sm"
                   colorScheme="blue"
                   _hover={{ textDecoration: 'none' }}

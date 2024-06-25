@@ -31,7 +31,7 @@ export default function Index() {
     if (logout.current && user === null) {
       toast({
         title: 'Logged out',
-        status: 'error',
+        status: 'info',
         duration: 6000,
         isClosable: true,
       })

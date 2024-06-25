@@ -85,19 +85,6 @@ export const BuchTags = ({ buch, user }: Props) => {
         {isAdmin && (
           <>
             {active ? (
-              <Button
-                h={5}
-                w={4}
-                colorScheme="blue"
-                rounded="sm"
-                px={2}
-                display="flex"
-                aria-label="Add Tag"
-                onClick={() => setActive(true)}
-              >
-                <Icon as={Plus} />
-              </Button>
-            ) : (
               <fetcher.Form
                 action={`/update-schlagwoerter/${buch.id}`}
                 method="put"
@@ -136,6 +123,19 @@ export const BuchTags = ({ buch, user }: Props) => {
                   </Button>
                 </Flex>
               </fetcher.Form>
+            ) : (
+              <Button
+                h={5}
+                w={4}
+                colorScheme="blue"
+                rounded="sm"
+                px={2}
+                display="flex"
+                aria-label="Add Tag"
+                onClick={() => setActive(true)}
+              >
+                <Icon as={Plus} />
+              </Button>
             )}
           </>
         )}

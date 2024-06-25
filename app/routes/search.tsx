@@ -8,6 +8,7 @@ import {
   HStack,
   Heading,
   Input,
+  Link,
   Radio,
   RadioGroup,
   Skeleton,
@@ -26,7 +27,7 @@ import { Await, useLoaderData, useSearchParams } from '@remix-run/react'
 import { Info } from 'lucide-react'
 import { Suspense, useEffect, useState } from 'react'
 import { StarRating } from '../features/search/star-rating'
-import { Buch } from '../lib/validators/book'
+import { Buch, ISBN_REGEX } from '../lib/validators/book'
 import { getAllBooks } from '../utils/rest/read-books'
 
 export const loader = async () => {
@@ -49,7 +50,7 @@ export default function SearchPage() {
   useEffect(() => {
     const query = searchParams.get('q')
     if (query) {
-      if (/^\d{10}$|^\d{13}$/.test(query)) {
+      if (ISBN_REGEX.test(query)) {
         return setIsbnQuery(query)
       }
       setSearchQuery(query)
@@ -146,9 +147,9 @@ export default function SearchPage() {
           <Tooltip
             label={
               <>
-                <p>Erlaubte Formate:</p>
+                <p>Allowed formats:</p>
                 <p>123-1-123-12345-1</p>
-                <p>oder</p>
+                <p>or</p>
                 <p>1234567890123</p>
               </>
             }
@@ -170,7 +171,7 @@ export default function SearchPage() {
       <HStack spacing="40px">
         <VStack align="start" spacing={2}>
           <Text mr="30px" fontWeight="bold">
-            Schlagwörter
+            Catchwords
           </Text>
           <Checkbox
             isChecked={isTypeScript}
@@ -188,7 +189,7 @@ export default function SearchPage() {
 
         <VStack align="start" spacing={2}>
           <Text mr="30px" fontWeight="bold">
-            Buchart
+            Type
           </Text>
           <RadioGroup
             value={selectedValueBookType}
@@ -227,16 +228,16 @@ export default function SearchPage() {
               <Table variant="simple" mt="15px">
                 <Thead>
                   <Tr>
-                    <Th>Titel</Th>
+                    <Th>Title</Th>
                     <Th>ISBN</Th>
-                    <Th>Preis</Th>
+                    <Th>Price</Th>
                     <Th>Rating</Th>
-                    <Th>Art</Th>
-                    <Th>Rabatt</Th>
-                    <Th>Lieferbar</Th>
-                    <Th>Datum</Th>
+                    <Th>Type</Th>
+                    <Th>Discount</Th>
+                    <Th>In Stock</Th>
                     <Th>Homepage</Th>
-                    <Th>Schlagwörter</Th>
+                    <Th>Catchwords</Th>
+                    <Th></Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -249,10 +250,19 @@ export default function SearchPage() {
                         <Td>{row.rating}</Td>
                         <Td>{row.art}</Td>
                         <Td>{row.rabatt}</Td>
-                        <Td>{row.lieferbar ? 'True' : 'False'}</Td>
-                        <Td>{row.datum}</Td>
+                        <Td>{row.lieferbar ? 'Yes' : 'No'}</Td>
                         <Td>{row.homepage}</Td>
                         <Td>{row.schlagwoerter?.join(', ')}</Td>
+                        <Td>
+                          <Button
+                            as={Link}
+                            href={`/book/${row.id}`}
+                            _hover={{ textDecoration: 'none' }}
+                            colorScheme="blue"
+                          >
+                            View
+                          </Button>
+                        </Td>
                       </Tr>
                     ))
                   ) : (

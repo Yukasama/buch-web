@@ -137,7 +137,7 @@ export function ErrorBoundary() {
   } else if (thrownError instanceof Error) {
     error = thrownError.message
   } else {
-    error = 'Unknown Error'
+    error = 'Internal server error'
   }
 
   return (
