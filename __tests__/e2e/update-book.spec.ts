@@ -10,6 +10,7 @@ const username = 'admin'
 const password = 'p'
 
 const loginUrl = '/login'
+const updateUrl = '/book'
 
 const updateId1 = process.env.NODE_ENV === 'production' ? '1003' : '1'
 const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
@@ -45,6 +46,8 @@ test.describe('authenticated', () => {
 
   test('update book data', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
+    await page.waitForURL(`**${updateUrl}/${updateId1}`)
+
     await page.getByRole('button', { name: 'Edit Book' }).click()
 
     await page.locator('input[name="homepage"]').click()
@@ -73,6 +76,8 @@ test.describe('authenticated', () => {
 
   test('check update validation', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
+    await page.waitForURL(`**${updateUrl}/${updateId1}`)
+
     await page.getByRole('button', { name: 'Edit Book' }).click()
 
     await page.locator('input[name="titelwrapper"]').click()
@@ -124,6 +129,7 @@ test.describe('authenticated', () => {
 
   test('add and remove book tag', async ({ page }) => {
     await page.goto(`/book/${updateId2}`)
+    await page.waitForURL(`**${updateUrl}/${updateId2}`)
 
     await page.getByLabel('Add Tag').click()
     await page.getByLabel('Tag Input').click()
@@ -137,6 +143,7 @@ test.describe('authenticated', () => {
 
   test('version number mismatch', async ({ page }) => {
     await page.goto(`/book/${updateId3}`)
+    await page.waitForURL(`**${updateUrl}/${updateId3}`)
 
     await page.getByLabel('Add Tag').click()
     await page.getByLabel('Tag Input').click()

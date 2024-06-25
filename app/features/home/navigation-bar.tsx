@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { Form, Link } from '@remix-run/react'
 import type { User } from '~/utils/rest/login'
-import { ThemeToggle } from '../../components/theme-toggle'
+import { ThemeToggle } from './theme-toggle'
 
 const NavBar = ({ user }: { user?: User | null }) => {
   const bg = useColorModeValue('gray.100', 'gray.900')

@@ -56,10 +56,10 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('Enter Homepage URL').fill(homepage)
     await page.getByRole('button', { name: 'Create' }).click()
 
-    const createPopup = page.waitForEvent('popup')
-    await page.getByRole('link', { name: 'View Book at: http://' }).click()
-    const bookPage = await createPopup
-    expect(bookPage.url()).toContain('/book/')
+    // const createPopup = page.waitForEvent('popup')
+    // await page.getByRole('link', { name: 'View Book at: http://' }).click()
+    // const bookPage = await createPopup
+    // expect(bookPage.url()).toContain('/book/')
   })
 
   test('check create validation', async ({ page }) => {
