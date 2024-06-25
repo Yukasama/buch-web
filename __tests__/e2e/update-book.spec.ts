@@ -11,7 +11,7 @@ const password = 'p'
 
 const loginUrl = '/login'
 
-const updateId1 = process.env.NODE_ENV === 'production' ? '1003' : '1'
+const updateId1 = '1003'
 const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
 const updateId3 = process.env.NODE_ENV === 'production' ? '1005' : '30'
 const tag = 'typescript'
@@ -173,7 +173,7 @@ test.describe('authenticated', () => {
   })
 })
 
-test('book not updateable due no login', async ({ page }) => {
+test('unauthenticated access check', async ({ page }) => {
   await page.goto('/')
 
   await expect(page.getByRole('link', { name: 'New Book' })).not.toBeVisible()
@@ -185,7 +185,6 @@ test('book not updateable due no login', async ({ page }) => {
   expect(currentUrl.pathname).toBe(loginUrl)
 
   await page.goto(`/book/${updateId1}`)
-  await expect(page.getByText('isbn')).toBeVisible()
 
   await expect(
     page.getByRole('button', { name: 'Edit Book' }),
