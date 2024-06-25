@@ -4,7 +4,6 @@ import { json, LoaderFunctionArgs } from '@remix-run/node'
 import {
   isRouteErrorResponse,
   Links,
-  // LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -121,7 +120,6 @@ export const Layout = withEmotionCache(
           </ChakraProvider>
           <ScrollRestoration />
           <Scripts />
-          {/* <LiveReload /> */}
         </body>
       </html>
     )

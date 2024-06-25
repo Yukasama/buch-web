@@ -2,7 +2,6 @@ import { AxiosResponse } from 'axios'
 import dotenv from 'dotenv'
 import { jwtDecode } from 'jwt-decode'
 import { client } from '~/lib/axios-client'
-import { logger } from '~/lib/logger'
 
 dotenv.config()
 
@@ -17,17 +16,23 @@ export const login = async (username: string, password: string) => {
     `username=${username}&password=${password}`,
     { headers },
   )
-  logger.debug('login (done): username=%s, password=%s', username, password)
 
   return {
     username: username,
     access_token: response.data.access_token,
     refresh_token: response.data.refresh_token,
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unnecessary-type-assertion, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-    role: (jwtDecode(response.data.access_token) as any).resource_access[
+    role: (jwtDecode(response.data.access_token) as JwtPayload).resource_access[ //NOSONAR
       'buch-client'
-    ].roles,
+    ].roles ,
+  }
+}
+
+interface JwtPayload {
+  resource_access: {
+    'buch-client': {
+      roles: string[]
+    }
   }
 }
 
