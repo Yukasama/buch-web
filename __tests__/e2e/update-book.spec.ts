@@ -10,7 +10,6 @@ const username = 'admin'
 const password = 'p'
 
 const loginUrl = '/login'
-const updateUrl = '/book'
 
 const updateId1 = process.env.NODE_ENV === 'production' ? '1003' : '1'
 const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
@@ -46,9 +45,10 @@ test.describe('authenticated', () => {
 
   test('update book data', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
-    await page.waitForURL(`**${updateUrl}/${updateId1}`)
 
-    await page.getByRole('button', { name: 'Edit Book' }).click()
+    const editBook = page.getByRole('button', { name: 'Edit Book' })
+    await editBook.waitFor({ state: 'visible' })
+    await editBook.click()
 
     await page.locator('input[name="homepage"]').click()
     await page.locator('input[name="homepage"]').fill('https://book-web.com')
@@ -76,9 +76,10 @@ test.describe('authenticated', () => {
 
   test('check update validation', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
-    await page.waitForURL(`**${updateUrl}/${updateId1}`)
 
-    await page.getByRole('button', { name: 'Edit Book' }).click()
+    const editBook = page.getByRole('button', { name: 'Edit Book' })
+    await editBook.waitFor({ state: 'visible' })
+    await editBook.click()
 
     await page.locator('input[name="titelwrapper"]').click()
     await page.locator('input[name="titelwrapper"]').fill(wrongTitle)
@@ -129,9 +130,11 @@ test.describe('authenticated', () => {
 
   test('add and remove book tag', async ({ page }) => {
     await page.goto(`/book/${updateId2}`)
-    await page.waitForURL(`**${updateUrl}/${updateId2}`)
 
-    await page.getByLabel('Add Tag').click()
+    const addTag = page.getByLabel('Add Tag')
+    await addTag.waitFor({ state: 'visible' })
+    await addTag.click()
+
     await page.getByLabel('Tag Input').click()
     await page.getByLabel('Tag Input').fill(tag)
     await page.getByLabel('Confirm Tag').click()
@@ -143,9 +146,11 @@ test.describe('authenticated', () => {
 
   test('version number mismatch', async ({ page }) => {
     await page.goto(`/book/${updateId3}`)
-    await page.waitForURL(`**${updateUrl}/${updateId3}`)
 
-    await page.getByLabel('Add Tag').click()
+    const addTag = page.getByLabel('Add Tag')
+    await addTag.waitFor({ state: 'visible' })
+    await addTag.click()
+
     await page.getByLabel('Tag Input').click()
     await page.getByLabel('Tag Input').fill(tag)
     await page.getByLabel('Confirm Tag').click()
@@ -180,7 +185,7 @@ test('book not updateable due no login', async ({ page }) => {
   expect(currentUrl.pathname).toBe(loginUrl)
 
   await page.goto(`/book/${updateId1}`)
-  await expect(page.getByText('ISBN')).toBeVisible()
+  await expect(page.getByText('isbn')).toBeVisible()
 
   await expect(
     page.getByRole('button', { name: 'Edit Book' }),
