@@ -36,6 +36,10 @@ export const loader = async () => {
   return json({ books, error })
 }
 
+const calculateDiscountPercentage = (discount: number | undefined) => {
+  return discount ? `${(discount * 100).toFixed(2)}%` : '0%'
+}
+
 export default function SearchPage() {
   const { books, error } = useLoaderData<typeof loader>()
 
@@ -113,21 +117,21 @@ export default function SearchPage() {
     setSearchResults(
       filteredBooks?.sort((a, b) => {
         switch (sortCriteria) {
-          case 'rating':
+          case 'rating': {
             return (b.rating ?? 0) - (a.rating ?? 0)
-          case 'discount':
+          }
+          case 'discount': {
             return (b.rabatt ?? 0) - (a.rabatt ?? 0)
-          case 'price':
+          }
+          case 'price': {
             return (b.preis ?? 0) - (a.preis ?? 0)
-          default:
+          }
+          default: {
             return 0
+          }
         }
       }),
     )
-  }
-
-  const calculateDiscountPercentage = (discount:number |undefined) => {
-    return discount ? `${(discount * 100).toFixed(2)}%` : '0%';
   }
 
   return (
