@@ -3,17 +3,14 @@ import { Form, Link } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { User } from '~/utils/rest/login'
 
-const LoginLogoutButton = ({ user }: { user?: User | null }) => {
-  const [isLogInPlayed, setIsLogInPlayed] = useState(true)
-  const [isLogOutPlayed, setIsLogOutPlayed] = useState(false)
+export const LoginLogoutButton = ({ user }: { user?: User | null }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
 
   const toast = useToast()
 
   useEffect(() => {
     // log in
-    if (user && !isLogInPlayed) {
-      setIsLogInPlayed(true)
-      setIsLogOutPlayed(false)
+    if (!isLoggedIn && user) {
       toast({
         title: 'Welcome back',
         description: `You're logged in as ${user?.username}`,
@@ -22,28 +19,17 @@ const LoginLogoutButton = ({ user }: { user?: User | null }) => {
         isClosable: true,
       })
     }
-    // log out
-    if (!user && !isLogOutPlayed) {
-      setIsLogOutPlayed(true)
-      setIsLogInPlayed(false)
-      toast({
-        title: 'Logged out',
-        status: 'info',
-        duration: 6000,
-        isClosable: true,
-      })
-    }
-  }, [isLogInPlayed, isLogOutPlayed, toast, user, user?.username])
+  }, [isLoggedIn, toast, user, user?.username])
 
-  const handleIsLogInPlayed = () => {
-    setIsLogInPlayed(true)
+  const handleLogOut = () => {
+    setIsLoggedIn(false)
   }
 
   return (
     <Flex>
       {user ? (
         <Form method="post" action="/logout">
-          <Button size="sm" type="submit" onClick={handleIsLogInPlayed}>
+          <Button size="sm" type="submit">
             Sign Out
           </Button>
         </Form>
@@ -54,6 +40,7 @@ const LoginLogoutButton = ({ user }: { user?: User | null }) => {
           size="sm"
           colorScheme="blue"
           _hover={{ textDecoration: 'none' }}
+          onClick={handleLogOut}
         >
           Sign In
         </Button>
@@ -61,5 +48,3 @@ const LoginLogoutButton = ({ user }: { user?: User | null }) => {
     </Flex>
   )
 }
-
-export default LoginLogoutButton

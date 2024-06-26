@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react'
 import { Form, Link } from '@remix-run/react'
 import type { User } from '~/utils/rest/login'
-import LoginLogoutButton from '../book/login-logout-button'
+import { LoginLogoutButton } from './login-logout-button'
 import { ThemeToggle } from './theme-toggle'
 
 const NavBar = ({ user }: { user?: User | null }) => {
