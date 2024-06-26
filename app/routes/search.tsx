@@ -11,6 +11,7 @@ import {
   Link,
   Radio,
   RadioGroup,
+  Select,
   Skeleton,
   Table,
   Tbody,
@@ -46,6 +47,7 @@ export default function SearchPage() {
   const [rating, setRating] = useState(0)
   const [searchParams] = useSearchParams()
   const [searchResults, setSearchResults] = useState<Buch[] | undefined>(books)
+  const [sortCriteria, setSortCriteria] = useState('rating')
 
   useEffect(() => {
     const query = searchParams.get('q')
@@ -61,7 +63,7 @@ export default function SearchPage() {
     handleSearchClick()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchResults])
+  }, [searchResults, sortCriteria])
 
   const resetInputs = () => {
     setSearchQuery('')
@@ -108,7 +110,24 @@ export default function SearchPage() {
       )
     })
 
-    setSearchResults(filteredBooks)
+    setSearchResults(
+      filteredBooks?.sort((a, b) => {
+        switch (sortCriteria) {
+          case 'rating':
+            return (b.rating ?? 0) - (a.rating ?? 0)
+          case 'discount':
+            return (b.rabatt ?? 0) - (a.rabatt ?? 0)
+          case 'price':
+            return (b.preis ?? 0) - (a.preis ?? 0)
+          default:
+            return 0
+        }
+      }),
+    )
+  }
+
+  const calculateDiscountPercentage = (discount:number |undefined) => {
+    return discount ? `${(discount * 100).toFixed(2)}%` : '0%';
   }
 
   return (
@@ -166,6 +185,16 @@ export default function SearchPage() {
             />
           </Tooltip>
         </Box>
+        <Select
+          placeholder="Sort by"
+          value={sortCriteria}
+          onChange={(e) => setSortCriteria(e.target.value)}
+          w="150px"
+        >
+          <option value="rating">Rating</option>
+          <option value="discount">Discount</option>
+          <option value="price">Price</option>
+        </Select>
       </Flex>
 
       <HStack spacing="40px">
@@ -249,7 +278,7 @@ export default function SearchPage() {
                         <Td>{row.preis}</Td>
                         <Td>{row.rating}</Td>
                         <Td>{row.art}</Td>
-                        <Td>{row.rabatt}</Td>
+                        <Td>{calculateDiscountPercentage(row.rabatt)}</Td>
                         <Td>{row.lieferbar ? 'Yes' : 'No'}</Td>
                         <Td>{row.homepage}</Td>
                         <Td>{row.schlagwoerter?.join(', ')}</Td>
