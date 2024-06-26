@@ -27,8 +27,6 @@ state App {
         AuthProvider : token
         AuthProvider : writeAccess
         Details --> Update: Button "Bearbeiten"
-        Details --> Löschen: Button "Löschen"
-        Löschen --> BookSearch: Löschen des Buches
 
         state Create {
             [*] ---> Eingabefelder: Daten eines Buches eintragen
