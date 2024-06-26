@@ -35,12 +35,7 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('password').fill(password)
 
     await page.getByRole('button', { name: 'Sign In' }).click()
-    await page.waitForURL('/')
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
-  })
-
-  test.afterEach(async ({ page }) => {
-    await page.getByRole('button', { name: 'Sign Out' }).click()
   })
 
   test('update book data', async ({ page }) => {
@@ -117,9 +112,7 @@ test.describe('authenticated', () => {
     const errorBadge = page.locator(
       'span:text("You have entered invalid data. Please check your input.")',
     )
-    await expect(errorBadge).toHaveCount(1)
-
-    await page.getByText('Close').click()
+    await expect(errorBadge).toBeVisible()
   })
 
   test('add and remove book tag', async ({ page }) => {
@@ -155,9 +148,7 @@ test.describe('authenticated', () => {
     const errorBadge = page.locator(
       'span:text("Your data is outdated. Please refresh the page.")',
     )
-    await expect(errorBadge).toHaveCount(1)
-
-    await page.getByText('Close').click()
+    await expect(errorBadge).toBeVisible()
   })
 })
 
