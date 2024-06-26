@@ -28,9 +28,7 @@ jobs:
       - name: Run Playwright tests
         run: pnpm e2e
         env:
-          REMIX_URL: 'https://buch-web.zenathra.com'
-        # env:
-        #   REMIX_URL: ${{ github.event.deployment_status.environment_url }}
+          REMIX_URL: ${{ secrets.REMIX_URL }}
 
       - uses: actions/upload-artifact@v4
         if: always()
