@@ -9,7 +9,7 @@ export const loginPath = `${process.env.NEST_BACKEND_URL}/auth/login`
 
 export const login = async (username: string, password: string) => {
   const headers = {
-    'Content-Type': 'application/x-www-form-urlencoded', // eslint-disable-line @typescript-eslint/naming-convention
+    'Content-Type': 'application/x-www-form-urlencoded',
   }
   const response: AxiosResponse<LoginResult> = await client.post(
     loginPath,
@@ -22,9 +22,10 @@ export const login = async (username: string, password: string) => {
     access_token: response.data.access_token,
     refresh_token: response.data.refresh_token,
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     role: (jwtDecode(response.data.access_token) as JwtPayload).resource_access[ //NOSONAR
       'buch-client'
-    ].roles ,
+    ].roles,
   }
 }
 

@@ -3,6 +3,8 @@ import {
   Button,
   Center,
   Flex,
+  FormControl,
+  FormErrorMessage,
   FormLabel,
   Image,
   Input,
@@ -11,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { ActionFunctionArgs, LoaderFunctionArgs } from '@remix-run/node'
 import { Form, useActionData, useNavigation } from '@remix-run/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthorizationError } from 'remix-auth'
 import authenticator from '~/services/auth.server'
 
@@ -41,6 +43,21 @@ export default function Login() {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const actionData = useActionData<typeof action>()
 
+  const [inputUsername, setInputUsername] = useState()
+  const [inputPassword, setInputPassword] = useState()
+
+  // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+  const handleInputChangeUsername = (e: any) => setInputUsername(e.target.value)
+
+  // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+  const handleInputChangePassword = (e: any) => setInputPassword(e.target.value)
+
+  const usernameError = inputUsername === ''
+  const passwordError = inputPassword === ''
+
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (actionData?.cause.status === 401) {
@@ -52,9 +69,7 @@ export default function Login() {
         isClosable: true,
       })
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionData])
+  }, [actionData, toast])
 
   return (
     <Center mt="120px">
@@ -71,24 +86,40 @@ export default function Login() {
         <Form method="post">
           <Flex flexDir="column" gap={3}>
             <Box>
-              <FormLabel>Username</FormLabel>
-              <Input
-                name="username"
-                disabled={navigation.state === 'submitting'}
-                placeholder="Enter your username"
-                required
-              />
+              <FormControl isInvalid={usernameError}>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  name="username"
+                  value={inputUsername}
+                  onChange={handleInputChangeUsername}
+                  disabled={navigation.state === 'submitting'}
+                  placeholder="Enter your username"
+                />
+                {usernameError ? (
+                  <FormErrorMessage>Username is required</FormErrorMessage>
+                ) : (
+                  <></>
+                )}
+              </FormControl>
             </Box>
             <Box>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                name="password"
-                disabled={navigation.state === 'submitting'}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
+              <FormControl isInvalid={passwordError}>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type="password"
+                  name="password"
+                  value={inputPassword}
+                  onChange={handleInputChangePassword}
+                  disabled={navigation.state === 'submitting'}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                />
+                {passwordError ? (
+                  <FormErrorMessage>Password is required</FormErrorMessage>
+                ) : (
+                  <></>
+                )}
+              </FormControl>
             </Box>
             <Button
               isLoading={navigation.state === 'submitting'}
