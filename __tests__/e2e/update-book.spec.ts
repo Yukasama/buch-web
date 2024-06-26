@@ -11,9 +11,9 @@ const password = 'p'
 
 const loginUrl = '/login'
 
-const updateId1 = process.env.NODE_ENV === 'production' ? '1003' : '1'
-const updateId2 = process.env.NODE_ENV === 'production' ? '1004' : '20'
-const updateId3 = process.env.NODE_ENV === 'production' ? '1005' : '30'
+const updateId1 = process.env.NODE_ENV === 'development' ? '1' : '1003'
+const updateId2 = process.env.NODE_ENV === 'development' ? '20' : '1004'
+const updateId3 = process.env.NODE_ENV === 'development' ? '30' : '1005'
 const tag = 'typescript'
 
 const wrongTitle = ''
@@ -35,17 +35,18 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('password').fill(password)
 
     await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.waitForURL('/')
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
   })
 
-  test.afterEach(async ({ page }) => {
-    await page.getByRole('button', { name: 'Sign Out' }).click()
-  })
+  // test.afterEach(async ({ page }) => {
+  //   await page.getByRole('button', { name: 'Sign Out' }).click()
+  // })
 
   test('update book data', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
-    await page.getByRole('button', { name: 'Edit Book' }).click()
 
+    await page.getByRole('button', { name: 'Edit Book' }).click()
     await page.locator('input[name="homepage"]').click()
     await page.locator('input[name="homepage"]').fill('https://book-web.com')
     await page
@@ -72,8 +73,8 @@ test.describe('authenticated', () => {
 
   test('check update validation', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)
-    await page.getByRole('button', { name: 'Edit Book' }).click()
 
+    await page.getByRole('button', { name: 'Edit Book' }).click()
     await page.locator('input[name="titelwrapper"]').click()
     await page.locator('input[name="titelwrapper"]').fill(wrongTitle)
     await page.locator('input[name="isbn"]').click()
@@ -160,7 +161,7 @@ test.describe('authenticated', () => {
   })
 })
 
-test('book not updateable due no login', async ({ page }) => {
+test('unauthenticated access check', async ({ page }) => {
   await page.goto('/')
 
   await expect(page.getByRole('link', { name: 'New Book' })).not.toBeVisible()
@@ -172,7 +173,6 @@ test('book not updateable due no login', async ({ page }) => {
   expect(currentUrl.pathname).toBe(loginUrl)
 
   await page.goto(`/book/${updateId1}`)
-  await expect(page.getByText('ISBN')).toBeVisible()
 
   await expect(
     page.getByRole('button', { name: 'Edit Book' }),

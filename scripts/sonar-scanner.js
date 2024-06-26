@@ -13,7 +13,7 @@ scanner(
       'sonar.projectDescription': 'Buch Web',
       'sonar.projectVersion': '2024.06.0',
       'sonar.sources': 'app',
-      'sonar.tests': 'tests',
+      'sonar.tests': '__tests__',
       'sonar.token': sonarToken,
       'sonar.scm.disabled': 'true',
       'sonar.javascript.environments': 'node',

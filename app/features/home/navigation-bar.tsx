@@ -8,7 +8,8 @@ import {
 } from '@chakra-ui/react'
 import { Form, Link } from '@remix-run/react'
 import type { User } from '~/utils/rest/login'
-import { ThemeToggle } from '../../components/theme-toggle'
+import LoginLogoutButton from '../book/login-logout-button'
+import { ThemeToggle } from './theme-toggle'
 
 const NavBar = ({ user }: { user?: User | null }) => {
   const bg = useColorModeValue('gray.100', 'gray.900')
@@ -47,25 +48,7 @@ const NavBar = ({ user }: { user?: User | null }) => {
         <Flex justifyContent="end" flex="1">
           <Flex gap={2} alignItems="center">
             <ThemeToggle />
-            <Flex>
-              {user ? (
-                <Form method="post" action="/logout">
-                  <Button size="sm" type="submit">
-                    Sign Out
-                  </Button>
-                </Form>
-              ) : (
-                <Button
-                  as={Link}
-                  to="/login"
-                  size="sm"
-                  colorScheme="blue"
-                  _hover={{ textDecoration: 'none' }}
-                >
-                  Sign In
-                </Button>
-              )}
-            </Flex>
+            <LoginLogoutButton user={user} />
           </Flex>
         </Flex>
       </Flex>
