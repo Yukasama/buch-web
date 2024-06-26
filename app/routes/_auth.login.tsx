@@ -1,3 +1,5 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import {
   Box,
   Button,
@@ -46,12 +48,9 @@ export default function Login() {
   const [inputUsername, setInputUsername] = useState()
   const [inputPassword, setInputPassword] = useState()
 
-  // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   const handleInputChangeUsername = (e: any) => setInputUsername(e.target.value)
 
-  // eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
   const handleInputChangePassword = (e: any) => setInputPassword(e.target.value)
 

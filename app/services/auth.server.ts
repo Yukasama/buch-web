@@ -7,8 +7,8 @@ const authenticator = new Authenticator<User>(sessionStorage)
 
 authenticator.use(
   new FormStrategy(async ({ form }) => {
-    const username = form.get('username') as string
-    const password = form.get('password') as string
+    const username = String(form.get('username'))
+    const password = String(form.get('password'))
     return (await login(username, password)) as User
   }),
 )

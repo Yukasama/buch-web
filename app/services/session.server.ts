@@ -1,7 +1,4 @@
 import { createCookieSessionStorage } from '@remix-run/node'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -9,7 +6,7 @@ export const sessionStorage = createCookieSessionStorage({
     sameSite: 'lax',
     path: '/',
     httpOnly: true,
-    secrets: ['boisen'],
+    secrets: ['SWE'],
     secure: process.env.NODE_ENV === 'production',
   },
 })
