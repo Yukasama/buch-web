@@ -242,10 +242,7 @@ export default function SearchPage() {
       </HStack>
 
       <Box mt={4} display="flex" gap="20px">
-        <Button colorScheme="blue" onClick={handleSearchClick}>
-          Search
-        </Button>
-        <Button colorScheme="gray" onClick={resetInputs}>
+        <Button colorScheme="blue" onClick={resetInputs}>
           Reset
         </Button>
       </Box>
