@@ -16,6 +16,7 @@ import { Star } from 'lucide-react'
 import { Suspense } from 'react'
 import { BuchTags } from '~/features/book/buch-tags'
 import { BuyDetails } from '~/features/book/buy-details'
+import { DeleteModal } from '~/features/book/delete-modal'
 import { UpdateModal } from '~/features/book/update-modal'
 import { logger } from '~/lib/logger'
 import { BuchUpdateSchema } from '~/lib/validators/book'
@@ -74,7 +75,12 @@ export default function BookPage() {
                       {buch.titel.untertitel}
                     </Text>
                   </Box>
-                  {isAdmin && <UpdateModal buch={buch} />}
+                  {isAdmin && (
+                    <Flex gap={2}>
+                      <UpdateModal buch={buch} />
+                      <DeleteModal buch={buch} />
+                    </Flex>
+                  )}
                 </Flex>
 
                 <BuchTags buch={buch} user={user} />

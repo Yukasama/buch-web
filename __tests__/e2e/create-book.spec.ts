@@ -1,3 +1,6 @@
+// eslint-disable-next-line @eslint-community/eslint-comments/disable-enable-pair
+/* eslint-disable sonarjs/no-duplicate-string */
+
 import { expect, test } from '@playwright/test'
 import dotenv from 'dotenv'
 import { generateISBN } from '~/utils/generate-isbn'
@@ -35,6 +38,26 @@ test.describe('authenticated', () => {
     await page.getByRole('button', { name: 'Sign Out' }).click()
   })
 
+  test.afterAll(async ({ page }) => {
+    await page.goto('/book')
+    await page.getByRole('link', { name: 'New Book' }).click()
+    await page.getByPlaceholder('Enter Book Title').click()
+    await page.getByPlaceholder('Enter Book Title').fill(titel)
+    await page.getByPlaceholder('Enter ISBN').click()
+    await page.getByPlaceholder('Enter ISBN').fill(isbn)
+    await page.getByPlaceholder('Enter Price').click()
+    await page.getByPlaceholder('Enter Price').fill(price)
+    await page.getByPlaceholder('Enter Discount').click()
+    await page.getByPlaceholder('Enter Discount').fill(discount)
+    await page.getByLabel('In Stock').selectOption(available)
+    await page.getByLabel('Type').selectOption(type)
+    await page.getByPlaceholder('Enter Rating (1-5)').click()
+    await page.getByPlaceholder('Enter Rating (1-5)').fill(rating)
+    await page.getByPlaceholder('Enter Homepage URL').click()
+    await page.getByPlaceholder('Enter Homepage URL').fill(homepage)
+    await page.getByRole('button', { name: 'Create' }).click()
+  })
+
   test('create book', async ({ page }) => {
     await page.getByRole('link', { name: 'New Book' }).click()
 
@@ -56,10 +79,10 @@ test.describe('authenticated', () => {
     await page.getByPlaceholder('Enter Homepage URL').fill(homepage)
     await page.getByRole('button', { name: 'Create' }).click()
 
-    // const createPopup = page.waitForEvent('popup')
-    // await page.getByRole('link', { name: 'View Book at: http://' }).click()
-    // const bookPage = await createPopup
-    // expect(bookPage.url()).toContain('/book/')
+    const createPopup = page.waitForEvent('popup')
+    await page.getByRole('link', { name: 'View Book at: http://' }).click()
+    const bookPage = await createPopup
+    expect(bookPage.url()).toContain('/book/')
   })
 
   test('check create validation', async ({ page }) => {

@@ -39,9 +39,9 @@ test.describe('authenticated', () => {
     await expect(page.getByRole('button', { name: 'Sign Out' })).toBeVisible()
   })
 
-  // test.afterEach(async ({ page }) => {
-  //   await page.getByRole('button', { name: 'Sign Out' }).click()
-  // })
+  test.afterEach(async ({ page }) => {
+    await page.getByRole('button', { name: 'Sign Out' }).click()
+  })
 
   test('update book data', async ({ page }) => {
     await page.goto(`/book/${updateId1}`)

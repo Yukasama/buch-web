@@ -55,5 +55,5 @@ export async function action({ request, params }: ActionFunctionArgs) {
     access_token: user.access_token,
   })
 
-  return { error, version: newVersion }
+  return json({ error, version: newVersion })
 }

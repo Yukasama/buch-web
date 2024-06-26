@@ -114,3 +114,41 @@ export const updateBookById = async ({
 
   return { error: 'Internal Server Error' }
 }
+
+/**
+ * Delete a book entry in the database
+ * @param id Id of the book to delete
+ * @param access_token JWT access token from the user
+ */
+export const deleteBookById = async ({
+  id,
+  access_token,
+}: {
+  id: string
+  access_token: string
+}) => {
+  try {
+    await client.delete(`/rest/${id}`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+
+    logger.debug('deleteBookById (done): id=%s', id)
+
+    return { ok: true }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      logger.debug(
+        'deleteBookById (axios-error): id=%s message=%s',
+        id,
+        error.message,
+      )
+      return { error: formatErrorMsg(error) }
+    } else {
+      logger.error('deleteBookById (error): error=%s', error)
+    }
+  }
+
+  return { error: 'Internal Server Error' }
+}

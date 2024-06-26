@@ -1,5 +1,5 @@
-import { Button, Flex, useToast } from '@chakra-ui/react'
-import { Form, Link } from '@remix-run/react'
+import { Button, Flex, Link, useToast } from '@chakra-ui/react'
+import { Form } from '@remix-run/react'
 import { useEffect, useState } from 'react'
 import { User } from '~/utils/rest/login'
 
@@ -36,7 +36,7 @@ export const LoginLogoutButton = ({ user }: { user?: User | null }) => {
       ) : (
         <Button
           as={Link}
-          to="/login"
+          href="/login"
           size="sm"
           colorScheme="blue"
           _hover={{ textDecoration: 'none' }}
