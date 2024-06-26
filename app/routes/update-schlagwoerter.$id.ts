@@ -35,7 +35,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     schlagwoerter = schlagwoerterStr.split(',').map((s) => s.trim())
   } catch {
     logger.debug(
-      'updateSchlagwoerter [action] Invalid JSON format for schlagwoerter: %o',
+      'updateSchlagwoerter [action (invalid-schlagwoerter): data=%o',
       data.schlagwoerter,
     )
     return json(

@@ -10,6 +10,7 @@ import { RemixServer } from '@remix-run/react'
 import { isbot } from 'isbot'
 import { PassThrough } from 'node:stream'
 import { renderToPipeableStream } from 'react-dom/server'
+import { logger } from './lib/logger'
 
 const ABORT_DELAY = 5000
 
@@ -76,7 +77,7 @@ function handleBotRequest(
         onError(error: unknown) {
           responseStatusCode = 500
           if (shellRendered) {
-            console.error(error)
+            logger.error(error)
           }
         },
       },
@@ -128,7 +129,7 @@ function handleBrowserRequest(
         onError(error: unknown) {
           responseStatusCode = 500
           if (shellRendered) {
-            console.error(error)
+            logger.error(error)
           }
         },
       },

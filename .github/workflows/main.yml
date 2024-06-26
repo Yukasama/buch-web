@@ -73,7 +73,7 @@ jobs:
         run: pnpm audit --prod
 
   sonarcloud:
-    name: SonarCloud
+    name: sonarcloud
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -28,8 +28,6 @@ export const createBook = async ({
     untertitelwrapper: undefined,
   }
 
-  logger.debug('createBook (attempt): payload=%o', payload)
-
   try {
     const { headers } = await client.post('/rest', payload, {
       headers: {
@@ -40,11 +38,11 @@ export const createBook = async ({
     const location = headers.location as string | undefined
     const id = location?.split('/').pop()
 
-    logger.debug('createBook (done): id=%s', id)
+    logger.debug('createBook (done): id=%s payload=%s', id, payload)
     return { id }
   } catch (error) {
     if (error instanceof AxiosError) {
-      logger.error('createBook (axios-error): message=%s', error.message)
+      logger.debug('createBook (axios-error): message=%s', error.message)
       return { error: formatErrorMsg(error) }
     } else {
       logger.error('createBook (error): error=%s', error)
@@ -71,14 +69,6 @@ export const updateBookById = async ({
   mutateData: Partial<BuchUpdate>
   access_token: string
 }) => {
-  logger.debug(
-    'updateBookById (attempt): id=%s, version=%s, mutateData=%o, access_token=%s',
-    id,
-    mutateData.version,
-    mutateData,
-    access_token ? `${access_token?.slice(0, 10)}...` : 'undefined',
-  )
-
   const bookDb = await getBookById({ id })
 
   const payload = {
@@ -102,7 +92,7 @@ export const updateBookById = async ({
     const currentVersion = eTag?.replace(/"/g, '') ?? '0'
 
     logger.debug(
-      'updateBookById (done): id=%s, version=%s payload=%o',
+      'updateBookById (done): id=%s, version=%s, payload=%o',
       id,
       currentVersion,
       payload,
@@ -111,7 +101,7 @@ export const updateBookById = async ({
     return { version: currentVersion }
   } catch (error) {
     if (error instanceof AxiosError) {
-      logger.error(
+      logger.debug(
         'updateBookById (axios-error): id=%s message=%s',
         id,
         error.message,

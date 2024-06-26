@@ -3,7 +3,7 @@ import { logger } from '~/lib/logger'
 import { destroySession, getSession } from '~/services/session.server'
 
 export async function action() {
-  logger.debug('logout')
+  logger.debug('logout (done)')
   return redirect('/', {
     headers: {
       'Set-Cookie': await destroySession(await getSession()),

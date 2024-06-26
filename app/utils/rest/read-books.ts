@@ -22,7 +22,7 @@ export const getAllBooks = async () => {
     return { data: books }
   } catch (error) {
     if (error instanceof AxiosError) {
-      logger.error('getAllBooks (axios-error): message=%s', error.message)
+      logger.debug('getAllBooks (axios-error): message=%s', error.message)
       return { error: error.message }
     } else {
       logger.error('getAllBooks (error): error=%s', error)
@@ -63,7 +63,7 @@ export const getBookById = async ({
     }
   } catch (error) {
     if (error instanceof AxiosError) {
-      logger.error('getBookById (axios-error): message=%s', error.message)
+      logger.debug('getBookById (axios-error): message=%s', error.message)
     } else {
       logger.error('updateBookById (error): error=%s', error)
     }
